@@ -38,11 +38,17 @@ class Card:
         self.power = self.base_power
 
     def is_row_playable(self, row_type):
+        if self.is_special():
+            return True
+
         for row in self.rows:
             if row.upper() == row_type.name:
                 return True
 
         return False
+
+    def send_to_owner_grave(self):
+        self.owner.send_to_grave(self)
 
     def __lt__(self, other):
         if self.is_special() and not other.is_special():

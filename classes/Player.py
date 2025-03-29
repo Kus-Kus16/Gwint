@@ -1,5 +1,3 @@
-from turtledemo.clock import hand
-
 from classes.Grave import Grave
 from classes.Hand import Hand
 
@@ -13,6 +11,8 @@ class Player:
         self.commander = commander
         self.points = 0
         self.passed = False
+
+        self.own_cards()
 
     def add_card(self, card, container):
         container.add_card(card)
@@ -34,6 +34,12 @@ class Player:
 
     def play_to_board(self, card):
         self.remove_card(card, self.hand)
+
+    def send_to_grave(self, card):
+        self.add_card(card, self.grave)
+
+    def own_cards(self):
+        self.deck.own_cards(self)
 
     def __str__(self):
         return str(self.hand) + "\n" + f'\nH: {self.hand.size()} D: {self.deck.size()}, G: {self.grave.size()} PTS: {self.points}'

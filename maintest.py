@@ -1,7 +1,7 @@
 import json
 
 from classes.Card import Card
-from classes.CardHolder import CardHolder
+from classes.Deck import Deck
 from classes.Game import Game
 from classes.Player import Player
 from classes.Row import RowType
@@ -10,8 +10,8 @@ with open("./data/cards.json", "r", encoding="utf-8") as file:
     data = json.load(file)
 
 cards = [Card(d) for d in data]
-card_holder0 = CardHolder(cards[10:20])
-card_holder1 = CardHolder(cards[20:30])
+card_holder0 = Deck(cards[0:10])
+card_holder1 = Deck(cards[20:30])
 
 player0 = Player(card_holder0, None)
 player1 = Player(card_holder1, None)

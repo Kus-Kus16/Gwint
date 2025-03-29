@@ -1,7 +1,4 @@
-from unittest import case
-
 from classes.Board import Board
-
 
 class Game:
     def __init__(self, id):
@@ -26,20 +23,16 @@ class Game:
             print("wrong row")
             return
 
+        player.play_to_board(card)
+
         if card.is_special():
             #TODO special logic here
             self.handle_special(card)
+        else:
+            self.board.play_card(card, row_type, player.id)
+            self.handle_abilities(card)
 
-            return
-
-        self.handle_abilities(card)
-
-        player.play_to_board(card)
-
-        player0_pts, player1_pts = self.board.play_card(card, row_type, player.id)
-        self.players[0].points = player0_pts
-        self.players[1].points = player1_pts
-
+        self.update_points()
         self.next_turn()
 
     def handle_special(self, card):
@@ -51,14 +44,12 @@ class Game:
                     pass
                 case "scorch":
                     pass
-                case "clear":
-                    pass
-                case "frost":
-                    pass
-                case "rain":
-                    pass
-                case "storm":
-                    pass
+                case "clear" | "frost" | "fog" | "rain" | "storm":
+                    if self.board.is_weather_active(ability):
+                        card.send_to_owner_grave()
+                        return
+
+                    self.board.add_weather(card, ability)
                 case "mardroeme":
                     pass
                 case "sangreal":
@@ -109,6 +100,12 @@ class Game:
         if self.current_player.passed:
             self.end_round()
             return
+
+    def update_points(self):
+        player0_pts, player1_pts = self.board.rows_sum()
+
+        self.players[0].points = player0_pts
+        self.players[1].points = player1_pts
 
     def start_game(self):
         #TODO game start
