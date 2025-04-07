@@ -45,5 +45,12 @@ class Row(CardHolder):
         self.effects["weather"] = False
         self.recalculate()
 
+    ## TODO CHANGE HERE AFTER ABILITIES!
+    # def transfer_card(self, card, container):
+    #     super.transfer_card(card, container)
+    #
+    # def transfer_all_cards(self, container):
+    #     super.transfer_all_cards(container)
+
     def __str__(self):
         return str(self.points) + " :: " + ", ".join(str(card) for card in self.cards)

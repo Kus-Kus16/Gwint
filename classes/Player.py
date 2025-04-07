@@ -10,15 +10,10 @@ class Player:
         self.grave = Grave()
         self.commander = commander
         self.points = 0
+        self.hp = 2
         self.passed = False
 
         self.own_cards()
-
-    def add_card(self, card, container):
-        container.add_card(card)
-
-    def remove_card(self, card, container):
-        container.remove_card(card)
 
     def draw_card(self):
         card = self.deck.get_next_card()
@@ -26,20 +21,27 @@ class Player:
         if card is None:
             return
 
-        self.add_card(card, self.hand)
+        self.hand.add_card(card)
 
     def draw_cards(self, n):
         for _ in range(n):
             self.draw_card()
 
     def play_to_board(self, card):
-        self.remove_card(card, self.hand)
+        self.hand.remove_card(card)
 
     def send_to_grave(self, card):
-        self.add_card(card, self.grave)
+        self.grave.add_card(card)
 
     def own_cards(self):
         self.deck.own_cards(self)
+
+    def lower_hp(self):
+        self.hp -= 1
+        return self.is_dead()
+    
+    def is_dead(self):
+        return self.hp <= 0
 
     def __str__(self):
         return str(self.hand) + "\n" + f'\nH: {self.hand.size()} D: {self.deck.size()}, G: {self.grave.size()} PTS: {self.points}'

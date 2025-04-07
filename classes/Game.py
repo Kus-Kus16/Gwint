@@ -1,4 +1,5 @@
 from classes.Board import Board
+import random
 
 class Game:
     def __init__(self, id):
@@ -6,10 +7,13 @@ class Game:
         self.id = id
         self.board = Board()
         self.players = []
-        self.current_player = None
+        self.current_player_id = None
+        self.first_player_id = None
+        self.current_round = 0
+        self.round_history = []
 
     def play_card(self, player, card_id, row_type):
-        if self.current_player.id != player.id:
+        if self.current_player_id != player.id:
             print("wrong player")
             return
 
@@ -82,7 +86,7 @@ class Game:
                     pass
 
     def pass_round(self, player):
-        if self.current_player.id != player.id:
+        if self.current_player_id != player.id:
             print("wrong player")
             return
 
@@ -91,13 +95,14 @@ class Game:
         self.next_turn()
 
     def next_turn(self):
-        next_player = self.players[1 - self.current_player.id]
+        current_player = self.players[self.current_player_id]
+        next_player = self.players[1 - self.current_player_id]
 
         if not next_player.passed:
-            self.current_player = next_player
+            self.current_player_id = next_player.id
             return
 
-        if self.current_player.passed:
+        if current_player.passed:
             self.end_round()
             return
 
@@ -109,11 +114,44 @@ class Game:
 
     def start_game(self):
         #TODO game start
-        self.current_player = self.players[0]
+        self.first_player_id = random.randint(0, 1)
+        self.start_round()
+
+    def end_game(self):
+        pass
 
     def end_round(self):
-        #TODO
-        self.current_player = None
+        #TODO round end
+        self.current_player_id = None
+        player0, player1 = self.players[0], self.players[1]
+
+        player0.passed = False
+        player1.passed = False
+
+        player0_pts, player1_pts = player0.points, player1.points
+        self.round_history.append((player0_pts, player1_pts))
+
+        if player0_pts > player1_pts:
+            is_any_dead = player0.lower_hp()
+        elif player1_pts > player0_pts:
+            is_any_dead = player1.lower_hp()
+        else:
+            is_any_dead = player0.lower_hp()
+            is_any_dead = player1.lower_hp() or is_any_dead
+
+        if is_any_dead or self.current_round == 3:
+            self.end_game()
+            return
+
+        self.board.clear_rows(self.players)
+        self.board.clear_weather()
+        self.update_points()
+
+        self.start_round()
+
+    def start_round(self):
+        self.current_round += 1
+        self.current_player_id = (self.first_player_id + self.current_round) % 2
 
     def game_tostring(self, player_id):
         return self.board.rows_tostring(player_id) + "\n\n" + str(self.players[player_id])
@@ -126,3 +164,6 @@ class Game:
 
         self.players.append(player)
         return player_count
+
+    def get_player(self, player_id):
+        return self.players[player_id]

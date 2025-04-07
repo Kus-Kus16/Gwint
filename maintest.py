@@ -27,23 +27,26 @@ player1.draw_cards(10)
 players = {0: player0, 1: player1}
 
 while True:
-    current_player = game.current_player
-    if current_player is None:
+    current_player_id = game.current_player_id
+    if current_player_id is None:
+        print(game.round_history)
         break
-
-    current_player_id = current_player.id
 
     print(game.game_tostring(current_player_id))
 
-    print("\n Enter card id: ")
-    card_id = int(input())
-    print("\n Enter row (close, ranged, siege): ")
-    row = input()
+    try:
+        print("\n Enter card id: ")
+        card_id = int(input())
+        print("\n Enter row (close, ranged, siege): ")
+        row = input()
 
-    if row == "pass":
-        game.pass_round(players[current_player_id])
-    else:
-        game.play_card(players[current_player_id], card_id, RowType[row.upper()])
+        if row == "pass":
+            game.pass_round(players[current_player_id])
+        else:
+            game.play_card(players[current_player_id], card_id, RowType[row.upper()])
+    except:
+        pass
+
     print("-" * 30)
 
 

@@ -62,10 +62,15 @@ class Card:
         return self.id < other.id
 
     def __gt__(self, other):
-        if self.is_special():
-            return False if not other.is_special() else self.id > other.id
+        if self.is_special() and not other.is_special():
+            return False
+        if not self.is_special() and other.is_special():
+            return True
 
-        return True if self.power > other.power else self.id > other.id
+        if self.power != other.power:
+            return self.power > other.power
+
+        return self.id > other.id
 
     def __str__(self):
         return f'{self.id} {self.name} {self.power}'

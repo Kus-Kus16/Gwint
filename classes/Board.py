@@ -32,15 +32,18 @@ class Board:
         self.weather.add_card(card)
 
         if weather_ability == "clear":
-            self.weather.clear()
+            self.clear_weather()
+            return
 
-            for row in self.rows:
-                row.clear_weather()
-        else:
-            self.weather.put(weather_ability)
-            for index in rows_map[weather_ability]:
-                self.rows[index].add_weather()
+        self.weather.put(weather_ability)
+        for index in rows_map[weather_ability]:
+            self.rows[index].add_weather()
 
+    def clear_weather(self):
+        self.weather.clear()
+
+        for row in self.rows:
+            row.clear_weather()
 
     def is_weather_active(self, weather_ability):
         return self.weather.contains(weather_ability)
@@ -48,6 +51,17 @@ class Board:
     def update_rows(self):
         for row in self.rows:
             row.recalculate()
+
+    def clear_rows(self, players):
+        player0, player1 = players
+
+        for i in range(0, 3):
+            self.rows[i].transfer_all_cards(player0.grave)
+            self.rows[i].recalculate()
+
+        for i in range(3, 6):
+            self.rows[i].transfer_all_cards(player1.grave)
+            self.rows[i].recalculate()
 
     def rows_tostring(self, player_id):
         rows0 = self.rows[0:3]

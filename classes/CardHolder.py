@@ -33,6 +33,14 @@ class CardHolder:
             return None
 
         return self.cards.pop(0)
+    
+    def transfer_card(self, card, container):
+        self.remove_card(card)
+        container.add_card(card)
+
+    def transfer_all_cards(self, container):
+        for card in list(self.cards):
+            self.transfer_card(card, container)
 
     def __str__(self):
         return "\n".join(str(card) for card in self.cards)
