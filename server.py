@@ -55,18 +55,15 @@ def start_game():
 def threaded_client(conn):
     global players_connected, game
     try:
-        # Najpierw przydziel ID gracza
         player_id = players_connected
         players_connected += 1
         connections.append(conn)
 
-        # Od razu wyślij ID graczowi
         conn.send(str.encode(str(player_id)))
 
-        # Jeśli dwóch graczy - rozpocznij grę
         if players_connected == 2 and game is None:
             start_game()
-            # Powiadom wszystkich graczy, że gra się rozpoczęła
+            # Powiadom graczy, że gra się rozpoczęła
             for connection in connections:
                 try:
                     connection.send(str.encode("game_started"))

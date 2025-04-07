@@ -16,7 +16,6 @@ def main():
         player_id = None
         game_started = False
 
-        # Pierwsza wiadomość - pobierz ID gracza
         try:
             response = n.send("connect")
             if response:
@@ -57,7 +56,6 @@ def main():
 
             win.fill(color)
 
-            # Wyświetl informacje o stanie gry
             if game_started:
                 text = font.render(f"Jesteś graczem {player_id}", True, (0, 0, 0))
             elif player_id is not None:
