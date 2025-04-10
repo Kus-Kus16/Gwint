@@ -1,4 +1,5 @@
 import socket
+import zlib
 from _thread import *
 import json
 
@@ -7,6 +8,7 @@ from classes.Deck import Deck
 from classes.Game import Game
 from classes.Player import Player
 from classes.Row import RowType
+import pickle
 
 server = "192.168.0.157"
 port = 5555
@@ -58,30 +60,41 @@ def threaded_client(conn):
         player_id = players_connected
         players_connected += 1
         connections.append(conn)
-
-        conn.send(str.encode(str(player_id)))
+        data = conn.recv(2048).decode()
+        if data == "connect":
+            conn.send(str.encode(str(player_id)))
 
         if players_connected == 2 and game is None:
             start_game()
-            # Powiadom graczy, że gra się rozpoczęła
-            for connection in connections:
-                try:
-                    connection.send(str.encode("game_started"))
-                except:
-                    print("Błąd wysyłania powiadomienia o rozpoczęciu gry")
 
         while True:
             data = conn.recv(2048).decode()
             if not data:
                 break
-
             if data == "status":
                 if game is not None:
                     conn.send(str.encode("game_started"))
                 else:
                     conn.send(str.encode(str(players_connected)))
-
-            # TODO - OBSLUGA RUCHÓW
+            elif data == "get_game":
+                serialized_data = pickle.dumps(game)
+                #print(f"Rozmiar danych: {len(serialized_data)} bajtów")
+                conn.send(serialized_data)
+            elif ":" in data:
+                card_id, row = data.split(":")
+                card_id = int(card_id)
+                if row == "pass":
+                    if game.pass_round(players[game.current_player_id]):
+                        conn.send("success")
+                    else:
+                        conn.send("FALSE")
+                else:
+                    if game.play_card(players[game.current_player_id], card_id, RowType[row.upper()]):
+                        conn.send("success")
+                    else:
+                        conn.send("FALSE")
+            else:
+                raise ValueError("Błędny format danych")
 
     except Exception as e:
         print(f"Błąd w połączeniu: {e}")

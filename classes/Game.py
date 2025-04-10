@@ -15,17 +15,17 @@ class Game:
     def play_card(self, player, card_id, row_type):
         if self.current_player_id != player.id:
             print("wrong player")
-            return
+            return False
 
         card = player.hand.find_card_by_id(card_id)
 
         if card is None:
             print("wrong card")
-            return
+            return False
 
         if not card.is_row_playable(row_type):
             print("wrong row")
-            return
+            return False
 
         player.play_to_board(card)
 
@@ -38,6 +38,8 @@ class Game:
 
         self.update_points()
         self.next_turn()
+
+        return True
 
     def handle_special(self, card):
         for ability in card.abilities:
@@ -88,11 +90,13 @@ class Game:
     def pass_round(self, player):
         if self.current_player_id != player.id:
             print("wrong player")
-            return
+            return  False
 
         player.passed = True
 
         self.next_turn()
+
+        return True
 
     def next_turn(self):
         current_player = self.players[self.current_player_id]

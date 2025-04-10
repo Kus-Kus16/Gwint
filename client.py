@@ -1,6 +1,6 @@
-import pygame
-import socket
 import time
+
+import pygame
 from network.network import Network
 
 def main():
@@ -9,12 +9,10 @@ def main():
     win = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Client")
     clock = pygame.time.Clock()
-
+    game_started = False
     try:
         n = Network()
         color = (255, 255, 255)
-        player_id = None
-        game_started = False
 
         try:
             response = n.send("connect")
@@ -32,17 +30,27 @@ def main():
 
         while True:
             clock.tick(60)
-
+            time.sleep(1)
             # Sprawdź status gry
             try:
-                status = n.send("status")
+                if game_started:
+                    game = n.send_for_pickle("get_game")
+                    #text = font.render(current_player, True, (0, 0, 0))
+                    print(game.game_tostring(player_id))
+                    if game.current_player_id == player_id:
+                        print("\n Enter card id: ")
+                        card_id = int(input())
+                        print("\n Enter row (close, ranged, siege): ")
+                        row = input()
+                        tmp = n.send(f"{card_id}:{row}")
+                else:
+                    text = font.render(f"Jesteś graczem {player_id}", True, (0, 0, 0))
 
-                if status == "game_started":
-                    game_started = True
-                    color = (0, 255, 0)  # Zielony - gra rozpoczęta
-                elif status and status.isdigit():
-                    if int(status) == 2:
-                        color = (0, 0, 255)  # Niebieski - dwóch graczy
+                    status = n.send("status")
+
+                    if status == "game_started":
+                        game_started = True
+                        color = (0, 255, 0)  # Zielony - gra rozpoczęta
                     else:
                         color = (255, 0, 0)  # Czerwony - czekanie na drugiego gracza
             except Exception as e:
@@ -55,13 +63,6 @@ def main():
                     return
 
             win.fill(color)
-
-            if game_started:
-                text = font.render(f"Jesteś graczem {player_id}", True, (0, 0, 0))
-            elif player_id is not None:
-                text = font.render(f"Jesteś graczem {player_id}", True, (0, 0, 0))
-            else:
-                text = font.render("Łączenie z serwerem...", True, (0, 0, 0))
 
             win.blit(text, (50, height // 2))
 
