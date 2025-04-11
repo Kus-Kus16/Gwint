@@ -11,7 +11,7 @@ from classes.Row import RowType
 import pickle
 
 
-server = "192.168.0.157"
+server = "192.168.243.83"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

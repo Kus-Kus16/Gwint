@@ -37,6 +37,10 @@ def main():
                     game = n.send("get_game")
                     #text = font.render(current_player, True, (0, 0, 0))
                     print(game.game_tostring(player_id))
+                    if game.current_player_id is None:
+                        print(game.round_history)
+                        return
+
                     if game.current_player_id == player_id:
                         print("\n Enter card id: ")
                         card_id = int(input())
