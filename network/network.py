@@ -15,28 +15,15 @@ class Network:
         except:
             print("Connection failed")
 
-    def send(self, data):
-        try:
-            self.client.send(str.encode(data))
-            return self.client.recv(2048).decode()
-        except socket.error as e:
-            print(e)
-            return None
 
-    def send_for_pickle(self, data):
+    def send(self, data):
         try:
             self.client.send(str.encode(data))
 
             received_data = self.client.recv(2048*2)
 
             try:
-                obj = pickle.loads(received_data)
-
-                if isinstance(obj, str) and obj == "game_not_started":
-                    print("Gra nie została jeszcze rozpoczęta")
-                    return None
-
-                return obj
+                return pickle.loads(received_data)
 
             except pickle.UnpicklingError:
                 # Jeśli nie udało się deserializować, potraktuj jako zwykły string

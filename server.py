@@ -1,5 +1,4 @@
 import socket
-import zlib
 from _thread import *
 import json
 
@@ -8,7 +7,9 @@ from classes.Deck import Deck
 from classes.Game import Game
 from classes.Player import Player
 from classes.Row import RowType
+
 import pickle
+
 
 server = "192.168.0.157"
 port = 5555
@@ -85,14 +86,14 @@ def threaded_client(conn):
                 card_id = int(card_id)
                 if row == "pass":
                     if game.pass_round(players[game.current_player_id]):
-                        conn.send("success")
+                        conn.send(str.encode("success"))
                     else:
-                        conn.send("FALSE")
+                        conn.send(str.encode("FALSE"))
                 else:
                     if game.play_card(players[game.current_player_id], card_id, RowType[row.upper()]):
-                        conn.send("success")
+                        conn.send(str.encode("success"))
                     else:
-                        conn.send("FALSE")
+                        conn.send(str.encode("FALSE"))
             else:
                 raise ValueError("Błędny format danych")
 

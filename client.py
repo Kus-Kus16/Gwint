@@ -34,7 +34,7 @@ def main():
             # Sprawdź status gry
             try:
                 if game_started:
-                    game = n.send_for_pickle("get_game")
+                    game = n.send("get_game")
                     #text = font.render(current_player, True, (0, 0, 0))
                     print(game.game_tostring(player_id))
                     if game.current_player_id == player_id:
