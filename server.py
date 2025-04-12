@@ -11,7 +11,7 @@ from classes.Row import RowType
 import pickle
 
 
-server = "192.168.243.83"
+server = "192.168.1.44"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -57,43 +57,48 @@ def start_game():
 # Funkcja zarządzająca klientami
 def threaded_client(conn):
     global players_connected, game
+
+    def send(data):
+        conn.send(pickle.dumps(data))
+
+    def receive():
+        return pickle.loads(conn.recv(2048))
+
     try:
         player_id = players_connected
         players_connected += 1
         connections.append(conn)
-        data = conn.recv(2048).decode()
-        if data == "connect":
-            conn.send(str.encode(str(player_id)))
+        request, data = receive()
+        if request == "connect":
+            send( ("ok", [player_id]) )
 
         if players_connected == 2 and game is None:
             start_game()
 
         while True:
-            data = conn.recv(2048).decode()
-            if not data:
+            request, data = receive()
+            if not request:
                 break
-            if data == "status":
-                if game is not None:
-                    conn.send(str.encode("game_started"))
-                else:
-                    conn.send(str.encode(str(players_connected)))
-            elif data == "get_game":
-                serialized_data = pickle.dumps(game)
-                #print(f"Rozmiar danych: {len(serialized_data)} bajtów")
-                conn.send(serialized_data)
-            elif ":" in data:
-                card_id, row = data.split(":")
+
+            if game is None:
+                send( ("error", ["no_game"]) )
+                continue
+
+            if request == "get_status":
+                send( ("ok", ["game_started"]) )
+
+            elif request == "get_game":
+                send( ("ok", [game]) )
+
+            elif request == "play_card":
+                card_id, row = data
                 card_id = int(card_id)
                 if row == "pass":
-                    if game.pass_round(players[game.current_player_id]):
-                        conn.send(str.encode("success"))
-                    else:
-                        conn.send(str.encode("FALSE"))
+                    result =  game.pass_round(players[game.current_player_id])
                 else:
-                    if game.play_card(players[game.current_player_id], card_id, RowType[row.upper()]):
-                        conn.send(str.encode("success"))
-                    else:
-                        conn.send(str.encode("FALSE"))
+                    result = game.play_card(players[game.current_player_id], card_id, RowType[row.upper()])
+
+                send( ("ok", [result]) )
             else:
                 raise ValueError("Błędny format danych")
 
@@ -101,11 +106,13 @@ def threaded_client(conn):
         print(f"Błąd w połączeniu: {e}")
 
     players_connected -= 1
+    game = None
     if conn in connections:
         connections.remove(conn)
     conn.close()
 
+# Client connects
 while True:
-    conn, addr = s.accept()
+    new_connection, addr = s.accept()
     print("Connected to:", addr)
-    start_new_thread(threaded_client, (conn,))
+    start_new_thread(threaded_client, (new_connection,))
