@@ -1,0 +1,207 @@
+[
+    {
+        "name": "Królestwa Północy",
+        "description": "Gdy wygrasz rundę, weż dodatkową kartę.",
+        "commanders": [
+            {
+                "id": 0,
+                "name": "Foltest",
+                "nickname": "Żelazny Władca",
+                "ability": "scorchRow",
+                "abilitycomment": "siege"
+            },
+            {
+                "id": 1,
+                "name": "Foltest",
+                "nickname": "Zdobywca",
+                "ability": "horn",
+                "abilitycomment": "siege"
+            },
+            {
+                "id": 2,
+                "name": "Foltest",
+                "nickname": "Król Temerii",
+                "ability": "fog",
+                "abilitycomment": "find"
+            },
+            {
+                "id": 3,
+                "name": "Foltest",
+                "nickname": "Dowódca Północy",
+                "ability": "clear",
+                "abilitycomment": null
+            },
+            {
+                "id": 4,
+                "name": "Foltest",
+                "nickname": "Syn Medella",
+                "ability": "scorchRow",
+                "abilitycomment": "ranged"
+            }
+        ]
+    },
+    {
+        "name": "Cesarstwo Nilfgaardu",
+        "description": "Jeśli runda kończy się remisem, to Ty odnosisz zwycięstwo.",
+        "commanders": [
+            {
+                "id": 5,
+                "name": "Emhyr var Emreis",
+                "nickname": "Biały Płomień Tańczący na Kurchanach Wrogów",
+                "ability": "block",
+                "abilitycomment": null
+            },
+            {
+                "id": 6,
+                "name": "Emhyr var Emreis",
+                "nickname": "Cesarz Nilfgaardu",
+                "ability": "peek",
+                "abilitycomment": "enemyHand"
+            },
+            {
+                "id": 7,
+                "name": "Emhyr var Emreis",
+                "nickname": "Jeż z Erlenwaldu",
+                "ability": "rain",
+                "abilitycomment": "find"
+            },
+            {
+                "id": 8,
+                "name": "Emhyr var Emreis",
+                "nickname": "Pan Południa",
+                "ability": "choose",
+                "abilitycomment": "enemyGrave"
+            },
+            {
+                "id": 9,
+                "name": "Emhyr var Emreis",
+                "nickname": "Najeźdźca Północy",
+                "ability": "gamerule",
+                "abilitycomment": "graveRandom"
+            }
+        ]
+    },
+    {
+        "name": "Potwory",
+        "description": "Po każdej rundzie, losowo wybrana jednostka pozostaje na polu bitwy.",
+        "commanders": [
+            {
+                "id": 10,
+                "name": "Eredin Bréac Glas",
+                "nickname": "Dowódca Czerwonych Jeźdźców",
+                "ability": "horn",
+                "abilitycomment": "close"
+            },
+            {
+                "id": 11,
+                "name": "Eredin Bréac Glas",
+                "nickname": "Król Dzikiego Gonu",
+                "ability": "choose",
+                "abilitycomment": "deckWeather"
+            },
+            {
+                "id": 12,
+                "name": "Eredin Bréac Glas",
+                "nickname": "Władca Tir ná Lia",
+                "ability": "discardChoose",
+                "abilitycomment": "deck"
+            },
+            {
+                "id": 13,
+                "name": "Eredin Bréac Glas",
+                "nickname": "Zabójca Auberona",
+                "ability": "choose",
+                "abilitycomment": "grave"
+            },
+            {
+                "id": 14,
+                "name": "Eredin Bréac Glas",
+                "nickname": "Zdradziecki",
+                "ability": "gamerule",
+                "abilitycomment": "spiesDouble"
+            }
+        ]
+    },
+    {
+        "name": "Scoia'tael",
+        "description": "Zadecyduj kto rozpoczyna rozgrywkę.",
+        "commanders": [
+            {
+                "id": 15,
+                "name": "Francesca Findabair",
+                "nickname": "Najpiękniejsza Kobieta na Świecie",
+                "ability": "horn",
+                "abilitycomment": "ranged"
+            },
+            {
+                "id": 16,
+                "name": "Francesca Findabair",
+                "nickname": "Elfka Czystej Krwi",
+                "ability": "frost",
+                "abilitycomment": "find"
+            },
+            {
+                "id": 17,
+                "name": "Francesca Findabair",
+                "nickname": "Królowa Dol Blathanna",
+                "ability": "scorchRow",
+                "abilitycomment": "close"
+            },
+            {
+                "id": 18,
+                "name": "Francesca Findabair",
+                "nickname": "Stokrotka z Dolin",
+                "ability": "gamerule",
+                "abilitycomment": "takeCard"
+            },
+            {
+                "id": 19,
+                "name": "Francesca Findabair",
+                "nickname": "Nadzieja Dol Blathanna",
+                "ability": "move",
+                "abilitycomment": "optimise"
+            }
+        ]
+    },
+    {
+        "name": "Skellige",
+        "description": "Na początku 3 rundy, wylosuj dwie jednostki ze stosu kart odrzuconych i zagraj je na pole bitwy.",
+        "commanders": [
+            {
+                "id": 20,
+                "name": "Arnjolf",
+                "nickname": "Ojcobójca",
+                "ability": "storm",
+                "abilitycomment": "find"
+            },
+            {
+                "id": 21,
+                "name": "Bran Tuirseach",
+                "nickname": "Król Skellige",
+                "ability": "gamerule",
+                "abilitycomment": "halfWeather"
+            },
+            {
+                "id": 22,
+                "name": "Crach an Craite",
+                "nickname": "Dzik Morski",
+                "ability": "reshuffle",
+                "abilitycomment": "graves"
+            },
+            {
+                "id": 23,
+                "name": "Eist Tuirseach",
+                "nickname": "Łowca z An Skellig",
+                "ability": "scorchLow",
+                "abilitycomment": "enemy"
+            },
+            {
+                "id": 24,
+                "name": "Harald an Craite",
+                "nickname": "Chromy",
+                "ability": "gamerule",
+                "abilitycomment": "doubleRedraw"
+            }
+        ]
+    }
+]
