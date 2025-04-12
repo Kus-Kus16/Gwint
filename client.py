@@ -1,3 +1,4 @@
+import json
 import time
 
 import pygame
@@ -10,15 +11,23 @@ def main():
     pygame.display.set_caption("Client")
     clock = pygame.time.Clock()
     game_started = False
+
+    #Deck crafting
+    with open("./data/exampledecks.json", "r", encoding="utf-8") as file:
+        deck = json.load(file)[0]
+
+    #Connection
     try:
         n = Network()
         color = (255, 255, 255)
 
         try:
-            response, data = n.send( ("connect", []) )
+            response, data = n.send( ("connect", [deck]) )
             if response == "ok":
                 player_id = int(data[0])
                 print(f"Jesteś graczem {player_id}")
+            elif response == "error":
+                raise ValueError("Illegal deck")
             else:
                 raise ValueError("Brak odpowiedzi")
         except Exception as e:
@@ -42,6 +51,7 @@ def main():
                     game = data[0]
                     #text = font.render(current_player, True, (0, 0, 0))
                     print(game.game_tostring(player_id))
+
                     if game.current_player_id is None:
                         print(game.round_history)
                         return
@@ -51,16 +61,15 @@ def main():
                         card_id = int(input())
                         print("\n Enter row (close, ranged, siege): ")
                         row = input()
-                        n.send( ("play_card", [card_id, row]) )
+                        tmp = n.send( ("play_card", [card_id, row]) )
+                        print(tmp)
                 else:
                     text = font.render(f"Jesteś graczem {player_id}", True, (0, 0, 0))
 
                     response, data = n.send( ("get_status", []) )
-                    print(response, data)
 
                     if response == "ok" and data[0] == "game_started":
                         game_started = True
-                        print("game started")
                         color = (0, 255, 0)  # Zielony - gra rozpoczęta
                     else:
                         color = (255, 0, 0)  # Czerwony - czekanie na drugiego gracza

@@ -1,9 +1,7 @@
 import socket
 from _thread import *
-import json
 
-from classes.Card import Card
-from classes.Deck import Deck
+from classes.CardsDatabase import CardsDatabase
 from classes.Game import Game
 from classes.Player import Player
 from classes.Row import RowType
@@ -24,39 +22,13 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for a connection, Server Started")
 
-players_connected = 0
-connections = []
-game = None
-players = {}
-
-# Funkcja tworząca nową grę
-def start_game():
-    global game, players
-
-    with open("./data/cards.json", "r", encoding="utf-8") as file:
-        data = json.load(file)
-
-    cards = [Card(d) for d in data]
-    card_holder0 = Deck(cards[0:10])
-    card_holder1 = Deck(cards[20:30])
-
-    player0 = Player(card_holder0, None)
-    player1 = Player(card_holder1, None)
-    game = Game(1)
-
-    player0.id = game.add_player(player0)
-    player1.id = game.add_player(player1)
-    game.start_game()
-
-    player0.draw_cards(10)
-    player1.draw_cards(10)
-
-    players = {0: player0, 1: player1}
-    print("Game started!")
+games = {}
+id_counter = 0
+database = CardsDatabase()
 
 # Funkcja zarządzająca klientami
-def threaded_client(conn):
-    global players_connected, game
+def threaded_client(conn, game_id):
+    global id_counter
 
     def send(data):
         conn.send(pickle.dumps(data))
@@ -65,27 +37,33 @@ def threaded_client(conn):
         return pickle.loads(conn.recv(2048))
 
     try:
-        player_id = players_connected
-        players_connected += 1
-        connections.append(conn)
         request, data = receive()
-        if request == "connect":
-            send( ("ok", [player_id]) )
+        if request != "connect":
+            raise ValueError("Illegal request")
 
-        if players_connected == 2 and game is None:
-            start_game()
+        valid, deck = database.create_verified_deck(data[0])
+        if not valid:
+            send( ("error", [f"deck_invalid_{deck}"]) )
+
+        game = games[game_id]
+        player_id = game.add_player(Player(deck, None))
+
+        send( ("ok", [player_id]) if player_id is not None else ("error", ["game_full"]) )
+
+        if player_id == 1:
+            game.start_game()
 
         while True:
             request, data = receive()
             if not request:
                 break
 
-            if game is None:
+            if not game_id in games:
                 send( ("error", ["no_game"]) )
-                continue
+                break
 
             if request == "get_status":
-                send( ("ok", ["game_started"]) )
+                send( ("ok", ["game_started" if game.ready else "game_waiting"]) )
 
             elif request == "get_game":
                 send( ("ok", [game]) )
@@ -94,9 +72,9 @@ def threaded_client(conn):
                 card_id, row = data
                 card_id = int(card_id)
                 if row == "pass":
-                    result =  game.pass_round(players[game.current_player_id])
+                    result =  game.pass_round(player_id)
                 else:
-                    result = game.play_card(players[game.current_player_id], card_id, RowType[row.upper()])
+                    result = game.play_card(player_id, card_id, RowType[row.upper()])
 
                 send( ("ok", [result]) )
             else:
@@ -105,14 +83,20 @@ def threaded_client(conn):
     except Exception as e:
         print(f"Błąd w połączeniu: {e}")
 
-    players_connected -= 1
-    game = None
-    if conn in connections:
-        connections.remove(conn)
+    print("Connection lost")
+    games.pop(game_id, None)
+    id_counter -= 1
     conn.close()
 
 # Client connects
 while True:
     new_connection, addr = s.accept()
     print("Connected to:", addr)
-    start_new_thread(threaded_client, (new_connection,))
+
+    id_counter += 1
+    new_game_id = (id_counter - 1) // 2
+    if id_counter % 2 == 1:
+        games[new_game_id] = Game(new_game_id)
+        print("New game created")
+
+    start_new_thread(threaded_client, (new_connection, new_game_id))

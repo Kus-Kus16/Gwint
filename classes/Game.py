@@ -12,11 +12,12 @@ class Game:
         self.current_round = 0
         self.round_history = []
 
-    def play_card(self, player, card_id, row_type):
-        if self.current_player_id != player.id:
+    def play_card(self, player_id, card_id, row_type):
+        if self.current_player_id != player_id:
             print("wrong player")
             return False
 
+        player = self.players[player_id]
         card = player.hand.find_card_by_id(card_id)
 
         if card is None:
@@ -33,7 +34,7 @@ class Game:
             #TODO special logic here
             self.handle_special(card)
         else:
-            self.board.play_card(card, row_type, player.id)
+            self.board.play_card(card, row_type, player_id)
             self.handle_abilities(card)
 
         self.update_points()
@@ -87,12 +88,12 @@ class Game:
                 case "thirsty":
                     pass
 
-    def pass_round(self, player):
-        if self.current_player_id != player.id:
+    def pass_round(self, player_id):
+        if self.current_player_id != player_id:
             print("wrong player")
             return  False
 
-        player.passed = True
+        self.players[player_id].passed = True
 
         self.next_turn()
 
@@ -119,6 +120,11 @@ class Game:
     def start_game(self):
         #TODO game start
         self.first_player_id = random.randint(0, 1)
+        self.ready = True
+
+        for player in self.players:
+            player.draw_cards(10)
+
         self.start_round()
 
     def end_game(self):
@@ -167,6 +173,7 @@ class Game:
             return None
 
         self.players.append(player)
+        player.id = player_count
         return player_count
 
     def get_player(self, player_id):
