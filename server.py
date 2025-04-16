@@ -54,13 +54,13 @@ def threaded_client(conn, game_id, player_id):
                     opponent_state = game_state.get_state(1 - player_id)
                     send( ("ok", []) if opponent_state is None else ("start-game", opponent_state) )
 
-                case "play-card":
+                case "play":
                     game_state.add_state(player_id, data)
                     send( ("ok", []) )
 
                 case "waiting":
                     opponent_state = game_state.get_state(1 - player_id)
-                    send( ("ok", []) if opponent_state is None else ("play-card", opponent_state) )
+                    send( ("ok", []) if opponent_state is None else ("play", opponent_state) )
 
                 case "rematch":
                     game_state.reseed()

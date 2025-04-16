@@ -1,6 +1,7 @@
 import json
 
 from classes.CardsDatabase import CardsDatabase
+from presenter.ConsoleGamePresenter import ConsoleGamePresenter
 from presenter.GamePresenter import GamePresenter
 from view.ConsoleView import ConsoleView
 
@@ -19,9 +20,7 @@ def main():
         raise ValueError("Illegal deck")
 
     try:
-       view = ConsoleView()
-       presenter = GamePresenter(view, deck, commander)
-       print("hyhy")
+       presenter = ConsoleGamePresenter(deck, commander)
        presenter.run()
     except Exception as e:
         print(f"Error: {e}")

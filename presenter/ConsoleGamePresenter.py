@@ -1,15 +1,14 @@
-import threading
 import time
 
 from classes.Game import Game
 from classes.Player import Player
 from network.network import Network
-from view.PyGameView import PygameView
+from view.ConsoleView import ConsoleView
 
 
-class GamePresenter:
+class ConsoleGamePresenter:
     def __init__(self, deck, commander):
-        self.view = PygameView()
+        self.view = ConsoleView()
         self.n = Network()
         self.my_id = None
         self.seed = None
@@ -17,8 +16,6 @@ class GamePresenter:
         self.opponent = None
         self.game = None
         self.game_state = None
-
-        threading.Thread(target=self.view.run, daemon=True).start()
 
         self.register(deck, commander)
 
@@ -35,19 +32,7 @@ class GamePresenter:
     def run(self):
         while True:
             time.sleep(1)
-            self.game_state = self.view.mode
-            if self.game_state == "game":
-                self.game_state = "waiting-for-game"
-
             match self.game_state:
-                case "menu":
-                    pass
-                case "deck":
-                    pass
-
-                case "register":
-                    #TODO registering with data from view
-                    pass
                 case "waiting-for-game":
                     self.handle_waitingforgame()
                 case "start-game":
@@ -83,60 +68,31 @@ class GamePresenter:
         self.game.start_game()
         self.game_state = 'playing' if self.game.current_player_id == self.my_id else "waiting"
 
-    def play_card(self, player_id, card_id, row):
-        return self.game.play_card(player_id, card_id, row)
-
-    def pass_round(self, player_id):
-        return self.game.pass_round(player_id)
-
-    def handle_ownturn(self):
-        self.view.unlock()
-        event = self.view.get_event()
-
-        if event is None:
-            return True
-
-        match event.type:
-            case "card":
-                card_id = event.card_id
-                row = event.row
-
-                if not self.play_card(self.my_id, card_id, row):
-                    return False
-
-                self.n.send(("play", ["card", card_id, row]))
-
-            case "pass":
-                if not self.pass_round(self.my_id):
-                    return False
-
-                self.n.send(("play", ["pass"]))
-
-            case "commander":
-                #TODO
-                pass
-
-        return True
-
-    def handle_opponentturn(self):
-        response, data = self.n.send(("waiting", []))
-
-        if response == "ok":
-            return True
-
-        match data[0]:
-            case "card":
-                return self.play_card(1 - self.my_id, data[1], data[2])
-            case "pass":
-                return self.pass_round(1 - self.my_id)
-
-
     def handle_turn(self, player_id):
+        self.view.show_game(self.game, self.my_id)
+
         own_turn = player_id == self.my_id
-        valid = self.handle_ownturn() if own_turn else self.handle_opponentturn()
+        if own_turn:
+            card_id, row = self.view.get_card_input()
+            move = "pass" if row == "pass" else "card"
+
+        else:
+            response, data = self.n.send(("waiting", []))
+            if response == "ok":
+                return True
+
+            move, card_id, row = data
+
+        if move == "pass":
+            valid = self.game.pass_round(player_id)
+        else:
+            valid = self.game.play_card(player_id, card_id, row)
 
         if not valid:
             return False
+
+        if own_turn:
+            self.n.send(("play", [move, card_id, row]))
 
         if self.game.current_player_id == self.my_id:
             self.game_state = "playing"
@@ -149,16 +105,10 @@ class GamePresenter:
         return True
 
     def handle_gameover(self):
-        event = self.view.get_event()
+        rematch = self.view.get_rematch()
+        self.n.send(("rematch", [rematch]))
 
-        if event is None:
-            return True
-
-        if event.type == "rematch":
-            rematch = event.rematch
-            self.n.send(("rematch", [rematch]))
-
-            self.game_state = "waiting-for-endgame" if rematch else "exit"
+        self.game_state = "waiting-for-endgame" if rematch else "exit"
 
     def handle_waitingforendgame(self):
         response, data = self.n.send(("waiting-for-endgame", []))
