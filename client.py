@@ -8,11 +8,11 @@ from view.ConsoleView import ConsoleView
 
 def main():
     #Deck crafting
-    print("\n Enter deck 0 North/1 Nilfgaard: ")
-    i = int(input())
+    # print("\n Enter deck 0 North/1 Nilfgaard: ")
+    # i = int(input())
     database = CardsDatabase()
     with open("./data/exampledecks.json", "r", encoding="utf-8") as file:
-        deck = json.load(file)[i]
+        deck = json.load(file)[0]
 
     commander = None
     valid, deck = database.create_verified_deck(deck)
@@ -20,7 +20,7 @@ def main():
         raise ValueError("Illegal deck")
 
     try:
-       presenter = ConsoleGamePresenter(deck, commander)
+       presenter = GamePresenter(deck, commander)
        presenter.run()
     except Exception as e:
         print(f"Error: {e}")
