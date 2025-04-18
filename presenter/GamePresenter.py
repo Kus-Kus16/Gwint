@@ -8,8 +8,8 @@ from view.PyGameView import PygameView
 
 
 class GamePresenter:
-    def __init__(self, deck, commander):
-        self.view = PygameView()
+    def __init__(self, deck, commander,view):
+        self.view = view
         self.n = Network()
         self.my_id = None
         self.seed = None

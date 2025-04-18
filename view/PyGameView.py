@@ -1,14 +1,20 @@
 import pygame
 
-from UI_Classes.CreditsScreen import CreditsScreen
-from UI_Classes.MenuScreen import MenuScreen
-from UI_Classes.VolumeSlider import VolumeSlider
+from view.Scenes.CreditsScene import CreditsScene
+from view.Scenes.MenuScene import MenuScene
 
 
 class PygameView:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((800,600))
+        #self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        #self.screen = pygame.display.set_mode((1000,500))
+        #self.screen = pygame.display.set_mode((1800,1000))
+        #self.screen = pygame.display.set_mode((1280, 720))
+
+        info = pygame.display.Info()
+        self.screen = pygame.display.set_mode((info.current_w, info.current_h), pygame.FULLSCREEN | pygame.SCALED)
+
         pygame.display.set_caption("Gwent LAN")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font("resources/Cinzel/Cinzel-VariableFont_wght.ttf", 30)
@@ -27,11 +33,11 @@ class PygameView:
         pygame.mixer.music.load("resources/soundtrack.mp3")
         pygame.mixer.music.set_volume(1)
         pygame.mixer.music.play(-1)
-        self.volume_slider = VolumeSlider((self.screen_width - 240, self.screen_height - 60))
+
 
         #Screens initiation
-        self.menu = MenuScreen(self.screen, self.font, self.switch_mode)
-        self.credits = CreditsScreen(self.screen, self.font, self.switch_mode)
+        self.menu = MenuScene(self.screen, self.font, self.switch_mode)
+        self.credits = CreditsScene(self.screen, self.font, self.switch_mode)
 
     def run(self):
         while self.running:
@@ -48,9 +54,8 @@ class PygameView:
                     self.show_game(self.game, self.player_id)
 
             self.handle_pygame_events()
-            #self.volume_slider.draw(self.screen)
             self.clock.tick(60)
-            pygame.display.update()
+            pygame.display.flip()
 
 
     def show_game(self, game, player_id):
@@ -66,36 +71,21 @@ class PygameView:
 
     def handle_pygame_events(self):
         for event in pygame.event.get():
-            print(f"Event: {event}")  # Logowanie każdego eventu
-
-            # Logowanie pochodzenia zdarzenia
             if event.type == pygame.QUIT:
-                print("Quit event triggered")
                 self.running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                print(f"Mouse clicked at {event.pos}")
-                if self.mode == "menu":
-                    print("Handling menu")
-                    self.menu.handle_events(event)
-                elif self.mode == "credits":
-                    print("Handling credits")
-                    self.credits.handle_events(event)
-            elif event.type == pygame.KEYDOWN:
-                print(f"Key pressed: {pygame.key.name(event.key)}")
-            elif event.type == pygame.MOUSEMOTION:
-                print(f"Mouse moved to {event.pos}")
-            elif event.type == pygame.ACTIVEEVENT:
-                print(f"Window active event: {event.state}")
-
-            # elif event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_RETURN and self.selected_card:
-            #         self.locked = True
-            #         row = self.selected_card.rows[0]
-            #         self.pending_event = {
-            #             "type": "card",
-            #             "card_id": self.selected_card.id,
-            #             "row": row
-            #         }
+            elif self.mode == "menu":
+                self.menu.handle_events(event)
+            elif self.mode == "credits":
+                self.credits.handle_events(event)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and self.selected_card:
+                    self.locked = True
+                    row = self.selected_card.rows[0]
+                    self.pending_event = {
+                        "type": "card",
+                        "card_id": self.selected_card.id,
+                        "row": row
+                    }
 
     def unlock(self):
         self.locked = False

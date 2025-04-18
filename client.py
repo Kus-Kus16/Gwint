@@ -1,9 +1,11 @@
 import json
+import threading
 
 from classes.CardsDatabase import CardsDatabase
 from presenter.ConsoleGamePresenter import ConsoleGamePresenter
 from presenter.GamePresenter import GamePresenter
 from view.ConsoleView import ConsoleView
+from view.PyGameView import PygameView
 
 
 def main():
@@ -20,8 +22,10 @@ def main():
         raise ValueError("Illegal deck")
 
     try:
-       presenter = GamePresenter(deck, commander)
-       presenter.run()
+        view = PygameView()
+        presenter = GamePresenter(deck, commander, view)
+        threading.Thread(target=presenter.run, daemon=True).start()
+        view.run()
     except Exception as e:
         print(f"Error: {e}")
 
