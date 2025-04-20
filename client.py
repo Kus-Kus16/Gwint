@@ -22,6 +22,7 @@ def main():
         raise ValueError("Illegal deck")
 
     try:
+
         view = PygameView()
         presenter = GamePresenter(deck, commander, view)
         threading.Thread(target=presenter.run, daemon=True).start()

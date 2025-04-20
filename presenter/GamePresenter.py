@@ -4,7 +4,6 @@ import time
 from classes.Game import Game
 from classes.Player import Player
 from network.network import Network
-from view.PyGameView import PygameView
 
 
 class GamePresenter:
@@ -18,9 +17,11 @@ class GamePresenter:
         self.game = None
         self.game_state = None
 
+        self.register(deck, commander)
+
         threading.Thread(target=self.view.run, daemon=True).start()
 
-        self.register(deck, commander)
+
 
     def register(self, deck, commander):
         response, data = self.n.send(("register", [deck, commander]))
@@ -31,16 +32,18 @@ class GamePresenter:
         self.my_id, self.seed = data
         self.me = Player(deck, commander)
         self.game_state = "waiting-for-game"
+        self.view.player_id = self.my_id
 
     def run(self):
         while True:
-            time.sleep(1)
+            time.sleep(0.05)
             self.game_state = self.view.mode
-            if self.game_state == "game":
-                self.game_state = "waiting-for-game"
+            self.view.game = self.game
 
             match self.game_state:
                 case "menu":
+                    pass
+                case "credits":
                     pass
                 case "deck":
                     pass
@@ -76,12 +79,15 @@ class GamePresenter:
             for p in players:
                 self.game.add_player(p)
 
-            self.game_state = 'start-game'
+            self.game_state = "start-game"
+            self.view.mode = "start-game"
+
 
     def handle_startgame(self):
         # Scoia'tael choosing here
         self.game.start_game()
-        self.game_state = 'playing' if self.game.current_player_id == self.my_id else "waiting"
+        self.game_state = "playing" if self.game.current_player_id == self.my_id else "waiting"
+        self.view.mode = "playing" if self.game.current_player_id == self.my_id else "waiting"
 
     def play_card(self, player_id, card_id, row):
         return self.game.play_card(player_id, card_id, row)
@@ -96,10 +102,10 @@ class GamePresenter:
         if event is None:
             return True
 
-        match event.type:
+        match event["type"]:
             case "card":
-                card_id = event.card_id
-                row = event.row
+                card_id = event["card_id"]
+                row = event["row"]
 
                 if not self.play_card(self.my_id, card_id, row):
                     return False
@@ -113,7 +119,7 @@ class GamePresenter:
                 self.n.send(("play", ["pass"]))
 
             case "commander":
-                #TODO
+                # TODO
                 pass
 
         return True
@@ -172,3 +178,6 @@ class GamePresenter:
             self.game_state = 'start-game'
         else:
             self.game_state = 'exit'
+
+    def is_waiting_for_player(self):
+        return self.game_state == "waiting-for-game"

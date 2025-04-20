@@ -5,7 +5,7 @@ import pickle
 
 from network.GameStates import GameStates
 
-server = "192.168.1.44"
+server = "192.168.100.66"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
