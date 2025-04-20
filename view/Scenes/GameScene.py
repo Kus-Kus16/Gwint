@@ -64,14 +64,14 @@ class GameScene:
         offset = 0
         for card in row.cards:
             image = pygame.image.load("resources/placeholder.png").convert_alpha()
-            image = pygame.transform.scale(image, (80, 120))  # jeśli chcesz zmniejszyć
+            image = pygame.transform.scale(image, (80, 120))
             self.screen.blit(image, (x + offset, y))
             offset += 90
 
     def draw_hand(self, hand_cards, x, y):
         offset = 0
         for card in hand_cards:
-            image = pygame.image.load("resources/placeholder.png")  # Wstaw odpowiednią ścieżkę do obrazka
-            image = pygame.transform.scale(image, (80, 120))  # Dopasuj rozmiar
+            image = pygame.image.load("resources/placeholder.png")
+            image = pygame.transform.scale(image, (80, 120))
             self.screen.blit(image, (x + offset, y))
             offset += 90

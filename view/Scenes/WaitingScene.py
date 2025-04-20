@@ -1,7 +1,6 @@
 import pygame
 
 from view.components.Button import Button
-from view.components.VolumeSlider import VolumeSlider
 
 
 class WaitingScene:
