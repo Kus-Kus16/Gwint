@@ -137,6 +137,7 @@ class GamePresenter:
                 return self.pass_round(1 - self.my_id)
 
 
+
     def handle_turn(self, player_id):
         own_turn = player_id == self.my_id
         valid = self.handle_ownturn() if own_turn else self.handle_opponentturn()
@@ -146,8 +147,10 @@ class GamePresenter:
 
         if self.game.current_player_id == self.my_id:
             self.game_state = "playing"
+            self.view.mode = "playing"
         elif self.game.current_player_id == 1 - self.my_id:
             self.game_state = "waiting"
+            self.view.mode = "waiting"
         else:
             self.view.show_game_history(self.game)
             self.game_state = "game-over"

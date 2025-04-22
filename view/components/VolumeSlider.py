@@ -6,7 +6,7 @@ class VolumeSlider:
         self.size = size
         self.rect = pygame.Rect(pos, size)
         self.handle_radius = 15
-        self.handle_x = pos[0] + size[0]  # start na 100% głośności
+        self.handle_x = pos[0] + size[0]//2
         self.dragging = False
         self.volume = 1.0
 
