@@ -1,3 +1,5 @@
+import os
+
 import pygame
 
 
@@ -17,10 +19,10 @@ class GameScene:
         self.screen.blit(self.background, (0, 0))
 
         row = self.game.board.rows[0]
-        self.draw_row(row, x=100, y=300)
+        #self.draw_hand(row, x=100, y=300)
 
         hand = self.game.players[self.player_id].hand
-        self.draw_hand(hand.cards, x=585, y=845)
+        #self.draw_hand(hand.cards, x=585, y=845)
 
         row_points = [row.points for row in self.game.board.rows]
         self.draw_text(f"{row_points[0]}", x=528, y=56,color=(0,0,0))
@@ -60,18 +62,24 @@ class GameScene:
             text_rect.topleft = (x, y)
         self.screen.blit(text_surface, text_rect)
 
+    def load_card_image(self,card):
+        path = f"resources/small/{card.faction}/{card.filename}.png"
+        if os.path.exists(path):
+            return pygame.image.load(path).convert_alpha()
+        else:
+            print(f"[WARN] Brak pliku: {path}")
+            return pygame.image.load("resources/placeholder.png").convert_alpha()
+
+
     def draw_row(self, row, x, y):
         offset = 0
         for card in row.cards:
-            image = pygame.image.load("resources/placeholder.png").convert_alpha()
+            image = self.load_card_image(card)
             image = pygame.transform.scale(image, (80, 120))
             self.screen.blit(image, (x + offset, y))
             offset += 90
 
-    def draw_hand(self, hand_cards, x, y):
-        offset = 0
-        for card in hand_cards:
-            image = pygame.image.load("resources/placeholder.png")
             image = pygame.transform.scale(image, (80, 120))
             self.screen.blit(image, (x + offset, y))
             offset += 90
+
