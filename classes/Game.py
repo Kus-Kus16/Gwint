@@ -153,9 +153,9 @@ class Game:
         self.round_history.append((player0_pts, player1_pts))
 
         if player0_pts > player1_pts:
-            is_any_dead = player0.lower_hp()
-        elif player1_pts > player0_pts:
             is_any_dead = player1.lower_hp()
+        elif player1_pts > player0_pts:
+            is_any_dead = player0.lower_hp()
         else:
             is_any_dead = player0.lower_hp()
             is_any_dead = player1.lower_hp() or is_any_dead
