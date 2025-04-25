@@ -19,9 +19,6 @@ class GamePresenter:
 
         self.register(deck, commander)
 
-        threading.Thread(target=self.view.run, daemon=True).start()
-
-
 
     def register(self, deck, commander):
         response, data = self.n.send(("register", [deck, commander]))

@@ -43,15 +43,13 @@ class PygameView:
         self.menu = MenuScene(self.screen, self.font, self.switch_mode)
         self.credits = CreditsScene(self.screen, self.font, self.switch_mode)
         self.waiting = WaitingScene(self.screen, self.font, self.switch_mode)
-        self.game_scene = GameScene(self.screen, self.font, self.game, self.player_id, self.switch_mode)
+        self.game_scene = GameScene(self.screen, self.font, self.switch_mode)
 
     def run(self):
         while self.running:
-            if self.game and self.player_id is not None:
-                self.game_scene.game = self.game
-                self.game_scene.player_id = self.player_id
+            self.game_scene.game = self.game
+            self.game_scene.player_id = self.player_id
 
-            print(self.mode)
             match self.mode:
                 case "menu":
                     self.menu.draw()
@@ -66,6 +64,7 @@ class PygameView:
                 case "start-game":
                     pass
                 case "playing":
+                    self.game_scene.selected_card = self.selected_card
                     self.game_scene.draw_playing()
                 case "waiting":
                     self.game_scene.draw_waiting()
@@ -93,14 +92,17 @@ class PygameView:
     def handle_pygame_events(self):
         for event in pygame.event.get():
             self.volume_slider.handle_event(event)
+
             if event.type == pygame.QUIT:
                 self.running = False
+
             elif self.mode == "menu":
                 self.menu.handle_events(event)
             elif self.mode == "credits":
                 self.credits.handle_events(event)
             elif self.mode == "waiting-for-game":
                 self.waiting.handle_events(event)
+
             elif self.mode == "playing":
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and not self.locked:
@@ -108,14 +110,35 @@ class PygameView:
                         self.pending_event = {
                             "type": "pass"
                         }
+
                     elif event.key == pygame.K_RETURN and self.selected_card:
-                        self.locked = True
-                        row = self.selected_card.rows[0]
-                        self.pending_event = {
-                            "type": "card",
-                            "card_id": self.selected_card.id,
-                            "row": row
-                        }
+                        if len(self.selected_card.rows) == 1:
+                            self.locked = True
+                            self.pending_event = {
+                                "type": "card",
+                                "card_id": self.selected_card.id,
+                                "row": self.selected_card.rows[0]
+                            }
+                            self.selected_card = None  # odznacz kartę
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if not self.locked:
+                        for card, rect in self.game_scene.hand_rects:
+                            if rect.collidepoint(event.pos):
+                                self.selected_card = card
+                                return
+
+                        if self.selected_card:
+                            for row_name, rect in self.game_scene.row_highlight_rects:
+                                if rect.collidepoint(event.pos):
+                                    self.locked = True
+                                    self.pending_event = {
+                                        "type": "card",
+                                        "card_id": self.selected_card.id,
+                                        "row": row_name
+                                    }
+                                    self.selected_card = None
+                                    return
 
     def unlock(self):
         self.locked = False
