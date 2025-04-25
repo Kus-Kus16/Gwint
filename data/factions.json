@@ -4,39 +4,39 @@
         "description": "Gdy wygrasz rundę, weż dodatkową kartę.",
         "commanders": [
             {
-                "id": 0,
-                "name": "Foltest",
-                "nickname": "Żelazny Władca",
-                "ability": "scorchRow",
-                "abilitycomment": "siege"
-            },
-            {
-                "id": 1,
-                "name": "Foltest",
-                "nickname": "Zdobywca",
-                "ability": "horn",
-                "abilitycomment": "siege"
-            },
-            {
-                "id": 2,
+                "id": 30,
                 "name": "Foltest",
                 "nickname": "Król Temerii",
-                "ability": "fog",
-                "abilitycomment": "find"
+                "ability": "findFog",
+                "filename": "foltest1"
             },
             {
-                "id": 3,
+                "id": 31,
                 "name": "Foltest",
                 "nickname": "Dowódca Północy",
                 "ability": "clear",
-                "abilitycomment": null
+                "filename": "foltest2"
             },
             {
-                "id": 4,
+                "id": 32,
+                "name": "Foltest",
+                "nickname": "Zdobywca",
+                "ability": "hornSiege",
+                "filename": "foltest3"
+            },
+            {
+                "id": 33,
+                "name": "Foltest",
+                "nickname": "Żelazny Władca",
+                "ability": "scorchSiege",
+                "filename": "foltest4"
+            },
+            {
+                "id": 34,
                 "name": "Foltest",
                 "nickname": "Syn Medella",
-                "ability": "scorchRow",
-                "abilitycomment": "ranged"
+                "ability": "scorchRanged",
+                "filename": "foltest5"
             }
         ]
     },
@@ -45,39 +45,39 @@
         "description": "Jeśli runda kończy się remisem, to Ty odnosisz zwycięstwo.",
         "commanders": [
             {
-                "id": 5,
-                "name": "Emhyr var Emreis",
-                "nickname": "Biały Płomień Tańczący na Kurchanach Wrogów",
-                "ability": "block",
-                "abilitycomment": null
-            },
-            {
-                "id": 6,
-                "name": "Emhyr var Emreis",
-                "nickname": "Cesarz Nilfgaardu",
-                "ability": "peek",
-                "abilitycomment": "enemyHand"
-            },
-            {
-                "id": 7,
+                "id": 80,
                 "name": "Emhyr var Emreis",
                 "nickname": "Jeż z Erlenwaldu",
-                "ability": "rain",
-                "abilitycomment": "find"
+                "ability": "findRain",
+                "filename": "emhyr1"
             },
             {
-                "id": 8,
+                "id": 81,
+                "name": "Emhyr var Emreis",
+                "nickname": "Cesarz Nilfgaardu",
+                "ability": "show3Enemy",
+                "filename": "emhyr2"
+            },
+            {
+                "id": 82,
+                "name": "Emhyr var Emreis",
+                "nickname": "Biały Płomień Tańczący na Kurchanach Wrogów",
+                "ability": "blockAbility",
+                "filename": "emhyr3"
+            },
+            {
+                "id": 83,
                 "name": "Emhyr var Emreis",
                 "nickname": "Pan Południa",
-                "ability": "choose",
-                "abilitycomment": "enemyGrave"
+                "ability": "chooseEnemyGrave",
+                "filename": "emhyr4"
             },
             {
-                "id": 9,
+                "id": 84,
                 "name": "Emhyr var Emreis",
                 "nickname": "Najeźdźca Północy",
-                "ability": "gamerule",
-                "abilitycomment": "graveRandom"
+                "ability": "graveRandom",
+                "filename": "emhyr5"
             }
         ]
     },
@@ -86,39 +86,39 @@
         "description": "Po każdej rundzie, losowo wybrana jednostka pozostaje na polu bitwy.",
         "commanders": [
             {
-                "id": 10,
-                "name": "Eredin Bréac Glas",
-                "nickname": "Dowódca Czerwonych Jeźdźców",
-                "ability": "horn",
-                "abilitycomment": "close"
-            },
-            {
-                "id": 11,
+                "id": 130,
                 "name": "Eredin Bréac Glas",
                 "nickname": "Król Dzikiego Gonu",
-                "ability": "choose",
-                "abilitycomment": "deckWeather"
+                "ability": "chooseDeckWeather",
+                "filename": "eredin1"
             },
             {
-                "id": 12,
+                "id": 131,
+                "name": "Eredin Bréac Glas",
+                "nickname": "Dowódca Czerwonych Jeźdźców",
+                "ability": "hornClose",
+                "filename": "eredin2"
+            },
+            {
+                "id": 132,
                 "name": "Eredin Bréac Glas",
                 "nickname": "Władca Tir ná Lia",
-                "ability": "discardChoose",
-                "abilitycomment": "deck"
+                "ability": "discard2Choose1",
+                "filename": "eredin3"
             },
             {
-                "id": 13,
+                "id": 133,
                 "name": "Eredin Bréac Glas",
                 "nickname": "Zabójca Auberona",
-                "ability": "choose",
-                "abilitycomment": "grave"
+                "ability": "chooseGrave",
+                "filename": "eredin4"
             },
             {
-                "id": 14,
+                "id": 134,
                 "name": "Eredin Bréac Glas",
                 "nickname": "Zdradziecki",
-                "ability": "gamerule",
-                "abilitycomment": "spiesDouble"
+                "ability": "spiesDouble",
+                "filename": "eredin5"
             }
         ]
     },
@@ -127,39 +127,39 @@
         "description": "Zadecyduj kto rozpoczyna rozgrywkę.",
         "commanders": [
             {
-                "id": 15,
-                "name": "Francesca Findabair",
-                "nickname": "Najpiękniejsza Kobieta na Świecie",
-                "ability": "horn",
-                "abilitycomment": "ranged"
-            },
-            {
-                "id": 16,
+                "id": 180,
                 "name": "Francesca Findabair",
                 "nickname": "Elfka Czystej Krwi",
-                "ability": "frost",
-                "abilitycomment": "find"
+                "ability": "findFrost",
+                "filename": "francesca1"
             },
             {
-                "id": 17,
-                "name": "Francesca Findabair",
-                "nickname": "Królowa Dol Blathanna",
-                "ability": "scorchRow",
-                "abilitycomment": "close"
-            },
-            {
-                "id": 18,
+                "id": 181,
                 "name": "Francesca Findabair",
                 "nickname": "Stokrotka z Dolin",
-                "ability": "gamerule",
-                "abilitycomment": "takeCard"
+                "ability": "plusCard",
+                "filename": "francesca2"
             },
             {
-                "id": 19,
+                "id": 182,
+                "name": "Francesca Findabair",
+                "nickname": "Najpiękniejsza Kobieta na Świecie",
+                "ability": "hornRanged",
+                "filename": "francesca3"
+            },
+            {
+                "id": 183,
+                "name": "Francesca Findabair",
+                "nickname": "Królowa Dol Blathanna",
+                "ability": "scorchClose",
+                "filename": "francesca4"
+            },
+            {
+                "id": 184,
                 "name": "Francesca Findabair",
                 "nickname": "Nadzieja Dol Blathanna",
-                "ability": "move",
-                "abilitycomment": "optimise"
+                "ability": "optimise",
+                "filename": "francesca5"
             }
         ]
     },
@@ -168,39 +168,34 @@
         "description": "Na początku 3 rundy, wylosuj dwie jednostki ze stosu kart odrzuconych i zagraj je na pole bitwy.",
         "commanders": [
             {
-                "id": 20,
-                "name": "Arnjolf",
-                "nickname": "Ojcobójca",
-                "ability": "storm",
-                "abilitycomment": "find"
-            },
-            {
-                "id": 21,
+                "id": 230,
                 "name": "Bran Tuirseach",
                 "nickname": "Król Skellige",
-                "ability": "gamerule",
-                "abilitycomment": "halfWeather"
+                "ability": "weatherHalf"
             },
             {
-                "id": 22,
+                "id": 231,
                 "name": "Crach an Craite",
                 "nickname": "Dzik Morski",
-                "ability": "reshuffle",
-                "abilitycomment": "graves"
+                "ability": "reshuffleGraves"
             },
             {
-                "id": 23,
+                "id": 232,
                 "name": "Eist Tuirseach",
                 "nickname": "Łowca z An Skellig",
-                "ability": "scorchLow",
-                "abilitycomment": "enemy"
+                "ability": "scorchEnemyLow"
             },
             {
-                "id": 24,
+                "id": 233,
                 "name": "Harald an Craite",
                 "nickname": "Chromy",
-                "ability": "gamerule",
-                "abilitycomment": "doubleRedraw"
+                "ability": "redraw4"
+            },
+            {
+                "id": 234,
+                "name": "Erlend an Craite",
+                "nickname": "Kamienna Pięść",
+                "ability": "findStorm"
             }
         ]
     }

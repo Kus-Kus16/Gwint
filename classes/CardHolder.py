@@ -1,11 +1,9 @@
-import random
 
 class CardHolder:
     def __init__(self, cards=None):
         if cards is None:
             cards = []
 
-        random.shuffle(cards)
         self.cards = cards
 
     def size(self):

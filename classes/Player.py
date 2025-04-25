@@ -43,5 +43,20 @@ class Player:
     def is_dead(self):
         return self.hp <= 0
 
+    def shuffle_deck(self, rng):
+        self.deck.shuffle(rng)
+
+    def return_cards(self):
+        self.hand.transfer_all_cards(self.grave)
+        self.deck.transfer_all_cards(self.grave)
+
+        for card in list(self.grave.cards):
+            if card.owner != self:
+                self.grave.remove_card(card)
+                card.send_to_owner_grave()
+
+    def deck_from_grave(self):
+        self.grave.transfer_all_cards(self.deck)
+
     def __str__(self):
         return str(self.hand) + "\n" + f'\nH: {self.hand.size()} D: {self.deck.size()}, G: {self.grave.size()} PTS: {self.points}'

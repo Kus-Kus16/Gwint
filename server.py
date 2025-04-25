@@ -1,15 +1,11 @@
 import socket
 from _thread import *
 
-from classes.CardsDatabase import CardsDatabase
-from classes.Game import Game
-from classes.Player import Player
-from classes.Row import RowType
-
 import pickle
 
+from network.GameStates import GameStates
 
-server = "192.168.1.44"
+server = "192.168.100.66"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,10 +20,9 @@ print("Waiting for a connection, Server Started")
 
 games = {}
 id_counter = 0
-database = CardsDatabase()
 
 # Funkcja zarządzająca klientami
-def threaded_client(conn, game_id):
+def threaded_client(conn, game_id, player_id):
     global id_counter
 
     def send(data):
@@ -38,20 +33,12 @@ def threaded_client(conn, game_id):
 
     try:
         request, data = receive()
-        if request != "connect":
-            raise ValueError("Illegal request")
+        if request != "register":
+            send( ("error", ["illegal request"]) )
 
-        valid, deck = database.create_verified_deck(data[0])
-        if not valid:
-            send( ("error", [f"deck_invalid_{deck}"]) )
-
-        game = games[game_id]
-        player_id = game.add_player(Player(deck, None))
-
-        send( ("ok", [player_id]) if player_id is not None else ("error", ["game_full"]) )
-
-        if player_id == 1:
-            game.start_game()
+        game_state = games[game_id]
+        game_state.add_state(player_id, data)
+        send( ("ok", [player_id, game_state.seed]) )
 
         while True:
             request, data = receive()
@@ -62,23 +49,30 @@ def threaded_client(conn, game_id):
                 send( ("error", ["no_game"]) )
                 break
 
-            if request == "get_status":
-                send( ("ok", ["game_started" if game.ready else "game_waiting"]) )
+            match request:
+                case "waiting-for-game":
+                    opponent_state = game_state.get_state(1 - player_id)
+                    send( ("ok", []) if opponent_state is None else ("start-game", opponent_state) )
 
-            elif request == "get_game":
-                send( ("ok", [game]) )
+                case "play":
+                    game_state.add_state(player_id, data)
+                    send( ("ok", []) )
 
-            elif request == "play_card":
-                card_id, row = data
-                card_id = int(card_id)
-                if row == "pass":
-                    result =  game.pass_round(player_id)
-                else:
-                    result = game.play_card(player_id, card_id, RowType[row.upper()])
+                case "waiting":
+                    opponent_state = game_state.get_state(1 - player_id)
+                    send( ("ok", []) if opponent_state is None else ("play", opponent_state) )
 
-                send( ("ok", [result]) )
-            else:
-                raise ValueError("Błędny format danych")
+                case "rematch":
+                    game_state.reseed()
+                    game_state.add_state(player_id, data)
+                    send( ("ok", []) )
+
+                case "waiting-for-endgame":
+                    opponent_state = game_state.get_state(1 - player_id)
+                    send( ("ok", []) if opponent_state is None else ("replay-game", opponent_state + [game_state.seed]) )
+
+                case _:
+                    send(("error", ["illegal request"]) )
 
     except Exception as e:
         print(f"Błąd w połączeniu: {e}")
@@ -90,13 +84,16 @@ def threaded_client(conn, game_id):
 
 # Client connects
 while True:
-    new_connection, addr = s.accept()
+    conn, addr = s.accept()
     print("Connected to:", addr)
 
     id_counter += 1
-    new_game_id = (id_counter - 1) // 2
+    game_id = (id_counter - 1) // 2
     if id_counter % 2 == 1:
-        games[new_game_id] = Game(new_game_id)
+        player_id = 0
+        games[game_id] = GameStates()
         print("New game created")
+    else:
+        player_id = 1
 
-    start_new_thread(threaded_client, (new_connection, new_game_id))
+    start_new_thread(threaded_client, (conn, game_id, player_id))

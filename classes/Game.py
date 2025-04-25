@@ -1,10 +1,13 @@
 from classes.Board import Board
 import random
 
+from classes.Row import RowType
+
+
 class Game:
-    def __init__(self, id):
+    def __init__(self, seed):
+        self.rng = random.Random(seed)
         self.ready = False
-        self.id = id
         self.board = Board()
         self.players = []
         self.current_player_id = None
@@ -12,13 +15,14 @@ class Game:
         self.current_round = 0
         self.round_history = []
 
-    def play_card(self, player_id, card_id, row_type):
+    def play_card(self, player_id, card_id, row):
         if self.current_player_id != player_id:
             print("wrong player")
             return False
 
         player = self.players[player_id]
         card = player.hand.find_card_by_id(card_id)
+        row_type = RowType[row.upper()]
 
         if card is None:
             print("wrong card")
@@ -119,16 +123,23 @@ class Game:
 
     def start_game(self):
         #TODO game start
-        self.first_player_id = random.randint(0, 1)
+        self.current_round = 0
+        self.round_history = []
+        self.first_player_id = self.rng.randint(0, 1)
         self.ready = True
 
         for player in self.players:
+            player.hp = 2
+            player.shuffle_deck(self.rng)
             player.draw_cards(10)
 
         self.start_round()
 
     def end_game(self):
-        pass
+        for player in self.players:
+            player.return_cards()
+        for player in self.players:
+            player.deck_from_grave()
 
     def end_round(self):
         #TODO round end
@@ -149,13 +160,13 @@ class Game:
             is_any_dead = player0.lower_hp()
             is_any_dead = player1.lower_hp() or is_any_dead
 
-        if is_any_dead or self.current_round == 3:
-            self.end_game()
-            return
-
         self.board.clear_rows(self.players)
         self.board.clear_weather()
         self.update_points()
+
+        if is_any_dead or self.current_round == 3:
+            self.end_game()
+            return
 
         self.start_round()
 
@@ -163,7 +174,7 @@ class Game:
         self.current_round += 1
         self.current_player_id = (self.first_player_id + self.current_round) % 2
 
-    def game_tostring(self, player_id):
+    def to_string(self, player_id):
         return self.board.rows_tostring(player_id) + "\n\n" + str(self.players[player_id])
 
     def add_player(self, player):
@@ -178,3 +189,6 @@ class Game:
 
     def get_player(self, player_id):
         return self.players[player_id]
+
+    def set_seed(self, seed):
+        self.rng = random.Random(seed)
