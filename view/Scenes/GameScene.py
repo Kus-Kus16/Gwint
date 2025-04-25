@@ -36,6 +36,7 @@ class GameScene:
         self.row_highlight_rects = []
 
     def draw(self):
+        self.screen.blit(self.background, (0, 0))
         row = self.game.board.rows
         row_points = [row.points for row in self.game.board.rows]
         if self.player_id%2==1:
