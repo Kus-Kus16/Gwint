@@ -5,7 +5,7 @@ import pickle
 
 from network.GameStates import GameStates
 
-server = "192.168.100.66"
+server = "192.168.1.44"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,7 +29,7 @@ def threaded_client(conn, game_id, player_id):
         conn.send(pickle.dumps(data))
 
     def receive():
-        return pickle.loads(conn.recv(2048))
+        return pickle.loads(conn.recv(4096))
 
     try:
         request, data = receive()

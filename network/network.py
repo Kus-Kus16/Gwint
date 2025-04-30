@@ -7,13 +7,24 @@ class Network:
         self.server =  "192.168.1.44"
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.connect()
+        self.connected = False
 
     def connect(self):
         try:
             self.client.connect(self.addr)
+            self.connected = True
         except:
             print("Connection failed")
+
+    def disconnect(self):
+        try:
+            self.client.close()
+            self.connected = False
+        except Exception as e:
+            print("Disconnection failed")
+
+    def is_connected(self):
+        return self.connected
 
     def send(self, data):
         try:

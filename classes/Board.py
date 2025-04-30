@@ -63,13 +63,15 @@ class Board:
             self.rows[i].transfer_all_cards(player1.grave)
             self.rows[i].recalculate()
 
-    def rows_tostring(self, player_id):
+    def get_ordered_rows(self, player_id):
         rows0 = self.rows[0:3]
         rows1 = self.rows[3:6]
 
         if player_id == 0:
-            rows1.reverse()
-            return "\n".join(str(row) for row in rows1) + "\n" + "\n".join(str(row) for row in rows0) + "\n"
+            return rows1[::-1] + rows0
+        else:
+            return rows0[::-1] + rows1
 
-        rows0.reverse()
-        return "\n".join(str(row) for row in rows0) + "\n" + "\n".join(str(row) for row in rows1) + "\n"
+    def rows_tostring(self, player_id):
+        rows = self.get_ordered_rows(player_id)
+        return "\n".join(str(row) for row in rows) + "\n"

@@ -29,9 +29,7 @@ class Button:
 		))
 
 	def check_click(self, pos):
-		if self.rect.collidepoint(pos):
-			if self.action:
-				self.action()
+		return True if self.rect.collidepoint(pos) else False
 
 	def on_hover(self, pos):
 		if self.rect.collidepoint(pos):

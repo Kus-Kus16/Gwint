@@ -1,4 +1,3 @@
-import threading
 import time
 
 from classes.Game import Game
@@ -15,12 +14,14 @@ class GamePresenter:
         self.me = None
         self.opponent = None
         self.game = None
-        self.game_state = None
+        self.game_state = "menu"
 
-        self.register(deck, commander)
+        self.deck = deck
+        self.commander = commander
 
 
-    def register(self, deck, commander):
+    def connect(self, deck, commander):
+        self.n.connect()
         response, data = self.n.send(("register", [deck, commander]))
 
         if response != "ok":
@@ -28,15 +29,15 @@ class GamePresenter:
 
         self.my_id, self.seed = data
         self.me = Player(deck, commander)
-        self.game_state = "waiting-for-game"
-        self.view.player_id = self.my_id
+
+    def disconnect(self):
+        if self.n.is_connected():
+            self.n.disconnect()
 
     def run(self):
         while True:
-            time.sleep(0.05)
-            self.game_state = self.view.mode
-            self.view.game = self.game
-
+            # time.sleep(0.05)
+            # self.view.draw()
             match self.game_state:
                 case "menu":
                     pass
@@ -45,25 +46,20 @@ class GamePresenter:
                 case "deck":
                     pass
 
-                case "register":
-                    #TODO registering with data from view
-                    pass
                 case "waiting-for-game":
                     self.handle_waitingforgame()
                 case "start-game":
                     self.handle_startgame()
                 case "playing":
-                    self.handle_turn(self.my_id)
+                    pass
                 case "waiting":
-                    if not self.handle_turn(1 - self.my_id):
-                        raise ValueError("Illegal opponent move")
+                    self.handle_opponentturn()
                 case "game-over":
                     self.handle_gameover()
                 case "waiting-for-endgame":
                     self.handle_waitingforendgame()
                 case _:
                     return
-
 
     def handle_waitingforgame(self):
         response, data = self.n.send(("waiting-for-game", []))
@@ -77,14 +73,13 @@ class GamePresenter:
                 self.game.add_player(p)
 
             self.game_state = "start-game"
-            self.view.mode = "start-game"
-
+            self.view.game.set_game(self.game, self.my_id)
+            self.view.change_scene(self.view.game)
 
     def handle_startgame(self):
         # Scoia'tael choosing here
         self.game.start_game()
-        self.game_state = "playing" if self.game.current_player_id == self.my_id else "waiting"
-        self.view.mode = "playing" if self.game.current_player_id == self.my_id else "waiting"
+        self.turn_switch()
 
     def play_card(self, player_id, card_id, row):
         return self.game.play_card(player_id, card_id, row)
@@ -92,79 +87,37 @@ class GamePresenter:
     def pass_round(self, player_id):
         return self.game.pass_round(player_id)
 
-    def handle_ownturn(self):
-        self.view.unlock()
-        event = self.view.get_event()
-
-        if event is None:
-            return True
-
-        match event["type"]:
-            case "card":
-                card_id = event["card_id"]
-                row = event["row"]
-
-                if not self.play_card(self.my_id, card_id, row):
-                    return False
-
-                self.n.send(("play", ["card", card_id, row]))
-
-            case "pass":
-                if not self.pass_round(self.my_id):
-                    return False
-
-                self.n.send(("play", ["pass"]))
-
-            case "commander":
-                # TODO
-                pass
-
-        return True
-
     def handle_opponentturn(self):
         response, data = self.n.send(("waiting", []))
 
+        #Still waiting
         if response == "ok":
-            return True
+            return
 
+        valid = False
         match data[0]:
             case "card":
-                return self.play_card(1 - self.my_id, data[1], data[2])
+                valid = self.play_card(1 - self.my_id, data[1], data[2])
             case "pass":
-                return self.pass_round(1 - self.my_id)
-
-
-
-    def handle_turn(self, player_id):
-        own_turn = player_id == self.my_id
-        valid = self.handle_ownturn() if own_turn else self.handle_opponentturn()
+                valid = self.pass_round(1 - self.my_id)
 
         if not valid:
-            return False
+            raise ValueError("Illegal opponent move")
 
-        if self.game.current_player_id == self.my_id:
-            self.game_state = "playing"
-            self.view.mode = "playing"
-        elif self.game.current_player_id == 1 - self.my_id:
-            self.game_state = "waiting"
-            self.view.mode = "waiting"
-        else:
-            self.view.show_game_history(self.game)
-            self.game_state = "game-over"
-
-        return True
+        self.turn_switch()
 
     def handle_gameover(self):
-        event = self.view.get_event()
-
-        if event is None:
-            return True
-
-        if event.type == "rematch":
-            rematch = event.rematch
-            self.n.send(("rematch", [rematch]))
-
-            self.game_state = "waiting-for-endgame" if rematch else "exit"
+        pass
+        # event = self.view.get_event()
+        #
+        # if event is None:
+        #     return True
+        #
+        # if event.type == "rematch":
+        #     rematch = event.rematch
+        #     self.n.send(("rematch", [rematch]))
+        #
+        #     self.game_state = "waiting-for-endgame" if rematch else "exit"
 
     def handle_waitingforendgame(self):
         response, data = self.n.send(("waiting-for-endgame", []))
@@ -181,3 +134,69 @@ class GamePresenter:
 
     def is_waiting_for_player(self):
         return self.game_state == "waiting-for-game"
+
+    # Called by view after user input
+    def notify(self, action):
+        match action["type"]:
+            case "mode_change":
+                self.handle_mode_change(action)
+            case "play":
+                self.handle_play(action)
+
+        self.view.unlock()
+
+    def handle_mode_change(self, action):
+        match action["mode"]:
+            case "start_game":
+                self.connect(self.deck, self.commander)
+                self.game_state = "waiting-for-game"
+                self.view.change_scene(self.view.waiting)
+            case "menu":
+                self.game_state = "menu"
+                self.disconnect()
+                self.view.change_scene(self.view.menu)
+            case "credits":
+                self.game_state = "credits"
+                self.disconnect()
+                self.view.change_scene(self.view.credits)
+            case "deck":
+                self.game_state = "deck"
+                self.disconnect()
+                self.view.change_scene(self.view.deck)
+            case "exit":
+                self.game_state = "exit"
+                self.disconnect()
+                self.view.running = False
+
+    def handle_play(self, action):
+        if action["card_id"] is None:
+            if not self.pass_round(self.my_id):
+                self.turn_switch()
+                return
+
+            self.n.send(("play", ["pass"]))
+            self.turn_switch()
+            return
+
+
+        card_id = action["card_id"]
+        row = action["row"]
+        if not self.play_card(self.my_id, card_id, row):
+            self.turn_switch()
+            return
+
+        self.n.send(("play", ["card", card_id, row]))
+        self.turn_switch()
+
+    def turn_switch(self):
+        if self.game.current_player_id == self.my_id:
+            self.game_state = "playing"
+            self.view.unlock()
+        elif self.game.current_player_id == 1 - self.my_id:
+            self.game_state = "waiting"
+            self.view.lock()
+        else:
+            #TODO
+            self.view.show_game_history(self.game)
+            self.game_state = "game-over"
+            self.view.unlock()

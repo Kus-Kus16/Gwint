@@ -1,17 +1,16 @@
 import pygame
+from overrides import overrides
 
+from view.Scenes.Scene import Scene
 from view.components.Button import Button
 
 
-class WaitingScene:
-    def __init__(self, screen, font, application_status):
-        self.screen = screen
-        self.font = font
-        self.screen_width, self.screen_height = screen.get_size()
-        self.application_status = application_status
+class WaitingScene(Scene):
+    def __init__(self, screen, font):
+        super().__init__(screen, font, "resources/menu.png")
 
         self.back_button = Button("Powrót do Menu", (self.screen_width // 2 - 200, self.screen_height - 150),
-                                  (400, 100), self.back_to_menu, self.font)
+          (400, 100), { "type": "mode_change", "mode": "menu" }, self.font)
 
         self.background = pygame.image.load("resources/menu.png").convert()
         self.background = pygame.transform.scale(self.background, (self.screen_width, self.screen_height))
@@ -19,8 +18,9 @@ class WaitingScene:
         self.darken = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
         self.darken.fill((0, 0, 0, 150))
 
+    @overrides
     def draw(self):
-        self.screen.blit(self.background, (0, 0))
+        super().draw()
         self.screen.blit(self.darken, (0, 0))
 
         text = self.font.render("Oczekiwanie na przeciwnika", True, (255, 255, 255))
@@ -31,9 +31,8 @@ class WaitingScene:
         self.back_button.on_hover(pygame.mouse.get_pos())
 
 
+    @overrides
     def handle_events(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            self.back_button.check_click(event.pos)
-
-    def back_to_menu(self):
-        self.application_status("menu")
+            if self.back_button.check_click(event.pos):
+                return self.back_button.action
