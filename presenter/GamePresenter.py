@@ -1,3 +1,4 @@
+import queue
 import time
 
 from classes.Game import Game
@@ -15,6 +16,7 @@ class GamePresenter:
         self.opponent = None
         self.game = None
         self.game_state = "menu"
+        self.actions = queue.Queue()
 
         self.deck = deck
         self.commander = commander
@@ -36,8 +38,9 @@ class GamePresenter:
 
     def run(self):
         while True:
-            # time.sleep(0.05)
+            time.sleep(0.01)
             # self.view.draw()
+            self.process_actions()
             match self.game_state:
                 case "menu":
                     pass
@@ -94,6 +97,14 @@ class GamePresenter:
         if response == "ok":
             return
 
+        #Opponent disconnected
+        if response == "error":
+            self.game_state = "menu"
+            self.disconnect()
+            self.view.change_scene(self.view.menu)
+            self.view.unlock()
+            return
+
         valid = False
         match data[0]:
             case "card":
@@ -137,13 +148,16 @@ class GamePresenter:
 
     # Called by view after user input
     def notify(self, action):
-        match action["type"]:
-            case "mode_change":
-                self.handle_mode_change(action)
-            case "play":
-                self.handle_play(action)
+        self.actions.put(action)
 
-        self.view.unlock()
+    def process_actions(self):
+        while not self.actions.empty():
+            action = self.actions.get()
+            match action["type"]:
+                case "mode_change":
+                    self.handle_mode_change(action)
+                case "play":
+                    self.handle_play(action)
 
     def handle_mode_change(self, action):
         match action["mode"]:
@@ -160,13 +174,16 @@ class GamePresenter:
                 self.disconnect()
                 self.view.change_scene(self.view.credits)
             case "deck":
-                self.game_state = "deck"
-                self.disconnect()
-                self.view.change_scene(self.view.deck)
+                pass
+                # self.game_state = "deck"
+                # self.disconnect()
+                # self.view.change_scene(self.view.deck)
             case "exit":
                 self.game_state = "exit"
                 self.disconnect()
                 self.view.running = False
+
+        self.view.unlock()
 
     def handle_play(self, action):
         if action["card_id"] is None:
@@ -175,9 +192,9 @@ class GamePresenter:
                 return
 
             self.n.send(("play", ["pass"]))
+            self.view.current_scene.deselect()
             self.turn_switch()
             return
-
 
         card_id = action["card_id"]
         row = action["row"]
@@ -186,6 +203,7 @@ class GamePresenter:
             return
 
         self.n.send(("play", ["card", card_id, row]))
+        self.view.current_scene.deselect()
         self.turn_switch()
 
     def turn_switch(self):

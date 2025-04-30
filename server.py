@@ -47,6 +47,7 @@ def threaded_client(conn, game_id, player_id):
 
             if not game_id in games:
                 send( ("error", ["no_game"]) )
+                print("NOGAME")
                 break
 
             match request:

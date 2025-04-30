@@ -3,15 +3,21 @@ import pygame
 from overrides import overrides
 
 from view.Scenes.Scene import Scene
-
+image_cache = {}
 
 def load_image(card, size):
     path = f"resources/{size}/{card.faction}/{card.filename}.png"
+    if path in image_cache:
+        return image_cache[path]
+
     if os.path.exists(path):
-        return pygame.image.load(path).convert_alpha()
+        image = pygame.image.load(path).convert_alpha()
     else:
         print(f"[WARN] Brak pliku: {path}")
-        return pygame.image.load("resources/placeholder.png").convert_alpha()
+        image = pygame.image.load("resources/placeholder.png").convert_alpha()
+
+    image_cache[path] = image
+    return image
 
 def load_small_image(card):
     return load_image(card, "small")
@@ -74,6 +80,7 @@ class GameScene(Scene):
         self.draw_stats()
 
         self.draw_row_highlights()
+        self.display_cursor_position()
 
     def draw_rows(self):
         rows = self.game.board.get_ordered_rows(self.player_id)
@@ -87,11 +94,11 @@ class GameScene(Scene):
     def draw_stats(self):
         #PLAYER HP
         self.draw_text(f"{self.game.players[self.player_id].hp}", x=400, y=715, color=(255, 255, 255))
-        self.draw_text(f"{self.game.players[self.player_id-1].hp}", x=400, y=312, color=(255, 255, 255))
+        self.draw_text(f"{self.game.players[1 - self.player_id].hp}", x=400, y=312, color=(255, 255, 255))
 
         #PLAYER POINTS
         self.draw_text(f"{self.game.players[self.player_id].points}", x=445, y=715,color=(0,0,0))
-        self.draw_text(f"{self.game.players[self.player_id-1].points}", x=445, y=312,color=(0,0,0))
+        self.draw_text(f"{self.game.players[1 - self.player_id].points}", x=445, y=312,color=(0,0,0))
 
         #MOVE TEXT
         if self.game.current_player_id == self.player_id:
@@ -124,7 +131,7 @@ class GameScene(Scene):
 
         rows = self.selected_card.rows
         highlight_color = (255, 255, 0)
-        alpha = 100
+        alpha = 50
 
         surface = pygame.Surface((815, 113), pygame.SRCALPHA)
         surface.fill((*highlight_color, alpha))
@@ -178,9 +185,12 @@ class GameScene(Scene):
             if row_name == name:
                 return rect
 
+    def deselect(self):
+        self.selected_card = None
+
     # Debugging method
     def display_cursor_position(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        position_text = f"{mouse_x}, {mouse_y})"
+        position_text = f"{mouse_x}, {mouse_y}, {self.player_id})"
         self.draw_text(position_text, 10, 10)

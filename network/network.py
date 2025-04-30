@@ -3,20 +3,27 @@ import socket
 
 class Network:
     def __init__(self):
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client = None
         self.server =  "192.168.1.44"
         self.port = 5555
         self.addr = (self.server, self.port)
         self.connected = False
 
     def connect(self):
+        if self.connected:
+            return
+
         try:
+            self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.client.connect(self.addr)
             self.connected = True
         except:
             print("Connection failed")
 
     def disconnect(self):
+        if not self.connected:
+            return
+
         try:
             self.client.close()
             self.connected = False

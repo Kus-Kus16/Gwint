@@ -1,4 +1,7 @@
+import time
+
 import pygame
+import ctypes
 
 from view.Scenes.CreditsScene import CreditsScene
 from view.Scenes.GameScene import GameScene
@@ -9,12 +12,13 @@ from view.components.VolumeSlider import VolumeSlider
 
 class PygameView:
     def __init__(self):
+        ctypes.windll.user32.SetProcessDPIAware()
         pygame.init()
-        # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         #self.screen = pygame.display.set_mode((1280, 720), pygame.FULLSCREEN | pygame.SCALED)
         #self.screen = pygame.display.set_mode((1000,500))
         #self.screen = pygame.display.set_mode((1800,1000))
-        self.screen = pygame.display.set_mode((1280, 720))
+        # self.screen = pygame.display.set_mode((1280, 720))
 
         # info = pygame.display.Info()
         # self.screen = pygame.display.set_mode((info.current_w, info.current_h), pygame.FULLSCREEN | pygame.SCALED)
@@ -48,8 +52,10 @@ class PygameView:
             self.draw()
             self.volume_slider.draw(self.screen)
             self.handle_pygame_events()
-            self.clock.tick(60)
             pygame.display.flip()
+            fps = self.clock.get_fps()
+            pygame.display.set_caption(f"Gwent LAN - FPS: {fps:.2f}")
+            self.clock.tick(60)
 
     def handle_pygame_events(self):
         for event in pygame.event.get():
