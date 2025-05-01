@@ -95,24 +95,18 @@ class Game:
     def pass_round(self, player_id):
         if self.current_player_id != player_id:
             print("wrong player")
-            return  False
+            return False
 
         self.players[player_id].passed = True
-
         self.next_turn()
 
         return True
 
     def next_turn(self):
-        current_player = self.players[self.current_player_id]
         next_player = self.players[1 - self.current_player_id]
 
         if not next_player.passed:
             self.current_player_id = next_player.id
-            return
-
-        if current_player.passed:
-            self.end_round()
             return
 
     def update_points(self):
@@ -133,8 +127,6 @@ class Game:
             player.shuffle_deck(self.rng)
             player.draw_cards(10)
 
-        self.start_round()
-
     def end_game(self):
         for player in self.players:
             player.return_cards()
@@ -153,22 +145,16 @@ class Game:
         self.round_history.append((player0_pts, player1_pts))
 
         if player0_pts > player1_pts:
-            is_any_dead = player1.lower_hp()
+            player1.lower_hp()
         elif player1_pts > player0_pts:
-            is_any_dead = player0.lower_hp()
+            player0.lower_hp()
         else:
-            is_any_dead = player0.lower_hp()
-            is_any_dead = player1.lower_hp() or is_any_dead
+            player0.lower_hp()
+            player1.lower_hp()
 
         self.board.clear_rows(self.players)
         self.board.clear_weather()
         self.update_points()
-
-        if is_any_dead or self.current_round == 3:
-            self.end_game()
-            return
-
-        self.start_round()
 
     def start_round(self):
         self.current_round += 1

@@ -6,8 +6,8 @@ from view.components.Button import Button
 
 
 class MenuScene(Scene):
-	def __init__(self, screen, font):
-		super().__init__(screen, font, "resources/menu.png")
+	def __init__(self, screen, framerate, font):
+		super().__init__(screen, framerate, font, "resources/menu.png")
 
 		button_x = self.screen_width // 2 - 200
 		button_y = self.screen_height // 2
@@ -39,8 +39,7 @@ class MenuScene(Scene):
 		if self.locked:
 			return None
 
-		if self.volume_slider.handle_event(event):
-			return self.volume_slider.action
+		self.volume_slider.handle_event(event)
 
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 			for btn in self.menu_buttons:

@@ -1,4 +1,5 @@
 import queue
+import threading
 import time
 
 from classes.Game import Game
@@ -88,30 +89,67 @@ class GamePresenter:
     def handle_startgame(self):
         # Scoia'tael choosing here
         self.game.start_game()
-        print(self.game.first_player_id, self.my_id)
         notif = "start" if self.game.first_player_id == self.my_id else "op_start"
         self.notification(notif)
+        # Redraw here
+        self.start_round()
         self.notification("round_start")
-
         self.turn_switch()
+
+    def start_round(self):
+        self.game.start_round()
+
+    def end_round(self):
+        self.game.end_round()
+
+        if self.game.current_round == 3 or self.me.is_dead() or self.opponent.is_dead():
+            self.end_game()
+            return True
+
+        return False
+
+    def end_game(self):
+        self.game.end_game()
+        self.game_state = "game-over"
+
+    def calculate_winner(self):
+        if self.me.is_dead() and self.opponent.is_dead():
+            return None
+
+        if self.opponent.is_dead():
+            return True
+
+        return False
 
     def play_card(self, player_id, card_id, row):
         return self.game.play_card(player_id, card_id, row)
 
     def pass_round(self, player_id):
+        if not self.game.pass_round(player_id):
+            return False
+
         if not self.one_passed:
             self.one_passed = True
+            if self.game_state != "game-over":
+                self.notification("waiting" if player_id == self.my_id else "playing")
         else:
+            self.one_passed = False
             notif = (
                 "win_round" if self.game.winning_round(self.my_id)
                 else "lose_round" if self.game.winning_round(1 - self.my_id)
                 else "draw_round"
             )
             self.notification(notif)
-            self.notification("round_start")
-            self.one_passed = False
 
-        return self.game.pass_round(player_id)
+            game_ended = self.end_round()
+            if game_ended:
+                self.end_game()
+                return True
+
+            self.start_round()
+            self.notification("round_start")
+
+        return True
 
     def handle_opponentturn(self):
         response, data = self.n.send(("waiting", []))
@@ -122,10 +160,7 @@ class GamePresenter:
 
         #Opponent disconnected
         if response == "error":
-            self.game_state = "menu"
-            self.disconnect()
-            self.view.change_scene(self.view.menu)
-            self.view.unlock()
+            self.return_to_menu()
             return
 
         valid = False
@@ -133,8 +168,8 @@ class GamePresenter:
             case "card":
                 valid = self.play_card(1 - self.my_id, data[1], data[2])
             case "pass":
-                valid = self.pass_round(1 - self.my_id)
                 self.notification("pass_op")
+                valid = self.pass_round(1 - self.my_id)
 
         if not valid:
             raise ValueError("Illegal opponent move")
@@ -142,6 +177,8 @@ class GamePresenter:
         self.turn_switch()
 
     def handle_gameover(self):
+        winner = self.calculate_winner()
+        threading.Timer(2, self.return_to_menu).start()
         pass
         # event = self.view.get_event()
         #
@@ -214,12 +251,22 @@ class GamePresenter:
 
     def handle_play(self, action):
         if action["card_id"] is None:
+            self.view.current_scene.deselect()
+            self.notification("pass")
+
             if not self.pass_round(self.my_id):
                 self.turn_switch()
                 return
 
-            self.n.send(("play", ["pass"]))
-            self.view.current_scene.deselect()
+            response, data = self.n.send(("play", ["pass"]))
+            # Opponent disconnected
+            if response == "error":
+                self.game_state = "menu"
+                self.disconnect()
+                self.view.change_scene(self.view.menu)
+                self.view.unlock()
+                return
+
             self.turn_switch()
             return
 
@@ -229,7 +276,12 @@ class GamePresenter:
             self.turn_switch()
             return
 
-        self.n.send(("play", ["card", card_id, row]))
+        response, data = self.n.send(("play", ["card", card_id, row]))
+        # Opponent disconnected
+        if response == "error":
+            self.return_to_menu()
+            return
+
         self.view.current_scene.deselect()
         self.turn_switch()
 
@@ -245,10 +297,13 @@ class GamePresenter:
             if not self.one_passed:
                 self.notification("waiting")
         else:
-            #TODO
-            self.view.show_game_history(self.game)
-            self.game_state = "game-over"
             self.view.unlock()
 
     def notification(self, name, seconds=2):
         self.view.run_later(lambda: self.view.notification(name, seconds=seconds))
+
+    def return_to_menu(self):
+        self.game_state = "menu"
+        self.disconnect()
+        self.view.change_scene(self.view.menu)
+        self.view.unlock()

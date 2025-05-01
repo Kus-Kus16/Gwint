@@ -41,10 +41,10 @@ class PygameView:
         pygame.mixer.music.play(-1)
 
         #Screens initiation
-        self.menu = MenuScene(self.screen, self.font)
-        self.credits = CreditsScene(self.screen, self.font)
-        self.waiting = WaitingScene(self.screen, self.font)
-        self.game = GameScene(self.screen, self.font)
+        self.menu = MenuScene(self.screen, self.framerate, self.font)
+        self.credits = CreditsScene(self.screen, self.framerate, self.font)
+        self.waiting = WaitingScene(self.screen, self.framerate, self.font)
+        self.game = GameScene(self.screen, self.framerate, self.font)
         self.current_scene = self.menu
 
     def run(self):

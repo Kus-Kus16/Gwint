@@ -16,8 +16,8 @@ def load_large_image(card):
     return load_image(card, "large")
 
 class GameScene(Scene):
-    def __init__(self, screen, font):
-        super().__init__(screen, font, "resources/board.jpg")
+    def __init__(self, screen, framerate, font):
+        super().__init__(screen, framerate, font, "resources/board.jpg")
         self.game = None
         self.player_id = None
         self.selected_card = None
@@ -30,6 +30,8 @@ class GameScene(Scene):
 
     @overrides
     def handle_events(self, event):
+        self.volume_slider.handle_event(event)
+
         if self.locked:
             return None
 
@@ -79,6 +81,8 @@ class GameScene(Scene):
         self.display_cursor_position()
 
         self.draw_temporary()
+
+        self.volume_slider.draw(self.screen)
 
     def draw_rows(self):
         rows = self.game.board.get_ordered_rows(self.player_id)

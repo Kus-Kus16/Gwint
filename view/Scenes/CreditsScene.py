@@ -6,8 +6,8 @@ from view.components.Button import Button
 
 
 class CreditsScene(Scene):
-    def __init__(self, screen, font):
-        super().__init__(screen, font, "resources/menu.png")
+    def __init__(self, screen, framerate, font):
+        super().__init__(screen, framerate, font, "resources/menu.png")
 
         self.back_button = Button("Powrót do Menu",(self.screen_width // 2 - 200, self.screen_height - 150),
           (400, 100), { "type": "mode_change", "mode": "menu" }, self.font)
