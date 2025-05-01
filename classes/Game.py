@@ -172,7 +172,7 @@ class Game:
 
     def start_round(self):
         self.current_round += 1
-        self.current_player_id = (self.first_player_id + self.current_round) % 2
+        self.current_player_id = (1 - self.first_player_id + self.current_round) % 2
 
     def to_string(self, player_id):
         return self.board.rows_tostring(player_id) + "\n\n" + str(self.players[player_id])
@@ -192,3 +192,6 @@ class Game:
 
     def set_seed(self, seed):
         self.rng = random.Random(seed)
+
+    def winning_round(self, player_id):
+        return self.players[player_id].points > self.players[1- player_id].points

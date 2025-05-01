@@ -1,13 +1,12 @@
-import time
+import ctypes
+import queue
 
 import pygame
-import ctypes
 
 from view.Scenes.CreditsScene import CreditsScene
 from view.Scenes.GameScene import GameScene
 from view.Scenes.MenuScene import MenuScene
 from view.Scenes.WaitingScene import WaitingScene
-from view.components.VolumeSlider import VolumeSlider
 
 
 class PygameView:
@@ -25,10 +24,13 @@ class PygameView:
 
         pygame.display.set_caption("Gwint LAN")
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.Font("resources/Cinzel/Cinzel-VariableFont_wght.ttf", 30)
+        # self.font = pygame.font.Font("resources/Cinzel/Cinzel-VariableFont_wght.ttf", 30)
+        self.font = pygame.font.Font("resources/mason.ttf", 30)
+        self.framerate = 60
+
         self.running = True
-        self.locked = False
         self.observer = None
+        self.tasks = queue.Queue()
 
         self.screen_width, self.screen_height = self.screen.get_size()
 
@@ -37,46 +39,47 @@ class PygameView:
         pygame.mixer.music.load("resources/soundtrack.mp3")
         pygame.mixer.music.set_volume(0.5)
         pygame.mixer.music.play(-1)
-        self.volume_slider = VolumeSlider((self.screen_width - 240, self.screen_height - 60))
 
         #Screens initiation
         self.menu = MenuScene(self.screen, self.font)
         self.credits = CreditsScene(self.screen, self.font)
         self.waiting = WaitingScene(self.screen, self.font)
         self.game = GameScene(self.screen, self.font)
-
         self.current_scene = self.menu
 
     def run(self):
         while self.running:
             self.draw()
-            self.volume_slider.draw(self.screen)
+            self.handle_tasks()
             self.handle_pygame_events()
             pygame.display.flip()
             fps = self.clock.get_fps()
             pygame.display.set_caption(f"Gwent LAN - FPS: {fps:.2f}")
-            self.clock.tick(60)
+            self.clock.tick(self.framerate)
 
     def handle_pygame_events(self):
         for event in pygame.event.get():
-            self.volume_slider.handle_event(event)
-
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if self.current_scene is not None and not self.locked:
+            if self.current_scene is not None:
                 action = self.current_scene.handle_events(event)
                 if action is not None:
-                    self.lock()
                     self.observer.notify(action)
 
+    def handle_tasks(self):
+        while not self.tasks.empty():
+            task = self.tasks.get()
+            task()
+
     def lock(self):
-        self.locked = True
+        self.current_scene.lock()
 
     def unlock(self):
-        self.locked = False
+        self.current_scene.unlock()
 
     def change_scene(self, scene):
+        self.current_scene.unlock()
         self.current_scene = scene
 
     def draw(self):
@@ -84,3 +87,12 @@ class PygameView:
 
     def set_observer(self, observer):
         self.observer = observer
+
+    def run_later(self, runable):
+        self.tasks.put(runable)
+
+    def notification(self, name, seconds=0, frames=0):
+        if frames == 0:
+            frames = seconds * self.framerate
+
+        self.current_scene.notification(name, frames, True)

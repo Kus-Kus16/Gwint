@@ -5,7 +5,7 @@ import pickle
 
 from network.GameStates import GameStates
 
-server = "192.168.1.44"
+server = "0.0.0.0"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -47,7 +47,6 @@ def threaded_client(conn, game_id, player_id):
 
             if not game_id in games:
                 send( ("error", ["no_game"]) )
-                print("NOGAME")
                 break
 
             match request:

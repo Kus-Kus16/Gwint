@@ -2,22 +2,12 @@ import os
 import pygame
 from overrides import overrides
 
+from view import ImageLoader
 from view.Scenes.Scene import Scene
-image_cache = {}
 
 def load_image(card, size):
     path = f"resources/{size}/{card.faction}/{card.filename}.png"
-    if path in image_cache:
-        return image_cache[path]
-
-    if os.path.exists(path):
-        image = pygame.image.load(path).convert_alpha()
-    else:
-        print(f"[WARN] Brak pliku: {path}")
-        image = pygame.image.load("resources/placeholder.png").convert_alpha()
-
-    image_cache[path] = image
-    return image
+    return ImageLoader.load_image(path)
 
 def load_small_image(card):
     return load_image(card, "small")
@@ -40,14 +30,19 @@ class GameScene(Scene):
 
     @overrides
     def handle_events(self, event):
+        if self.locked:
+            return None
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
+                self.lock()
                 return {
                     "type": "play",
                     "card_id": None
                 }
 
             elif event.key == pygame.K_RETURN and self.selected_card and len(self.selected_card.rows) > 0:
+                self.lock()
                 return {
                     "type": "play",
                     "card_id": self.selected_card.id,
@@ -65,6 +60,7 @@ class GameScene(Scene):
                 if self.selected_card is not None:
                     for row_name, rect in self.row_rects:
                         if rect.collidepoint(event.pos):
+                            self.lock()
                             return {
                                 "type": "play",
                                 "card_id": self.selected_card.id,
@@ -81,6 +77,8 @@ class GameScene(Scene):
 
         self.draw_row_highlights()
         self.display_cursor_position()
+
+        self.draw_temporary()
 
     def draw_rows(self):
         rows = self.game.board.get_ordered_rows(self.player_id)

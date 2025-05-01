@@ -9,6 +9,7 @@ class VolumeSlider:
         self.handle_x = pos[0] + size[0]//2
         self.dragging = False
         self.volume = 1.0
+        self.action = { "type": "ui_action" }
 
         self.bg_color = (139, 69, 19)
         self.hover_color = (160, 82, 45)
@@ -43,6 +44,10 @@ class VolumeSlider:
             self.handle_x = x
             self.volume = (x - self.rect.left) / self.rect.width
             pygame.mixer.music.set_volume(self.volume)
+
+            return True
+
+        return False
 
     def _is_over_handle(self, pos):
         handle_center = (int(self.handle_x), self.rect.centery)

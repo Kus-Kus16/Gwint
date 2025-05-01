@@ -21,16 +21,23 @@ class GamePresenter:
         self.deck = deck
         self.commander = commander
 
+        self.one_passed = False
 
     def connect(self, deck, commander):
-        self.n.connect()
-        response, data = self.n.send(("register", [deck, commander]))
+        try:
+            self.n.connect()
+            response, data = self.n.send(("register", [deck, commander]))
+        except Exception:
+            print("Server not responding")
+            return False
 
         if response != "ok":
             raise ValueError("No response")
 
         self.my_id, self.seed = data
         self.me = Player(deck, commander)
+
+        return True
 
     def disconnect(self):
         if self.n.is_connected():
@@ -39,7 +46,6 @@ class GamePresenter:
     def run(self):
         while True:
             time.sleep(0.01)
-            # self.view.draw()
             self.process_actions()
             match self.game_state:
                 case "menu":
@@ -82,12 +88,29 @@ class GamePresenter:
     def handle_startgame(self):
         # Scoia'tael choosing here
         self.game.start_game()
+        print(self.game.first_player_id, self.my_id)
+        notif = "start" if self.game.first_player_id == self.my_id else "op_start"
+        self.notification(notif)
+        self.notification("round_start")
+
         self.turn_switch()
 
     def play_card(self, player_id, card_id, row):
         return self.game.play_card(player_id, card_id, row)
 
     def pass_round(self, player_id):
+        if not self.one_passed:
+            self.one_passed = True
+        else:
+            notif = (
+                "win_round" if self.game.winning_round(self.my_id)
+                else "lose_round" if self.game.winning_round(1 - self.my_id)
+                else "draw_round"
+            )
+            self.notification(notif)
+            self.notification("round_start")
+            self.one_passed = False
+
         return self.game.pass_round(player_id)
 
     def handle_opponentturn(self):
@@ -111,6 +134,7 @@ class GamePresenter:
                 valid = self.play_card(1 - self.my_id, data[1], data[2])
             case "pass":
                 valid = self.pass_round(1 - self.my_id)
+                self.notification("pass_op")
 
         if not valid:
             raise ValueError("Illegal opponent move")
@@ -158,13 +182,16 @@ class GamePresenter:
                     self.handle_mode_change(action)
                 case "play":
                     self.handle_play(action)
+                case _:
+                    pass
+                    self.view.unlock()
 
     def handle_mode_change(self, action):
         match action["mode"]:
             case "start_game":
-                self.connect(self.deck, self.commander)
-                self.game_state = "waiting-for-game"
-                self.view.change_scene(self.view.waiting)
+                if self.connect(self.deck, self.commander):
+                    self.game_state = "waiting-for-game"
+                    self.view.change_scene(self.view.waiting)
             case "menu":
                 self.game_state = "menu"
                 self.disconnect()
@@ -210,11 +237,18 @@ class GamePresenter:
         if self.game.current_player_id == self.my_id:
             self.game_state = "playing"
             self.view.unlock()
+            if not self.one_passed:
+                self.notification("playing")
         elif self.game.current_player_id == 1 - self.my_id:
             self.game_state = "waiting"
             self.view.lock()
+            if not self.one_passed:
+                self.notification("waiting")
         else:
             #TODO
             self.view.show_game_history(self.game)
             self.game_state = "game-over"
             self.view.unlock()
+
+    def notification(self, name, seconds=2):
+        self.view.run_later(lambda: self.view.notification(name, seconds=seconds))

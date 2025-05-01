@@ -39,6 +39,10 @@ class CreditsScene(Scene):
 
     @overrides
     def handle_events(self, event):
+        if self.locked:
+            return None
+
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.back_button.check_click(event.pos):
+                self.lock()
                 return self.back_button.action

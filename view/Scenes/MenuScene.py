@@ -32,9 +32,18 @@ class MenuScene(Scene):
 			btn.draw(self.screen)
 			btn.on_hover(mouse_pos)
 
+		self.volume_slider.draw(self.screen)
+
 	@overrides
 	def handle_events(self, event):
+		if self.locked:
+			return None
+
+		if self.volume_slider.handle_event(event):
+			return self.volume_slider.action
+
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 			for btn in self.menu_buttons:
 				if btn.check_click(event.pos):
+					self.lock()
 					return btn.action

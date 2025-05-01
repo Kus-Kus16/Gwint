@@ -33,6 +33,10 @@ class WaitingScene(Scene):
 
     @overrides
     def handle_events(self, event):
+        if self.locked:
+            return None
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.back_button.check_click(event.pos):
+                self.lock()
                 return self.back_button.action
