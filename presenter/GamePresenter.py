@@ -65,7 +65,7 @@ class GamePresenter:
                 case "waiting":
                     self.handle_opponentturn()
                 case "game-over":
-                    self.handle_gameover()
+                    pass
                 case "waiting-for-endgame":
                     self.handle_waitingforendgame()
                 case _:
@@ -109,8 +109,16 @@ class GamePresenter:
         return False
 
     def end_game(self):
-        self.game.end_game()
         self.game_state = "game-over"
+
+        if self.me.is_dead() and self.opponent.is_dead():
+            result = "draw"
+        elif self.opponent.is_dead():
+            result = "win"
+        else:
+            result = "lose"
+
+        self.view.current_scene.end_game(result, self.game.get_round_history(self.my_id))
 
     def play_card(self, player_id, card_id, row):
         return self.game.play_card(player_id, card_id, row)
@@ -167,40 +175,21 @@ class GamePresenter:
 
         self.turn_switch()
 
-    def handle_gameover(self):
-        if self.me.is_dead() and self.opponent.is_dead():
-            result = "draw"
-        elif self.opponent.is_dead():
-            result = "win"
-        else:
-            result = "lose"
-
-        self.view.current_scene.end_game(result, self.game.get_round_history(self.my_id))
-
-        # threading.Timer(2, self.return_to_menu).start()
-        # event = self.view.get_event()
-        #
-        # if event is None:
-        #     return True
-        #
-        # if event.type == "rematch":
-        #     rematch = event.rematch
-        #     self.n.send(("rematch", [rematch]))
-        #
-        #     self.game_state = "waiting-for-endgame" if rematch else "exit"
-
     def handle_waitingforendgame(self):
         response, data = self.n.send(("waiting-for-endgame", []))
 
+        #Still waiting
         if response == "ok":
             return
 
-        if data[0]:
-            self.seed = data[1]
-            self.game.set_seed(data[1])
-            self.game_state = 'start-game'
-        else:
-            self.game_state = 'exit'
+        #Opponent disconnected
+        if response == "error" or not data[0]:
+            self.return_to_menu()
+            return
+
+        self.seed = data[1]
+        self.game.set_seed(data[1])
+        self.game_state = 'start-game'
 
     def is_waiting_for_player(self):
         return self.game_state == "waiting-for-game"
@@ -212,11 +201,14 @@ class GamePresenter:
     def process_actions(self):
         while not self.actions.empty():
             action = self.actions.get()
+            print(action)
             match action["type"]:
                 case "mode_change":
                     self.handle_mode_change(action)
                 case "play":
                     self.handle_play(action)
+                case "game-over":
+                    self.handle_gameover(action)
                 case _:
                     pass
                     self.view.unlock()
@@ -259,10 +251,7 @@ class GamePresenter:
             response, data = self.n.send(("play", ["pass"]))
             # Opponent disconnected
             if response == "error":
-                self.game_state = "menu"
-                self.disconnect()
-                self.view.change_scene(self.view.menu)
-                self.view.unlock()
+                self.return_to_menu()
                 return
 
             self.turn_switch()
@@ -283,6 +272,22 @@ class GamePresenter:
         self.view.current_scene.deselect()
         self.turn_switch()
 
+    def handle_gameover(self, action):
+        rematch = action["rematch"]
+        self.game.end_game()
+
+        response, data = self.n.send(("rematch", [rematch]))
+        # Opponent disconnected
+        if response == "error":
+            self.return_to_menu()
+            return
+
+        if rematch:
+            self.game_state = "waiting-for-endgame"
+            self.view.current_scene.reset()
+        else:
+            self.return_to_menu()
+
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:
             self.game_state = "playing"
@@ -298,10 +303,12 @@ class GamePresenter:
             self.view.unlock()
 
     def notification(self, name, seconds=1.5):
+        return
         self.view.run_later(lambda: self.view.notification(name, seconds=seconds))
 
     def return_to_menu(self):
         self.game_state = "menu"
         self.disconnect()
+        scene = self.view.current_scene
         self.view.change_scene(self.view.menu)
-        self.view.unlock()
+        scene.reset_all()

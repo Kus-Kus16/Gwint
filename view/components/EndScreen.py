@@ -26,9 +26,9 @@ class EndScreen(Scene):
         button_size = (300, 60)
         self.buttons = [
             Button("Menu", (button_x - 400, button_y), button_size,
-                   {"type": "mode_change", "mode": "menu"}, font),
+                   {"type": "game-over", "rematch": False}, font),
             Button("Replay", (button_x + 100, button_y), button_size,
-                   {"type": "ui_action", "mode": "menu"}, font),
+                   {"type": "game-over", "rematch": True}, font),
         ]
 
     @overrides
@@ -45,19 +45,28 @@ class EndScreen(Scene):
         img_rect = self.image.get_rect(center=(self.screen_width // 2, 280))
         self.screen.blit(self.image, img_rect)
 
-        x_left = 300
+        x_center = self.screen_width // 2
         x_offset = (self.screen_width - 600) // 4
-        # x_left -= x_offset
         y = self.screen_height // 2 + 100
         y_offset = 60
 
-        self.screen.blit(self.font.render("Ty", True, (197, 152, 79)), (x_left, y))
-        self.screen.blit(self.font.render("Przeciwnik", True, (197, 152, 79)), (x_left, y + y_offset))
+        me = self.font.render("Ty", True, (197, 152, 79))
+        opp = self.font.render("Przeciwnik", True, (197, 152, 79))
+
+        me_rect = me.get_rect()
+        me_rect.topleft = (x_center - 2 * x_offset, y - me.get_height() // 2)
+
+        opp_rect = opp.get_rect()
+        opp_rect.topleft = (x_center - 2 * x_offset, y + y_offset - opp.get_height() // 2)
+
+        self.screen.blit(me, me_rect)
+        self.screen.blit(opp, opp_rect)
 
         for i, text in enumerate(["Runda 1", "Runda 2", "Runda 3"]):
-            x = x_left + x_offset * (i + 1)
+            x = x_center + (i - 1) * x_offset
             label = self.font.render(text, True, (200, 200, 200))
-            self.screen.blit(label, (x, y - y_offset))
+            label_rect = label.get_rect(center=(x, y - y_offset))
+            self.screen.blit(label, label_rect)
 
             if i < len(self.round_history):
                 me_score, opp_score = self.round_history[i]
@@ -77,8 +86,11 @@ class EndScreen(Scene):
                 me_result = self.font.render("-", True, (255, 255, 255))
                 opp_result = self.font.render("-", True, (255, 255, 255))
 
-            self.screen.blit(me_result, (x + 25, y))
-            self.screen.blit(opp_result, (x + 25, y + y_offset))
+            me_result_rect = me_result.get_rect(center=(x, y))
+            opp_result_rect = opp_result.get_rect(center=(x, y + y_offset))
+
+            self.screen.blit(me_result, me_result_rect)
+            self.screen.blit(opp_result, opp_result_rect)
 
         mouse_pos = pygame.mouse.get_pos()
         for btn in self.buttons:

@@ -84,7 +84,7 @@
         "name": "Tajemniczy Elf",
         "faction": "Neutralne",
         "power": 0,
-        "rows": ["close"],
+        "rows": ["close_OPP"],
         "abilities": ["spy", "hero"],
         "count": 1,
         "filename": "avallach"
@@ -337,7 +337,7 @@
         "name": "Sigismund Dijkstra",
         "faction": "Królestwa Północy",
         "power": 4,
-        "rows": ["close"],
+        "rows": ["close_OPP"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "dijkstra"
@@ -527,7 +527,7 @@
         "name": "Książę Stennis",
         "faction": "Królestwa Północy",
         "power": 5,
-        "rows": ["close"],
+        "rows": ["close_OPP"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "stennis"
@@ -537,7 +537,7 @@
         "name": "Talar",
         "faction": "Królestwa Północy",
         "power": 1,
-        "rows": ["siege"],
+        "rows": ["siege_OPP"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "talar"
@@ -879,7 +879,7 @@
         "name": "Shilard Fitz-Oesterlen",
         "faction": "Cesarstwo Nilfgaardu",
         "power": 7,
-        "rows": ["close"],
+        "rows": ["close_OPP"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "shilard"
@@ -889,7 +889,7 @@
         "name": "Stefan Skellen",
         "faction": "Cesarstwo Nilfgaardu",
         "power": 9,
-        "rows": ["close"],
+        "rows": ["close_OPP"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "stefan"
@@ -919,7 +919,7 @@
         "name": "Vattier de Rideaux",
         "faction": "Cesarstwo Nilfgaardu",
         "power": 4,
-        "rows": ["close"],
+        "rows": ["close_OPP"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "vattier"

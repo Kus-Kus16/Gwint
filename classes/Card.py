@@ -16,7 +16,6 @@ class Card:
         self.owner = None
         self.rows = data['rows']
         self.abilities = data['abilities']
-        #print(data['filename'],data['id'])
         self.filename = data['filename']
         self.type = (
             CardType.SPECIAL if self.power is None

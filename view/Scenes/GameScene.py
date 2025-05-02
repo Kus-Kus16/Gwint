@@ -1,4 +1,3 @@
-import os
 import pygame
 from overrides import overrides
 
@@ -65,10 +64,10 @@ class GameScene(Scene):
                         self.selected_card = card
                         return None
 
-                #Check row clics
+                #Check row clics #TODO Other clicks
                 if self.selected_card is not None:
-                    for row_name, rect in self.row_rects:
-                        if rect.collidepoint(event.pos):
+                    for row_name, unit_rect, _, _ in self.row_rects:
+                        if unit_rect.collidepoint(event.pos):
                             self.lock()
                             return {
                                 "type": "play",
@@ -84,7 +83,7 @@ class GameScene(Scene):
         self.draw_hand()
         self.draw_stats()
 
-        self.draw_row_highlights()
+        self.draw_highlights()
         self.display_cursor_position()
 
         self.draw_temporary()
@@ -99,9 +98,10 @@ class GameScene(Scene):
         positions = self.row_rects
 
         for i, row in enumerate(rows):
-            y = positions[i][1].top
-            self.draw_row(row, 720, y)
-            self.draw_text(f"{row.points}", 528, y + 44, color=(0, 0, 0))
+            unit_rect, (text_x_center, text_y_center) = positions[i][1], positions[i][3]
+            unit_x, unit_y = unit_rect.left, unit_rect.top
+            self.draw_row(row, unit_x, unit_y)
+            self.draw_text(f"{row.points}", text_x_center, text_y_center, color=(0, 0, 0), center=True)
 
     def draw_stats(self):
         #PLAYER HP
@@ -109,8 +109,16 @@ class GameScene(Scene):
         self.draw_text(f"{self.game.players[1 - self.player_id].hp}", x=400, y=312, color=(255, 255, 255))
 
         #PLAYER POINTS
-        self.draw_text(f"{self.game.players[self.player_id].points}", x=445, y=715,color=(0,0,0))
-        self.draw_text(f"{self.game.players[1 - self.player_id].points}", x=445, y=312,color=(0,0,0))
+        self.draw_text(f"{self.game.players[self.player_id].points}", x=453, y=734,color=(0,0,0), center=True)
+        self.draw_text(f"{self.game.players[1 - self.player_id].points}", x=453, y=332,color=(0,0,0), center=True)
+
+        #PLAYER GRAVE
+        self.draw_text(f"{self.game.players[self.player_id].grave.size()}", x=1550, y=900, color=(255, 255, 255))
+        self.draw_text(f"{self.game.players[1 - self.player_id].grave.size()}", x=1550, y=150, color=(255, 255, 255))
+
+        #PLAYER DECK
+        self.draw_text(f"{self.game.players[self.player_id].deck.size()}", x=1777, y=900, color=(255, 255, 255))
+        self.draw_text(f"{self.game.players[1 - self.player_id].deck.size()}", x=1777, y=150, color=(255, 255, 255))
 
         #MOVE TEXT
         if self.game.current_player_id == self.player_id:
@@ -137,20 +145,21 @@ class GameScene(Scene):
             self.hand_rects.append((card, rect))
             offset += 90
 
-    def draw_row_highlights(self):
+    def draw_highlights(self):
         if self.selected_card is None:
             return
 
         rows = self.selected_card.rows
+        # rows = ["close", "ranged", "siege", "close_OPP", "ranged_OPP", "siege_OPP"]
         highlight_color = (255, 255, 0)
         alpha = 50
 
-        surface = pygame.Surface((815, 113), pygame.SRCALPHA)
+        surface = pygame.Surface((812, 119), pygame.SRCALPHA)
         surface.fill((*highlight_color, alpha))
 
         for row_name in rows:
-            rect = self.get_row_rect(row_name)
-            self.screen.blit(surface, (rect.x, rect.y))
+            unit_rect = self.get_row_rects(row_name)[1]
+            self.screen.blit(surface, (unit_rect.x, unit_rect.y))
 
     def draw_card(self, card, x, y, size):
         image = load_image(card, size)
@@ -179,23 +188,30 @@ class GameScene(Scene):
         self.player_id = player_id
 
     def init_row_rects(self):
-        positions = {
-            "siege_OPP": 13,
-            "ranged_OPP": 145,
-            "close_OPP": 275,
-            "close": 431,
-            "ranged": 562,
-            "siege": 700
+        positions_y = {
+            # name, (row_y, text_y_center)
+            "siege_OPP": (17, 74),
+            "ranged_OPP": (149, 205),
+            "close_OPP": (286, 343),
+            "close": (435, 492),
+            "ranged": (567, 625),
+            "siege": (705, 763)
         }
 
-        for row_name, y in positions.items():
-            rect = pygame.Rect(708, y + 10, 815, 113)
-            self.row_rects.append((row_name, rect))
+        unit_size, unit_x = (812, 119), 700
+        boost_size, boost_x = (130, 119), 570
+        text_x_center = 536
 
-    def get_row_rect(self, name):
-        for row_name, rect in self.row_rects:
+        for row_name, (row_y, text_y_center) in positions_y.items():
+            unit_rect = pygame.Rect(unit_x, row_y, *unit_size)
+            boost_rect = pygame.Rect(boost_x, row_y, *boost_size)
+            self.row_rects.append( (row_name, unit_rect, boost_rect, (text_x_center, text_y_center)) )
+
+    def get_row_rects(self, name):
+        for row_rect in self.row_rects:
+            row_name = row_rect[0]
             if row_name == name:
-                return rect
+                return row_rect
 
     def deselect(self):
         self.selected_card = None
@@ -211,3 +227,30 @@ class GameScene(Scene):
         self.lock()
         self.end_screen = EndScreen(self.screen, result, round_history, self.framerate, self.font)
         self.ended = True
+
+    def reset_all(self):
+        self.reset()
+        self.game = None
+        self.player_id = None
+
+    def reset(self):
+        self.ended = False
+        self.end_screen = None
+        self.selected_card = None
+        self.zoomed_card = None
+
+    @overrides
+    def lock(self):
+        if self.end_screen is not None:
+            self.end_screen.lock()
+            return
+
+        self.locked = True
+
+    @overrides
+    def unlock(self):
+        if self.end_screen is not None:
+            self.end_screen.unlock()
+            return
+
+        self.locked = False

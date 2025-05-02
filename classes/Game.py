@@ -1,6 +1,7 @@
 from classes.Board import Board
 import random
 
+from classes import CardsDatabase
 from classes.Row import RowType
 
 
@@ -38,13 +39,23 @@ class Game:
             #TODO special logic here
             self.handle_special(card)
         else:
+            additional_actions = self.handle_abilities(player, card, row_type)
             self.board.play_card(card, row_type, player_id)
-            self.handle_abilities(card)
+            for action in additional_actions:
+                action()
 
         self.update_points()
         self.next_turn()
 
         return True
+
+    def put_extra_card(self, player_id, card, row):
+        # Ignores the limits
+        player = self.players[player_id]
+        row_type = RowType[row.upper()]
+
+        self.board.play_card(card, row_type, player_id)
+        self.update_points()
 
     def handle_special(self, card):
         for ability in card.abilities:
@@ -66,31 +77,27 @@ class Game:
                 case "sangreal":
                     pass
 
-    def handle_abilities(self, card):
+    def handle_abilities(self, player, card, row_type):
+        actions = []
+        card_id = card.id
+        player_id = player.id
+
         for ability in card.abilities:
             match ability:
-                case "hero":
-                    pass
-                case "muster":
-                    pass
-                case "recall":
-                    pass
-                case "agile":
-                    pass
-                case "morale":
-                    pass
                 case "spy":
-                    pass
+                    actions.append(lambda p=player: p.draw_cards(2))
+                case "muster":
+                    other_ids = CardsDatabase.get_muster(card_id)
+                    for id in other_ids:
+                        extra = player.hand.get_card_by_id(id) or player.deck.get_card_by_id(id)
+                        if extra is not None:
+                            actions.append(lambda p=player_id, e=extra, r=extra.rows[0]: self.put_extra_card(p, e, r))
                 case "scorchRow":
-                    pass
-                case "medic":
-                    pass
-                case "bond":
-                    pass
-                case "berserk":
-                    pass
-                case "thirsty":
-                    pass
+                    actions.append(lambda r=row_type, p=1 - player_id: self.board.scorch_row(r, p))
+                case "scorch":
+                    actions.append(lambda: self.board.scorch())
+
+        return actions
 
     def pass_round(self, player_id):
         if self.current_player_id != player_id:

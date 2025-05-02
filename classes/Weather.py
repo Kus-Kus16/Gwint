@@ -13,6 +13,7 @@ class Weather(CardHolder):
         for card in self.cards:
             card.send_to_owner_grave()
 
+        self.cards.clear()
         self.active.clear()
 
     def put(self, weather_ability):

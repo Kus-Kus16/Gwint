@@ -7,6 +7,9 @@ class RowType(Enum):
     CLOSE = 0
     RANGED = 1
     SIEGE = 2
+    CLOSE_OPP = 3
+    RANGED_OPP = 4
+    SIEGE_OPP = 5
 
 class Row(CardHolder):
     def __init__(self):
@@ -44,6 +47,22 @@ class Row(CardHolder):
     def clear_weather(self):
         self.effects["weather"] = False
         self.recalculate()
+
+    def find_strongest(self):
+        maxi = -10e10
+        for card in self.cards:
+            if card.power > maxi:
+                maxi = card.power
+
+        return self.find_cards(lambda card: card.power == maxi)
+
+    def find_weakest(self):
+        maxi = 10e10
+        for card in self.cards:
+            if card.power > maxi:
+                maxi = card.power
+
+        return self.find_cards(lambda card: card.power == maxi)
 
     ## TODO CHANGE HERE AFTER ABILITIES!
     # def transfer_card(self, card, container):

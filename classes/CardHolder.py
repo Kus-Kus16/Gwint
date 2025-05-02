@@ -20,11 +20,28 @@ class CardHolder:
             if predicate(card):
                 return card
 
+    def find_cards(self, predicate):
+        cards = []
+        for card in self.cards:
+            if predicate(card):
+                cards.append(card)
+
+        return cards
+
     def find_card_by_id(self, card_id):
         return self.find_card(lambda card: card.id == card_id)
 
     def find_card_by_name(self, card_name):
         return self.find_card(lambda card: card.name == card_name)
+
+    def get_card(self, predicate):
+        for card in self.cards:
+            if predicate(card):
+                self.remove_card(card)
+                return card
+
+    def get_card_by_id(self, card_id):
+        return self.get_card(lambda card: card.id == card_id)
 
     def get_next_card(self):
         if len(self.cards) == 0:

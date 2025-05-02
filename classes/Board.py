@@ -8,13 +8,15 @@ class Board:
         self.rows = [Row() for _ in range(6)]
         self.weather = Weather()
 
-    def play_card(self, card, row_type, player_id):
+    def row_index(self, row_type, player_id):
         row_index = row_type.value
-
         if player_id == 1:
-            row_index += 3
+            row_index = (row_index + 3) % 6
 
-        row = self.rows[row_index]
+        return row_index
+
+    def play_card(self, card, row_type, player_id):
+        row = self.rows[self.row_index(row_type, player_id)]
         row.add_card(card)
         row.recalculate()
 
@@ -75,3 +77,30 @@ class Board:
     def rows_tostring(self, player_id):
         rows = self.get_ordered_rows(player_id)
         return "\n".join(str(row) for row in rows) + "\n"
+
+    def scorch_row(self, row_type, player_id):
+        row = self.rows[self.row_index(row_type, player_id)]
+
+        if row.points < 10:
+            return
+
+        cards = row.find_strongest()
+        for card in cards:
+            row.remove_card(card)
+
+    def scorch(self):
+        maxi = -10e10
+        all_cards = [[] for _ in range(6)]
+
+        for i, row in enumerate(self.rows):
+            cards = row.find_strongest()
+            if len(cards) > 0 and cards[0].power >= maxi:
+                if cards[0].power > maxi:
+                    maxi = cards[0].power
+                    all_cards = [[] for _ in range(6)]
+
+                all_cards[i] = cards
+
+        for i, row in enumerate(self.rows):
+            for card in all_cards[i]:
+                row.remove_card(card)
