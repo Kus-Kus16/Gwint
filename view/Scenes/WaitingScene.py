@@ -27,8 +27,7 @@ class WaitingScene(Scene):
         text_rect = text.get_rect(center=(self.screen_width // 2, self.screen_height // 2))
         self.screen.blit(text, text_rect)
 
-        self.back_button.draw(self.screen)
-        self.back_button.on_hover(pygame.mouse.get_pos())
+        self.back_button.draw(self.screen, pygame.mouse.get_pos())
 
 
     @overrides

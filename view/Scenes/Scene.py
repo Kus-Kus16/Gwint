@@ -49,7 +49,7 @@ class Scene(ABC):
         drawable.draw(self.screen)
         drawable.frames -= 1
 
-        if drawable.frames <= 0:
+        if drawable.frames == 0:
             self.temporary_drawable.pop(0)
 
             if drawable.locking:
@@ -67,3 +67,6 @@ class Scene(ABC):
             self.spacing_frames = self.framerate // 2
 
         self.temporary_drawable.append(notification)
+
+    def clear_temporary(self):
+        self.temporary_drawable.clear()

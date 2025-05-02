@@ -181,3 +181,13 @@ class Game:
 
     def winning_round(self, player_id):
         return self.players[player_id].points > self.players[1- player_id].points
+
+    def get_round_history(self, player_id):
+        if player_id == 0:
+            return self.round_history
+
+        history = []
+        for pl0, pl1 in self.round_history:
+            history.append((pl1, pl0))
+
+        return history

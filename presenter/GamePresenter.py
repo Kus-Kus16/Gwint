@@ -112,15 +112,6 @@ class GamePresenter:
         self.game.end_game()
         self.game_state = "game-over"
 
-    def calculate_winner(self):
-        if self.me.is_dead() and self.opponent.is_dead():
-            return None
-
-        if self.opponent.is_dead():
-            return True
-
-        return False
-
     def play_card(self, player_id, card_id, row):
         return self.game.play_card(player_id, card_id, row)
 
@@ -177,9 +168,16 @@ class GamePresenter:
         self.turn_switch()
 
     def handle_gameover(self):
-        winner = self.calculate_winner()
-        threading.Timer(2, self.return_to_menu).start()
-        pass
+        if self.me.is_dead() and self.opponent.is_dead():
+            result = "draw"
+        elif self.opponent.is_dead():
+            result = "win"
+        else:
+            result = "lose"
+
+        self.view.current_scene.end_game(result, self.game.get_round_history(self.my_id))
+
+        # threading.Timer(2, self.return_to_menu).start()
         # event = self.view.get_event()
         #
         # if event is None:
@@ -299,7 +297,7 @@ class GamePresenter:
         else:
             self.view.unlock()
 
-    def notification(self, name, seconds=2):
+    def notification(self, name, seconds=1.5):
         self.view.run_later(lambda: self.view.notification(name, seconds=seconds))
 
     def return_to_menu(self):

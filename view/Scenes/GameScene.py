@@ -4,6 +4,8 @@ from overrides import overrides
 
 from view import ImageLoader
 from view.Scenes.Scene import Scene
+from view.components.EndScreen import EndScreen
+
 
 def load_image(card, size):
     path = f"resources/{size}/{card.faction}/{card.filename}.png"
@@ -19,6 +21,8 @@ class GameScene(Scene):
     def __init__(self, screen, framerate, font):
         super().__init__(screen, framerate, font, "resources/board.jpg")
         self.game = None
+        self.ended = False
+        self.end_screen = None
         self.player_id = None
         self.selected_card = None
         self.zoomed_card = None #TODO
@@ -31,6 +35,9 @@ class GameScene(Scene):
     @overrides
     def handle_events(self, event):
         self.volume_slider.handle_event(event)
+
+        if self.ended:
+            return self.end_screen.handle_events(event)
 
         if self.locked:
             return None
@@ -81,6 +88,9 @@ class GameScene(Scene):
         self.display_cursor_position()
 
         self.draw_temporary()
+
+        if self.ended and len(self.temporary_drawable) == 0:
+            self.end_screen.draw()
 
         self.volume_slider.draw(self.screen)
 
@@ -196,3 +206,8 @@ class GameScene(Scene):
 
         position_text = f"{mouse_x}, {mouse_y}, {self.player_id})"
         self.draw_text(position_text, 10, 10)
+
+    def end_game(self, result, round_history):
+        self.lock()
+        self.end_screen = EndScreen(self.screen, result, round_history, self.framerate, self.font)
+        self.ended = True

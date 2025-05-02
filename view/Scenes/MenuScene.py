@@ -29,8 +29,7 @@ class MenuScene(Scene):
 
 		mouse_pos = pygame.mouse.get_pos()
 		for btn in self.menu_buttons:
-			btn.draw(self.screen)
-			btn.on_hover(mouse_pos)
+			btn.draw(self.screen, mouse_pos)
 
 		self.volume_slider.draw(self.screen)
 

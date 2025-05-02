@@ -34,8 +34,7 @@ class CreditsScene(Scene):
             self.screen.blit(text, text_rect)
             y_pos += 50
 
-        self.back_button.draw(self.screen)
-        self.back_button.on_hover(pygame.mouse.get_pos())
+        self.back_button.draw(self.screen, pygame.mouse.get_pos())
 
     @overrides
     def handle_events(self, event):

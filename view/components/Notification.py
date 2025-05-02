@@ -2,7 +2,6 @@ import pygame
 
 from view import ImageLoader
 
-
 def load_image(name):
     path = f"resources/ico/{name}.png"
     return ImageLoader.load_image(path)

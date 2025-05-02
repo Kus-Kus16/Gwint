@@ -79,6 +79,7 @@ class PygameView:
         self.current_scene.unlock()
 
     def change_scene(self, scene):
+        self.current_scene.clear_temporary()
         self.current_scene.unlock()
         self.current_scene = scene
 
