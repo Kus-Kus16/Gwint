@@ -23,11 +23,38 @@ class Card:
             else CardType.UNIT
         )
 
+    def is_unit(self):
+        return self.type == CardType.UNIT
+
     def is_hero(self):
         return self.type == CardType.HERO
 
     def is_special(self):
         return self.type == CardType.SPECIAL
+
+    def is_weather(self):
+        if not self.type == CardType.SPECIAL:
+            return False
+
+        return any(ability in self.abilities for ability in ["frost", "fog", "rain", "storm", "clear"])
+
+    def is_boost(self):
+        if not self.type == CardType.SPECIAL:
+            return False
+
+        return any(ability in self.abilities for ability in ["horn", "mardroeme", "sangreal"])
+
+    def is_targeting(self):
+        if not self.type == CardType.SPECIAL:
+            return False
+
+        return any(ability in self.abilities for ability in ["decoy"])
+
+    def is_absolute(self):
+        if not self.type == CardType.SPECIAL:
+            return False
+
+        return any(ability in self.abilities for ability in ["scorch"])
 
     def set_power(self, power):
         if self.is_hero() or self.is_special():

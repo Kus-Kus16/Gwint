@@ -1,3 +1,6 @@
+from overrides import overrides
+
+from classes import CardsDatabase
 from classes.CardHolder import CardHolder
 from enum import Enum
 import bisect
@@ -10,15 +13,29 @@ class RowType(Enum):
     CLOSE_OPP = 3
     RANGED_OPP = 4
     SIEGE_OPP = 5
+    ANY = 6
 
 class Row(CardHolder):
     def __init__(self):
         super().__init__()
         self.points = 0
-        self.effects = {"weather": False}
+        self.effects = {
+            "weather": False,
+            "morale": set(),
+            "bond": {},
+            "horn": set()
+        }
 
+    @overrides
     def add_card(self, card):
         bisect.insort(self.cards, card)
+        self.handle_abilities_insert(card)
+
+    @overrides
+    def remove_card(self, card):
+        self.cards.remove(card)
+        self.handle_abilities_remove(card)
+        card.power = card.base_power
 
     def recalculate(self):
         #TODO add power changes
@@ -35,10 +52,29 @@ class Row(CardHolder):
         if card.is_hero():
             return
 
+        card.power = card.base_power
+
+        # Weather
         if self.effects["weather"]:
             card.power = min(card.power, 1)
-        else:
-            card.power = card.base_power
+
+        # Bond
+        if "bond" in card.abilities:
+            bond_id = CardsDatabase.get_bond(card.id)
+            card.power *= self.effects["bond"][bond_id]
+
+        # Morale
+        for source in self.effects["morale"]:
+            if card != source:
+                card.power += 1
+
+        # Horn
+        horned = False
+        for source in self.effects["horn"]:
+            if card != source:
+                horned = True
+        if horned:
+            card.power *= 2
 
     def add_weather(self):
         self.effects["weather"] = True
@@ -48,28 +84,67 @@ class Row(CardHolder):
         self.effects["weather"] = False
         self.recalculate()
 
-    def find_strongest(self):
+    def find_strongest(self, ignore_heroes = False):
         maxi = -10e10
         for card in self.cards:
+            if ignore_heroes and card.is_hero():
+                continue
+
             if card.power > maxi:
                 maxi = card.power
 
-        return self.find_cards(lambda card: card.power == maxi)
+        if ignore_heroes:
+            fun = lambda card: not card.is_hero() and card.power == maxi
+        else:
+            fun = lambda card: card.power == maxi
 
-    def find_weakest(self):
-        maxi = 10e10
+        return self.find_cards(fun)
+
+    def find_weakest(self, ignore_heroes = False):
+        mini = 10e10
         for card in self.cards:
-            if card.power > maxi:
-                maxi = card.power
+            if ignore_heroes and card.is_hero():
+                continue
 
-        return self.find_cards(lambda card: card.power == maxi)
+            if card.power < mini:
+                mini = card.power
 
-    ## TODO CHANGE HERE AFTER ABILITIES!
-    # def transfer_card(self, card, container):
-    #     super.transfer_card(card, container)
-    #
-    # def transfer_all_cards(self, container):
-    #     super.transfer_all_cards(container)
+        if ignore_heroes:
+            fun = lambda card: not card.is_hero() and card.power == mini
+        else:
+            fun = lambda card: card.power == mini
+
+        return self.find_cards(fun)
+
+    def handle_abilities_insert(self, card):
+        for ability in card.abilities:
+            match ability:
+                case "morale":
+                    self.effects["morale"].add(card)
+                case "bond":
+                    bond_id = CardsDatabase.get_bond(card.id)
+                    self.effects["bond"].setdefault(bond_id, 0)
+                    self.effects["bond"][bond_id] += 1
+                case "horn":
+                    self.effects["horn"].add(card)
+
+    def handle_abilities_remove(self, card):
+        for ability in card.abilities:
+            match ability:
+                case "morale":
+                    self.effects["morale"].remove(card)
+                case "bond":
+                    bond_id = CardsDatabase.get_bond(card.id)
+                    self.effects["bond"][bond_id] -= 1
+                case "horn":
+                    self.effects["horn"].remove(card)
+
+    def clear_boosts(self):
+        for card in self.effects["horn"]:
+            if card.is_special():
+                self.effects["horn"].remove(card)
+                card.send_to_owner_grave()
+                break
 
     def __str__(self):
         return str(self.points) + " :: " + ", ".join(str(card) for card in self.cards)

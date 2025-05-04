@@ -9,8 +9,10 @@ with open("./data/cards.json", "r", encoding="utf-8") as file:
 with open("./data/muster.json", "r", encoding="utf-8") as file:
     muster_dict = json.load(file)
 
-# Dictionary
+with open("./data/bond.json", "r", encoding="utf-8") as file:
+    bond_dict = json.load(file)
 
+# Dictionary
 def find_card(predicate):
     for card in dictionary:
         if predicate(card):
@@ -52,6 +54,9 @@ def create_verified_deck(data):
     return True, Deck(deck)
 
 # Muster
-
 def get_muster(card_id):
     return muster_dict[f"{card_id}"]
+
+# Bond
+def get_bond(card_id):
+    return bond_dict[f"{card_id}"]

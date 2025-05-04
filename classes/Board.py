@@ -84,16 +84,19 @@ class Board:
         if row.points < 10:
             return
 
-        cards = row.find_strongest()
+        cards = row.find_strongest(ignore_heroes=True)
         for card in cards:
             row.remove_card(card)
+            card.send_to_owner_grave()
+
+        row.recalculate()
 
     def scorch(self):
         maxi = -10e10
         all_cards = [[] for _ in range(6)]
 
         for i, row in enumerate(self.rows):
-            cards = row.find_strongest()
+            cards = row.find_strongest(ignore_heroes=True)
             if len(cards) > 0 and cards[0].power >= maxi:
                 if cards[0].power > maxi:
                     maxi = cards[0].power
@@ -104,3 +107,6 @@ class Board:
         for i, row in enumerate(self.rows):
             for card in all_cards[i]:
                 row.remove_card(card)
+                card.send_to_owner_grave()
+
+        self.update_rows()

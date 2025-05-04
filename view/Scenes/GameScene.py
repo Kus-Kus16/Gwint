@@ -27,9 +27,9 @@ class GameScene(Scene):
         self.zoomed_card = None #TODO
 
         self.hand_rects = [] #TODO To be changed - all "card images" need a saved rect for zoom
-        self.row_rects = []
 
-        self.init_row_rects()
+        self.consts = {}
+        self.init_consts()
 
     @overrides
     def handle_events(self, event):
@@ -64,26 +64,73 @@ class GameScene(Scene):
                         self.selected_card = card
                         return None
 
-                #Check row clics #TODO Other clicks
-                if self.selected_card is not None:
-                    for row_name, unit_rect, _, _ in self.row_rects:
-                        if unit_rect.collidepoint(event.pos):
+                if self.selected_card is None:
+                    return None
+
+                card = self.selected_card
+
+                #Check row clicks
+                if card.is_unit() or card.is_hero():
+                    row_names = card.rows
+
+                    for row_name in row_names:
+                        row_rect = self.consts[row_name]["unit_rect"]
+                        if row_rect.collidepoint(event.pos):
                             self.lock()
                             return {
                                 "type": "play",
-                                "card_id": self.selected_card.id,
+                                "card_id": card.id,
                                 "row": row_name
                             }
+
+                #Check weather clicks
+                if card.is_weather():
+                    weather_rect = self.consts["weather"]["rect"]
+
+                    if weather_rect.collidepoint(event.pos):
+                        self.lock()
+                        return {
+                            "type": "play",
+                            "card_id": card.id,
+                            "row": "any"
+                        }
+
+                #Check boosts clicks
+                if card.is_boost():
+                    row_names = ["close", "ranged", "siege"]
+                    for row_name in row_names:
+                        boost_rect = self.consts[row_name]["boost_rect"]
+                        if boost_rect.collidepoint(event.pos):
+                            self.lock()
+                            return {
+                                "type": "play",
+                                "card_id": card.id,
+                                "row": row_name
+                            }
+
+                #Check any board clicks
+                if card.is_absolute():
+                    board_rect = self.consts["board"]["rect"]
+
+                    if board_rect.collidepoint(event.pos):
+                        self.lock()
+                        return {
+                            "type": "play",
+                            "card_id": card.id,
+                            "row": "any"
+                        }
 
     @overrides
     def draw(self):
         super().draw()
 
+        self.draw_highlights()
+
         self.draw_rows()
         self.draw_hand()
+        self.draw_weather()
         self.draw_stats()
 
-        self.draw_highlights()
         self.display_cursor_position()
 
         self.draw_temporary()
@@ -95,12 +142,13 @@ class GameScene(Scene):
 
     def draw_rows(self):
         rows = self.game.board.get_ordered_rows(self.player_id)
-        positions = self.row_rects
+        row_names = self.consts["row_names"]
 
         for i, row in enumerate(rows):
-            unit_rect, (text_x_center, text_y_center) = positions[i][1], positions[i][3]
-            unit_x, unit_y = unit_rect.left, unit_rect.top
-            self.draw_row(row, unit_x, unit_y)
+            data = self.consts[row_names[i]]
+            row_rect = data["unit_rect"]
+            text_x_center, text_y_center = data["text_center"]
+            self.draw_row(row, row_rect)
             self.draw_text(f"{row.points}", text_x_center, text_y_center, color=(0, 0, 0), center=True)
 
     def draw_stats(self):
@@ -126,7 +174,8 @@ class GameScene(Scene):
         else:
             self.draw_text("Oczekiwanie na ruch przeciwnika", 570, 1000)
 
-    def draw_row(self, row, x, y):
+    def draw_row(self, row, row_rect):
+        x, y = row_rect.left, row_rect.top
         offset = 0
         for card in row.cards:
             self.draw_card(card, x + offset, y, "small")
@@ -136,30 +185,68 @@ class GameScene(Scene):
         self.hand_rects.clear()
         hand = self.game.players[self.player_id].hand
 
-        x = 585
-        y = 845
+        rect = self.consts["hand"]["rect"]
+        x, y = rect.left, rect.top
         offset = 0
 
         for card in hand.cards:
-            rect = self.draw_card(card, x + offset, y, "small")
-            self.hand_rects.append((card, rect))
+            card_rect = self.draw_card(card, x + offset, y, "small")
+            self.hand_rects.append((card, card_rect))
             offset += 90
 
+    def draw_weather(self):
+        weather = self.game.board.weather
+
+        rect = self.consts["weather"]["rect"]
+        x, y = rect.left, rect.top
+        x_offset = 0
+        y_offset = 11
+
+        for card in weather.cards:
+            self.draw_card(card, x + x_offset, y + y_offset, "small")
+            x_offset += 90
+
     def draw_highlights(self):
-        if self.selected_card is None:
+        selected = self.selected_card
+
+        if selected is None:
             return
 
-        rows = self.selected_card.rows
-        # rows = ["close", "ranged", "siege", "close_OPP", "ranged_OPP", "siege_OPP"]
         highlight_color = (255, 255, 0)
         alpha = 50
 
-        surface = pygame.Surface((812, 119), pygame.SRCALPHA)
-        surface.fill((*highlight_color, alpha))
+        if selected.is_unit() or selected.is_hero():
+            rows = selected.rows
+            rect_size = self.consts["unit_row_size"]
 
-        for row_name in rows:
-            unit_rect = self.get_row_rects(row_name)[1]
-            self.screen.blit(surface, (unit_rect.x, unit_rect.y))
+            surface = pygame.Surface(rect_size, pygame.SRCALPHA)
+            surface.fill((*highlight_color, alpha))
+
+            for row_name in rows:
+                unit_rect = self.consts[row_name]["unit_rect"]
+                self.screen.blit(surface, (unit_rect.x, unit_rect.y))
+
+            return
+
+        if selected.is_weather():
+            rect = self.consts["weather"]["rect"]
+            surface = pygame.Surface(rect.size, pygame.SRCALPHA)
+            surface.fill((*highlight_color, alpha))
+            self.screen.blit(surface, (rect.x, rect.y))
+
+            return
+
+        if selected.is_special():
+            rect_size = self.consts["boost_row_size"]
+            surface = pygame.Surface(rect_size, pygame.SRCALPHA)
+            surface.fill((*highlight_color, alpha))
+
+            rows = ["close", "ranged", "siege"]
+            for row_name in rows:
+                boost_rect = self.consts[row_name]["boost_rect"]
+                self.screen.blit(surface, (boost_rect.x, boost_rect.y))
+
+            return
 
     def draw_card(self, card, x, y, size):
         image = load_image(card, size)
@@ -170,7 +257,14 @@ class GameScene(Scene):
             pygame.draw.rect(self.screen, (212, 175, 55), rect, 4)
 
         if not card.is_special() and not card.is_hero():
-            self.draw_text(card.power, rect.x + 12, rect.y + 1, color=(0, 0, 0))
+            if card.power > card.base_power:
+                color = (20, 140, 60)
+            elif card.power < card.base_power:
+                color = (237, 56, 24)
+            else:
+                color = (0, 0, 0)
+
+            self.draw_text(card.power, rect.x + 12, rect.y + 1, color=color)
 
         return rect
 
@@ -187,7 +281,7 @@ class GameScene(Scene):
         self.game = game
         self.player_id = player_id
 
-    def init_row_rects(self):
+    def init_consts(self):
         positions_y = {
             # name, (row_y, text_y_center)
             "siege_OPP": (17, 74),
@@ -198,20 +292,41 @@ class GameScene(Scene):
             "siege": (705, 763)
         }
 
-        unit_size, unit_x = (812, 119), 700
-        boost_size, boost_x = (130, 119), 570
+        unit_x = 707
+        boost_x = 570
         text_x_center = 536
+        unit_size = (812, 119)
+        boost_size = (130, 119)
+
+        weather_pos = (140, 448)
+        weather_size = (281, 140)
+        hand_pos = (577, 842)
+        hand_size = (936, 125)
+        board_pos = (570, 17)
+        board_size = (949, 807)
+
+        consts = {
+            "row_names": [],
+            "unit_row_size": unit_size,
+            "boost_row_size": boost_size
+        }
 
         for row_name, (row_y, text_y_center) in positions_y.items():
             unit_rect = pygame.Rect(unit_x, row_y, *unit_size)
             boost_rect = pygame.Rect(boost_x, row_y, *boost_size)
-            self.row_rects.append( (row_name, unit_rect, boost_rect, (text_x_center, text_y_center)) )
+            consts[row_name] = { "unit_rect": unit_rect, "boost_rect": boost_rect, "text_center": (text_x_center, text_y_center) }
+            consts["row_names"].append(row_name)
 
-    def get_row_rects(self, name):
-        for row_rect in self.row_rects:
-            row_name = row_rect[0]
-            if row_name == name:
-                return row_rect
+        weather_rect = pygame.Rect(*weather_pos, *weather_size)
+        consts["weather"] = { "rect": weather_rect }
+
+        hand_rect = pygame.Rect(*hand_pos, *hand_size)
+        consts["hand"] = { "rect": hand_rect }
+
+        board_rect = pygame.Rect(*board_pos, *board_size)
+        consts["board"] = {"rect": board_rect}
+
+        self.consts = consts
 
     def deselect(self):
         self.selected_card = None
