@@ -26,7 +26,8 @@ class GameScene(Scene):
         self.selected_card = None
         self.zoomed_card = None #TODO
 
-        self.hand_rects = [] #TODO To be changed - all "card images" need a saved rect for zoom
+        self.hand_rects = []
+        self.card_rects = []
 
         self.consts = {}
         self.init_consts()
@@ -50,6 +51,7 @@ class GameScene(Scene):
                 }
 
             elif event.key == pygame.K_RETURN and self.selected_card and len(self.selected_card.rows) > 0:
+                #TODO nie dziala ze specjalnymi
                 self.lock()
                 return {
                     "type": "play",
@@ -108,6 +110,29 @@ class GameScene(Scene):
                                 "row": row_name
                             }
 
+                #Check decoy
+                if card.is_targeting():
+                    target = None
+                    for target_card, target_rect in self.card_rects:
+                        if target_rect.collidepoint(event.pos):
+                            target = target_card
+                            break
+
+                    if target is None:
+                        return None
+
+                    row_names = self.consts["row_names"]
+                    for row_name in row_names:
+                        row_rect = self.consts[row_name]["unit_rect"]
+                        if row_rect.collidepoint(event.pos):
+                            self.lock()
+                            return {
+                                "type": "play",
+                                "card_id": card.id,
+                                "row": row_name,
+                                "targets": [target], #TODO ended here
+                            }
+
                 #Check any board clicks
                 if card.is_absolute():
                     board_rect = self.consts["board"]["rect"]
@@ -141,6 +166,7 @@ class GameScene(Scene):
         self.volume_slider.draw(self.screen)
 
     def draw_rows(self):
+        self.card_rects.clear()
         rows = self.game.board.get_ordered_rows(self.player_id)
         row_names = self.consts["row_names"]
 
@@ -175,23 +201,22 @@ class GameScene(Scene):
             self.draw_text("Oczekiwanie na ruch przeciwnika", 570, 1000)
 
     def draw_row(self, row, row_rect):
-        x, y = row_rect.left, row_rect.top
-        offset = 0
-        for card in row.cards:
-            self.draw_card(card, x + offset, y, "small")
-            offset += 90
+        self.draw_card_holder(row, row_rect, self.card_rects)
 
     def draw_hand(self):
         self.hand_rects.clear()
         hand = self.game.players[self.player_id].hand
 
         rect = self.consts["hand"]["rect"]
+        self.draw_card_holder(hand, rect, self.hand_rects)
+
+    def draw_card_holder(self, container, rect, card_rects_output):
         x, y = rect.left, rect.top
         offset = 0
 
-        for card in hand.cards:
+        for card in container:
             card_rect = self.draw_card(card, x + offset, y, "small")
-            self.hand_rects.append((card, card_rect))
+            card_rects_output.append((card, card_rect))
             offset += 90
 
     def draw_weather(self):

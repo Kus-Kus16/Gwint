@@ -13,12 +13,17 @@ class Board:
         if player_id == 1:
             row_index = (row_index + 3) % 6
 
-        return row_index
+        row_player_id = 0 if row_index < 3 else 1
+        return row_index, row_player_id
+
+    def get_row(self, row_type, player_id):
+        row_index, row_player_id = self.row_index(row_type, player_id)
+        return self.rows[row_index], row_player_id
 
     def play_card(self, card, row_type, player_id):
-        row = self.rows[self.row_index(row_type, player_id)]
+        row_index, _ = self.row_index(row_type, player_id)
+        row = self.rows[row_index]
         row.add_card(card)
-        row.recalculate()
 
     def rows_sum(self):
         return sum(self.rows[i].points for i in range(3)), sum(self.rows[i].points for i in range(3, 6))
@@ -59,11 +64,11 @@ class Board:
 
         for i in range(0, 3):
             self.rows[i].transfer_all_cards(player0.grave)
-            self.rows[i].recalculate()
+            self.rows[i].clear_boosts()
 
         for i in range(3, 6):
             self.rows[i].transfer_all_cards(player1.grave)
-            self.rows[i].recalculate()
+            self.rows[i].clear_boosts()
 
     def get_ordered_rows(self, player_id):
         rows0 = self.rows[0:3]
@@ -79,7 +84,9 @@ class Board:
         return "\n".join(str(row) for row in rows) + "\n"
 
     def scorch_row(self, row_type, player_id):
-        row = self.rows[self.row_index(row_type, player_id)]
+        row_index, row_player_id = self.row_index(row_type, player_id)
+        row = self.rows[row_index]
+        scorched = []
 
         if row.points < 10:
             return
@@ -87,13 +94,14 @@ class Board:
         cards = row.find_strongest(ignore_heroes=True)
         for card in cards:
             row.remove_card(card)
-            card.send_to_owner_grave()
+            scorched.append( (card, row_player_id) )
 
-        row.recalculate()
+        return scorched
 
     def scorch(self):
         maxi = -10e10
         all_cards = [[] for _ in range(6)]
+        scorched = []
 
         for i, row in enumerate(self.rows):
             cards = row.find_strongest(ignore_heroes=True)
@@ -105,8 +113,10 @@ class Board:
                 all_cards[i] = cards
 
         for i, row in enumerate(self.rows):
+            row_player_id = 0 if i < 3 else 1
             for card in all_cards[i]:
                 row.remove_card(card)
-                card.send_to_owner_grave()
+                scorched.append( (card, row_player_id) )
 
         self.update_rows()
+        return scorched

@@ -309,6 +309,7 @@ class GamePresenter:
     def return_to_menu(self):
         self.game_state = "menu"
         self.disconnect()
+        self.game.end_game()
         scene = self.view.current_scene
         self.view.change_scene(self.view.menu)
         scene.reset_all()
