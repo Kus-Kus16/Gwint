@@ -3,6 +3,7 @@ from overrides import overrides
 
 from view import ImageLoader
 from view.Scenes.Scene import Scene
+from view.components.CarouselScene import CarouselScene
 from view.components.EndScreen import EndScreen
 
 
@@ -22,6 +23,8 @@ class GameScene(Scene):
         self.game = None
         self.ended = False
         self.end_screen = None
+        self.show_carousel = False
+        self.carousel_scene = None
         self.player_id = None
         self.selected_card = None
         self.zoomed_card = None #TODO
@@ -38,6 +41,11 @@ class GameScene(Scene):
 
         if self.ended:
             return self.end_screen.handle_events(event)
+
+        if self.show_carousel:
+            result = self.carousel_scene.handle_events(event)
+            if result is not None:
+                return result
 
         if self.locked:
             return None
@@ -162,6 +170,9 @@ class GameScene(Scene):
 
         if self.ended and len(self.temporary_drawable) == 0:
             self.end_screen.draw()
+
+        if self.show_carousel:
+            self.carousel_scene.draw()
 
         self.volume_slider.draw(self.screen)
 
@@ -394,3 +405,14 @@ class GameScene(Scene):
             return
 
         self.locked = False
+
+
+    def show_card_carousel(self, cards, callback):
+        self.carousel_scene = CarouselScene(
+            self.screen,
+            self.framerate,
+            self.font,
+            cards,
+            callback
+        )
+        self.show_carousel = True
