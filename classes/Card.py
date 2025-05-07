@@ -50,6 +50,9 @@ class Card:
 
         return any(ability in self.abilities for ability in ["decoy"])
 
+    def is_medic(self):
+        return any(ability in self.abilities for ability in ["medic"])
+
     def is_absolute(self):
         if not self.type == CardType.SPECIAL:
             return False

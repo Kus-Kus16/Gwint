@@ -45,7 +45,9 @@ class Game:
                 player.hand.add_card(card)
                 return False
         else:
-            additional_actions = self.handle_abilities(player, card, row_type)
+            additional_actions = self.handle_abilities(player, card, row_type, targets)
+            if additional_actions is None:
+                return False
             self.board.play_card(card, row_type, player_id)
             for action in additional_actions:
                 action()
@@ -101,7 +103,7 @@ class Game:
 
         return True
 
-    def handle_abilities(self, player, card, row_type):
+    def handle_abilities(self, player, card, row_type, targets):
         actions = []
         card_id = card.id
         player_id = player.id
@@ -120,6 +122,15 @@ class Game:
                     actions.append(lambda r=row_type, p=1 - player_id: self.grave_cards(self.board.scorch_row(r, p)))
                 case "scorch":
                     actions.append(lambda: self.grave_cards(self.board.scorch()))
+                case "medic":
+                    grave = self.players[player_id].grave
+                    for target_id in targets:
+                        target = grave.find_card_by_id(target_id)
+                        if target is None:
+                            return None
+
+                        actions.append(lambda p=player, t=target: p.grave.remove_card(t))
+                        actions.append(lambda p=player_id, e=target, r=target.rows[0]: self.put_extra_card(p, e, r))
 
         return actions
 

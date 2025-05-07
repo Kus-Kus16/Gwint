@@ -37,7 +37,7 @@ class PygameView:
         # Soundtrack
         pygame.mixer.init()
         pygame.mixer.music.load("resources/soundtrack.mp3")
-        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.set_volume(0)
         pygame.mixer.music.play(-1)
 
         #Screens initiation

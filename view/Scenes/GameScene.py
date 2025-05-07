@@ -44,8 +44,13 @@ class GameScene(Scene):
 
         if self.show_carousel:
             result = self.carousel_scene.handle_events(event)
-            if result is not None:
-                return result
+            if result is None:
+                return None
+            return {
+                "type": "carousel",
+                "card_id": result.id,
+                "end": not result.is_medic()
+            }
 
         if self.locked:
             return None
@@ -79,6 +84,7 @@ class GameScene(Scene):
 
                 card = self.selected_card
 
+
                 #Check row clicks
                 if card.is_unit() or card.is_hero():
                     row_names = card.rows
@@ -86,6 +92,17 @@ class GameScene(Scene):
                     for row_name in row_names:
                         row_rect = self.consts[row_name]["unit_rect"]
                         if row_rect.collidepoint(event.pos):
+                            # Check medic
+                            if card.is_medic():
+                                grave_cards = self.game.players[self.player_id].grave.cards
+                                if grave_cards:
+                                    self.lock()
+                                    return {
+                                        "type": "medic",
+                                        "card_id": card.id,
+                                        "row": row_name
+                                    }
+
                             self.lock()
                             return {
                                 "type": "play",
@@ -225,7 +242,7 @@ class GameScene(Scene):
         x, y = rect.left, rect.top
         offset = 0
 
-        for card in container:
+        for card in container.cards:
             card_rect = self.draw_card(card, x + offset, y, "small")
             card_rects_output.append((card, card_rect))
             offset += 90
@@ -407,12 +424,12 @@ class GameScene(Scene):
         self.locked = False
 
 
-    def show_card_carousel(self, cards, callback):
+    def show_card_carousel(self, cards):
         self.carousel_scene = CarouselScene(
             self.screen,
             self.framerate,
             self.font,
             cards,
-            callback
+            self.draw_card
         )
         self.show_carousel = True

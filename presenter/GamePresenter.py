@@ -18,6 +18,7 @@ class GamePresenter:
         self.game = None
         self.game_state = "menu"
         self.actions = queue.Queue()
+        self.medic_dictionary = {}
 
         self.deck = deck
         self.commander = commander
@@ -120,8 +121,8 @@ class GamePresenter:
 
         self.view.current_scene.end_game(result, self.game.get_round_history(self.my_id))
 
-    def play_card(self, player_id, card_id, row):
-        return self.game.play_card(player_id, card_id, row)
+    def play_card(self, player_id, card_id, row, targets):
+        return self.game.play_card(player_id, card_id, row, targets)
 
     def pass_round(self, player_id):
         if not self.game.pass_round(player_id):
@@ -165,7 +166,7 @@ class GamePresenter:
         valid = False
         match data[0]:
             case "card":
-                valid = self.play_card(1 - self.my_id, data[1], data[2])
+                valid = self.play_card(1 - self.my_id, data[1], data[2], data[3])
             case "pass":
                 self.notification("pass_op")
                 valid = self.pass_round(1 - self.my_id)
@@ -209,6 +210,10 @@ class GamePresenter:
                     self.handle_play(action)
                 case "game-over":
                     self.handle_gameover(action)
+                case "medic":
+                    self.handle_medic(action)
+                case "carousel":
+                    self.handle_carousel(action)
                 case _:
                     pass
                     self.view.unlock()
@@ -259,11 +264,12 @@ class GamePresenter:
 
         card_id = action["card_id"]
         row = action["row"]
-        if not self.play_card(self.my_id, card_id, row):
+        targets = action.get("targets", [])
+        if not self.play_card(self.my_id, card_id, row, targets):
             self.turn_switch()
             return
 
-        response, data = self.n.send(("play", ["card", card_id, row]))
+        response, data = self.n.send(("play", ["card", card_id, row, targets]))
         # Opponent disconnected
         if response == "error":
             self.return_to_menu()
@@ -287,6 +293,25 @@ class GamePresenter:
             self.view.current_scene.reset()
         else:
             self.return_to_menu()
+
+    def handle_medic(self, action):
+        self.medic_dictionary.clear()
+        self.medic_dictionary["medic_id"] = action["card_id"]
+        self.medic_dictionary["medic_row"] = action["row"]
+        self.medic_dictionary["medic_targets"] = []
+        self.view.current_scene.show_card_carousel(self.game.players[self.my_id].grave.cards)
+        self.view.current_scene.deselect()
+
+    def handle_carousel(self, action):
+        self.medic_dictionary["medic_targets"].append(action["card_id"])
+        if action["end"]:
+            self.view.current_scene.show_carousel = False
+            self.view.current_scene.carousel_scene = None
+            self.notify({"type": "play",
+                         "card_id": self.medic_dictionary["medic_id"],
+                         "row": self.medic_dictionary["medic_row"],
+                         "targets": self.medic_dictionary["medic_targets"]})
+            self.medic_dictionary.clear()
 
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:

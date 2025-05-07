@@ -8,7 +8,7 @@ class VolumeSlider:
         self.handle_radius = 15
         self.handle_x = pos[0] + size[0]//2
         self.dragging = False
-        self.volume = 1.0
+        self.volume = 0
         self.action = { "type": "ui_action" }
 
         self.bg_color = (139, 69, 19)
