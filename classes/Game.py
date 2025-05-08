@@ -48,6 +48,7 @@ class Game:
             additional_actions = self.handle_abilities(player, card, row_type, targets)
             if additional_actions is None:
                 return False
+            print("Zagrywam karte w play_card: ", card_id)
             self.board.play_card(card, row_type, player_id)
             for action in additional_actions:
                 action()
@@ -127,6 +128,7 @@ class Game:
                     for target_id in targets:
                         target = grave.find_card_by_id(target_id)
                         if target is None:
+                            print("nie ma")
                             return None
 
                         actions.append(lambda p=player, t=target: p.grave.remove_card(t))
