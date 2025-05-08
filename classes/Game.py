@@ -36,19 +36,19 @@ class Game:
             print("wrong row")
             return False
 
-        player.play_to_board(card)
-
         if card.is_special():
             valid = self.handle_special(player, card, row_type, targets)
             if not valid:
                 print("wrong special action")
-                player.hand.add_card(card)
                 return False
+            player.play_to_board(card)
         else:
             additional_actions = self.handle_abilities(player, card, row_type, targets)
             if additional_actions is None:
+                print("wrong ability use")
                 return False
-            print("Zagrywam karte w play_card: ", card_id)
+
+            player.play_to_board(card)
             self.board.play_card(card, row_type, player_id)
             for action in additional_actions:
                 action()
@@ -58,12 +58,20 @@ class Game:
 
         return True
 
-    def put_extra_card(self, player_id, card, row):
-        # Ignores the limits
+    def play_extra_card(self, player_id, card, row, targets = None):
+        # Ignores the limits except abilities
+        if targets is None:
+            targets = []
         player = self.players[player_id]
         row_type = RowType[row.upper()]
 
-        self.board.play_card(card, row_type, player_id)
+        if card.is_special():
+            self.handle_special(player, card, row_type, targets)
+        else:
+            additional_actions = self.handle_abilities(player, card, row_type, targets)
+            self.board.play_card(card, row_type, player_id)
+            for action in additional_actions:
+                action()
         self.update_points()
 
     def handle_special(self, player, card, row_type, targets):
@@ -117,22 +125,21 @@ class Game:
                     other_ids = CardsDatabase.get_muster(card_id)
                     for id in other_ids:
                         extra = player.hand.get_card_by_id(id) or player.deck.get_card_by_id(id)
-                        if extra is not None:
-                            actions.append(lambda p=player_id, e=extra, r=extra.rows[0]: self.put_extra_card(p, e, r))
+                        if extra is not None and extra != card:
+                            actions.append(lambda p=player_id, e=extra, r=extra.rows[0]: self.play_extra_card(p, e, r))
                 case "scorchRow":
                     actions.append(lambda r=row_type, p=1 - player_id: self.grave_cards(self.board.scorch_row(r, p)))
                 case "scorch":
                     actions.append(lambda: self.grave_cards(self.board.scorch()))
                 case "medic":
                     grave = self.players[player_id].grave
-                    for target_id in targets:
-                        target = grave.find_card_by_id(target_id)
-                        if target is None:
-                            print("nie ma")
-                            return None
+                    target_id = targets.pop(0)
+                    target = grave.find_card_by_id(target_id)
+                    if target is None:
+                        return None
 
-                        actions.append(lambda p=player, t=target: p.grave.remove_card(t))
-                        actions.append(lambda p=player_id, e=target, r=target.rows[0]: self.put_extra_card(p, e, r))
+                    actions.append(lambda p=player, t=target: p.grave.remove_card(t))
+                    actions.append(lambda p=player_id, c=target, r=target.rows[0], t=targets: self.play_extra_card(p, c, r, t))
 
         return actions
 

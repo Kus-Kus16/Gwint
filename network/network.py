@@ -4,7 +4,7 @@ import socket
 class Network:
     def __init__(self):
         self.client = None
-        self.server =  "192.168.0.157"
+        self.server =  "192.168.1.44"
         self.port = 5555
         self.addr = (self.server, self.port)
         self.connected = False

@@ -1,5 +1,4 @@
 import queue
-import threading
 import time
 
 from classes.Game import Game
@@ -122,7 +121,7 @@ class GamePresenter:
         self.view.current_scene.end_game(result, self.game.get_round_history(self.my_id))
 
     def play_card(self, player_id, card_id, row, targets):
-        return self.game.play_card(player_id, card_id, row, targets)
+        return self.game.play_card(player_id, card_id, row, list(targets))
 
     def pass_round(self, player_id):
         if not self.game.pass_round(player_id):
@@ -299,7 +298,7 @@ class GamePresenter:
         self.medic_dictionary["medic_id"] = action["card_id"]
         self.medic_dictionary["medic_row"] = action["row"]
         self.medic_dictionary["medic_targets"] = []
-        self.view.current_scene.show_card_carousel(self.game.players[self.my_id].grave.cards)
+        self.view.current_scene.show_card_carousel(self.game.players[self.my_id].get_grave_cards(playable_only=True))
         self.view.current_scene.deselect()
 
     def handle_carousel(self, action):
@@ -312,6 +311,8 @@ class GamePresenter:
                          "row": self.medic_dictionary["medic_row"],
                          "targets": self.medic_dictionary["medic_targets"]})
             self.medic_dictionary.clear()
+        else:
+            self.view.unlock()
 
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:

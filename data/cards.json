@@ -135,7 +135,7 @@
         "faction": "Neutralne",
         "power": 8,
         "rows": ["close"],
-        "abilities": [],
+        "abilities": ["avenger"],
         "count": 0,
         "filename": "bydlece"
     },
@@ -1792,7 +1792,7 @@
         "rows": ["close"],
         "abilities": ["hero", "muster"],
         "count": 1,
-	"filename": "Cerys"
+	    "filename": "cerys"
     },
     {
         "id": 237,
@@ -1800,9 +1800,9 @@
         "faction": "Skellige",
         "power": 11,
         "rows": ["close"],
-        "abilities": ["hero"],
+        "abilities": ["hero", "avenger"],
         "count": 0,
-	"filename": "Hemdall"
+	    "filename": "hemdall"
     },
     {
         "id": 238,
@@ -1812,7 +1812,7 @@
         "rows": ["ranged"],
         "abilities": ["hero"],
         "count": 1,
-	"filename": "Hjalmar"
+	    "filename": "hjalmar"
     },
     {
         "id": 239,
@@ -1822,7 +1822,7 @@
         "rows": ["ranged"],
         "abilities": ["hero", "mardroeme"],
         "count": 1,
-	"filename": "Myszowor"
+	    "filename": "myszowor"
     },
     {
         "id": 240,

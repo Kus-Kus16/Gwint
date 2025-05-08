@@ -146,7 +146,7 @@ class GameScene(Scene):
                     if target is None:
                         return None
 
-                    row_names = self.consts["row_names"]
+                    row_names = ["close", "ranged", "siege"]
                     for row_name in row_names:
                         row_rect = self.consts[row_name]["unit_rect"]
                         if row_rect.collidepoint(event.pos):
@@ -155,7 +155,7 @@ class GameScene(Scene):
                                 "type": "play",
                                 "card_id": card.id,
                                 "row": row_name,
-                                "targets": [target], #TODO ended here
+                                "targets": [target.id], #TODO ended here
                             }
 
                 #Check any board clicks
@@ -221,6 +221,10 @@ class GameScene(Scene):
         #PLAYER DECK
         self.draw_text(f"{self.game.players[self.player_id].deck.size()}", x=1777, y=900, color=(255, 255, 255))
         self.draw_text(f"{self.game.players[1 - self.player_id].deck.size()}", x=1777, y=150, color=(255, 255, 255))
+
+        # #COMMANDERS
+        # self.draw_card(self.game.players[self.player_id].commander, 138, 80, "small")
+        # self.draw_card(self.game.players[1 - self.player_id].commander, 138, 833, "small")
 
         #MOVE TEXT
         if self.game.current_player_id == self.player_id:
@@ -309,7 +313,7 @@ class GameScene(Scene):
         if self.selected_card == card:
             pygame.draw.rect(self.screen, (212, 175, 55), rect, 4)
 
-        if not card.is_special() and not card.is_hero():
+        if not card.is_commander() and not card.is_special() and not card.is_hero():
             if card.power > card.base_power:
                 color = (20, 140, 60)
             elif card.power < card.base_power:
@@ -413,12 +417,20 @@ class GameScene(Scene):
             self.end_screen.lock()
             return
 
+        if self.carousel_scene is not None:
+            self.carousel_scene.lock()
+            return
+
         self.locked = True
 
     @overrides
     def unlock(self):
         if self.end_screen is not None:
             self.end_screen.unlock()
+            return
+
+        if self.carousel_scene is not None:
+            self.carousel_scene.unlock()
             return
 
         self.locked = False

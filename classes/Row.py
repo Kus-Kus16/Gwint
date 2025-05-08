@@ -102,7 +102,7 @@ class Row(CardHolder):
     def find_strongest(self, ignore_heroes = False):
         maxi = -10e10
         for card in self.cards:
-            if ignore_heroes and card.is_hero():
+            if card.is_special() or (ignore_heroes and card.is_hero()):
                 continue
 
             if card.power > maxi:
@@ -118,7 +118,7 @@ class Row(CardHolder):
     def find_weakest(self, ignore_heroes = False):
         mini = 10e10
         for card in self.cards:
-            if ignore_heroes and card.is_hero():
+            if card.is_special() or (ignore_heroes and card.is_hero()):
                 continue
 
             if card.power < mini:
@@ -160,6 +160,23 @@ class Row(CardHolder):
                 self.effects["horn"].remove(card)
                 card.send_to_owner_grave()
                 break
+
+    def clear_row(self, player):
+        remove = []
+        add = []
+        for card in self.cards:
+            if card.is_recalling():
+                extra = CardsDatabase.get_recall(card.id)
+                extra.owner = player
+                add.append(extra)
+
+            remove.append(card)
+
+        for card in remove:
+            self.transfer_card(card, player.grave)
+
+        for card in add:
+            self.add_card(card)
 
     def __str__(self):
         return str(self.points) + " :: " + ", ".join(str(card) for card in self.cards)
