@@ -9,6 +9,7 @@ class Player:
         self.hand = Hand()
         self.grave = Grave()
         self.commander = commander
+        self.faction = commander.faction
         self.points = 0
         self.hp = 2
         self.passed = False
@@ -28,7 +29,8 @@ class Player:
             self.draw_card()
 
     def play_to_board(self, card):
-        self.hand.remove_card(card)
+        if card in self.hand.cards:
+            self.hand.remove_card(card)
 
     def send_to_grave(self, card):
         self.grave.add_card(card)
@@ -56,7 +58,20 @@ class Player:
                 card.send_to_owner_grave()
 
     def deck_from_grave(self):
-        self.grave.transfer_all_cards(self.deck)
+        self.grave.redo_deck(self.deck)
+
+    def get_grave_cards(self, playable_only=False):
+        if not playable_only:
+            return self.grave.cards
+
+        cards = []
+        for card in self.grave.cards:
+            if card.is_special() or card.is_hero():
+                continue
+
+            cards.append(card)
+
+        return cards
 
     def __str__(self):
         return str(self.hand) + "\n" + f'\nH: {self.hand.size()} D: {self.deck.size()}, G: {self.grave.size()} PTS: {self.points}'

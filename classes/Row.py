@@ -30,18 +30,23 @@ class Row(CardHolder):
     def add_card(self, card):
         bisect.insort(self.cards, card)
         self.handle_abilities_insert(card)
+        self.recalculate()
 
     @overrides
     def remove_card(self, card):
         self.cards.remove(card)
         self.handle_abilities_remove(card)
-        card.power = card.base_power
+        card.reset_power()
+        self.recalculate()
 
     def recalculate(self):
         #TODO add power changes
         total = 0
 
         for card in self.cards:
+            if card.is_special():
+                continue
+
             self.apply_effects(card)
             total += card.power
 
@@ -84,10 +89,20 @@ class Row(CardHolder):
         self.effects["weather"] = False
         self.recalculate()
 
+    def add_horn(self, card):
+        id = card.id
+        for source in self.effects["horn"]:
+            if source.id == id:
+                return False
+
+        self.effects["horn"].add(card)
+        self.recalculate()
+        return True
+
     def find_strongest(self, ignore_heroes = False):
         maxi = -10e10
         for card in self.cards:
-            if ignore_heroes and card.is_hero():
+            if card.is_special() or (ignore_heroes and card.is_hero()):
                 continue
 
             if card.power > maxi:
@@ -103,7 +118,7 @@ class Row(CardHolder):
     def find_weakest(self, ignore_heroes = False):
         mini = 10e10
         for card in self.cards:
-            if ignore_heroes and card.is_hero():
+            if card.is_special() or (ignore_heroes and card.is_hero()):
                 continue
 
             if card.power < mini:
@@ -145,6 +160,23 @@ class Row(CardHolder):
                 self.effects["horn"].remove(card)
                 card.send_to_owner_grave()
                 break
+
+    def clear_row(self, player):
+        remove = []
+        add = []
+        for card in self.cards:
+            if card.is_recalling():
+                extra = CardsDatabase.get_recall(card.id)
+                extra.owner = player
+                add.append(extra)
+
+            remove.append(card)
+
+        for card in remove:
+            self.transfer_card(card, player.grave)
+
+        for card in add:
+            self.add_card(card)
 
     def __str__(self):
         return str(self.points) + " :: " + ", ".join(str(card) for card in self.cards)

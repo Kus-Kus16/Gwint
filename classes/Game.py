@@ -16,7 +16,10 @@ class Game:
         self.current_round = 0
         self.round_history = []
 
-    def play_card(self, player_id, card_id, row):
+    def play_card(self, player_id, card_id, row, targets = None):
+        if targets is None:
+            targets = []
+
         if self.current_player_id != player_id:
             print("wrong player")
             return False
@@ -33,13 +36,19 @@ class Game:
             print("wrong row")
             return False
 
-        player.play_to_board(card)
-
         if card.is_special():
-            #TODO special logic here
-            self.handle_special(card)
+            valid = self.handle_special(player, card, row_type, targets)
+            if not valid:
+                print("wrong special action")
+                return False
+            player.play_to_board(card)
         else:
-            additional_actions = self.handle_abilities(player, card, row_type)
+            additional_actions = self.handle_abilities(player, card, row_type, targets)
+            if additional_actions is None:
+                print("wrong ability use")
+                return False
+
+            player.play_to_board(card)
             self.board.play_card(card, row_type, player_id)
             for action in additional_actions:
                 action()
@@ -49,35 +58,61 @@ class Game:
 
         return True
 
-    def put_extra_card(self, player_id, card, row):
-        # Ignores the limits
+    def play_extra_card(self, player_id, card, row, targets = None):
+        # Ignores the limits except abilities
+        if targets is None:
+            targets = []
         player = self.players[player_id]
         row_type = RowType[row.upper()]
 
-        self.board.play_card(card, row_type, player_id)
+        if card.is_special():
+            self.handle_special(player, card, row_type, targets)
+        else:
+            additional_actions = self.handle_abilities(player, card, row_type, targets)
+            self.board.play_card(card, row_type, player_id)
+            for action in additional_actions:
+                action()
         self.update_points()
 
-    def handle_special(self, card):
+    def handle_special(self, player, card, row_type, targets):
+        card_id = card.id
+        player_id = player.id
+
         for ability in card.abilities:
             match ability:
                 case "decoy":
-                    pass
+                    target_id = targets.pop(0)
+                    row, row_owner_id = self.board.get_row(row_type, player_id)
+                    if row_owner_id != player_id:
+                        return False
+
+                    target = row.find_card_by_id(target_id)
+                    if target is None or not target.is_unit():
+                        return False
+
+                    row.add_card(card)
+                    row.remove_card(target)
+                    player.hand.add_card(target)
                 case "horn":
-                    pass
+                    row, row_owner_id = self.board.get_row(row_type, player_id)
+                    if row_owner_id != player_id or not row.add_horn(card):
+                        return False
                 case "scorch":
-                    pass
+                    self.grave_cards(self.board.scorch())
+                    card.send_to_owner_grave()
                 case "clear" | "frost" | "fog" | "rain" | "storm":
                     if self.board.is_weather_active(ability):
                         card.send_to_owner_grave()
-                        return
-
-                    self.board.add_weather(card, ability)
+                    else:
+                        self.board.add_weather(card, ability)
                 case "mardroeme":
                     pass
                 case "sangreal":
                     pass
 
-    def handle_abilities(self, player, card, row_type):
+        return True
+
+    def handle_abilities(self, player, card, row_type, targets):
         actions = []
         card_id = card.id
         player_id = player.id
@@ -90,12 +125,21 @@ class Game:
                     other_ids = CardsDatabase.get_muster(card_id)
                     for id in other_ids:
                         extra = player.hand.get_card_by_id(id) or player.deck.get_card_by_id(id)
-                        if extra is not None:
-                            actions.append(lambda p=player_id, e=extra, r=extra.rows[0]: self.put_extra_card(p, e, r))
+                        if extra is not None and extra != card:
+                            actions.append(lambda p=player_id, e=extra, r=extra.rows[0]: self.play_extra_card(p, e, r))
                 case "scorchRow":
-                    actions.append(lambda r=row_type, p=1 - player_id: self.board.scorch_row(r, p))
+                    actions.append(lambda r=row_type, p=1 - player_id: self.grave_cards(self.board.scorch_row(r, p)))
                 case "scorch":
-                    actions.append(lambda: self.board.scorch())
+                    actions.append(lambda: self.grave_cards(self.board.scorch()))
+                case "medic":
+                    grave = self.players[player_id].grave
+                    target_id = targets.pop(0)
+                    target = grave.find_card_by_id(target_id)
+                    if target is None:
+                        return None
+
+                    actions.append(lambda p=player, t=target: p.grave.remove_card(t))
+                    actions.append(lambda p=player_id, c=target, r=target.rows[0], t=targets: self.play_extra_card(p, c, r, t))
 
         return actions
 
@@ -135,6 +179,10 @@ class Game:
             player.draw_cards(10)
 
     def end_game(self):
+        self.board.clear_rows(self.players)
+        self.board.clear_weather()
+        self.update_points()
+
         for player in self.players:
             player.return_cards()
         for player in self.players:
@@ -198,3 +246,8 @@ class Game:
             history.append((pl1, pl0))
 
         return history
+
+    def grave_cards(self, cards_data):
+        for card, player_id in cards_data:
+            player = self.players[player_id]
+            player.send_to_grave(card)

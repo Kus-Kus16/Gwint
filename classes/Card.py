@@ -32,6 +32,9 @@ class Card:
     def is_special(self):
         return self.type == CardType.SPECIAL
 
+    def is_commander(self):
+        return self.type == CardType.COMMANDER
+
     def is_weather(self):
         if not self.type == CardType.SPECIAL:
             return False
@@ -49,6 +52,15 @@ class Card:
             return False
 
         return any(ability in self.abilities for ability in ["decoy"])
+
+    def is_medic(self):
+        return any(ability in self.abilities for ability in ["medic"])
+
+    def is_recalling(self):
+        return any(ability in self.abilities for ability in ["recall"])
+
+    def is_avenging(self):
+        return any(ability in self.abilities for ability in ["avenger"])
 
     def is_absolute(self):
         if not self.type == CardType.SPECIAL:

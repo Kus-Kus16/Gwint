@@ -13,8 +13,8 @@ def main():
     with open("./data/exampledecks.json", "r", encoding="utf-8") as file:
         deck = json.load(file)[2]
 
-    commander = None
-    valid, deck = CardsDatabase.create_verified_deck(deck)
+    commander_id = 30
+    valid, (deck, commander) = CardsDatabase.create_verified_deck(deck, commander_id)
     if not valid:
         raise ValueError("Illegal deck")
 

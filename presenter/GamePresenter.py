@@ -1,5 +1,4 @@
 import queue
-import threading
 import time
 
 from classes.Game import Game
@@ -18,6 +17,7 @@ class GamePresenter:
         self.game = None
         self.game_state = "menu"
         self.actions = queue.Queue()
+        self.medic_dictionary = {}
 
         self.deck = deck
         self.commander = commander
@@ -120,8 +120,8 @@ class GamePresenter:
 
         self.view.current_scene.end_game(result, self.game.get_round_history(self.my_id))
 
-    def play_card(self, player_id, card_id, row):
-        return self.game.play_card(player_id, card_id, row)
+    def play_card(self, player_id, card_id, row, targets):
+        return self.game.play_card(player_id, card_id, row, list(targets))
 
     def pass_round(self, player_id):
         if not self.game.pass_round(player_id):
@@ -165,7 +165,7 @@ class GamePresenter:
         valid = False
         match data[0]:
             case "card":
-                valid = self.play_card(1 - self.my_id, data[1], data[2])
+                valid = self.play_card(1 - self.my_id, data[1], data[2], data[3])
             case "pass":
                 self.notification("pass_op")
                 valid = self.pass_round(1 - self.my_id)
@@ -209,6 +209,10 @@ class GamePresenter:
                     self.handle_play(action)
                 case "game-over":
                     self.handle_gameover(action)
+                case "show_carousel":
+                    self.handle_show_carousel(action)
+                case "carousel":
+                    self.handle_carousel(action)
                 case _:
                     pass
                     self.view.unlock()
@@ -259,11 +263,12 @@ class GamePresenter:
 
         card_id = action["card_id"]
         row = action["row"]
-        if not self.play_card(self.my_id, card_id, row):
+        targets = action.get("targets", [])
+        if not self.play_card(self.my_id, card_id, row, targets):
             self.turn_switch()
             return
 
-        response, data = self.n.send(("play", ["card", card_id, row]))
+        response, data = self.n.send(("play", ["card", card_id, row, targets]))
         # Opponent disconnected
         if response == "error":
             self.return_to_menu()
@@ -288,6 +293,52 @@ class GamePresenter:
         else:
             self.return_to_menu()
 
+    def handle_show_carousel(self, action):
+        match action["carousel"]:
+            case "medic":
+                self.medic_dictionary.clear()
+                self.medic_dictionary["medic_id"] = action["card_id"]
+                self.medic_dictionary["medic_row"] = action["row"]
+                self.medic_dictionary["medic_targets"] = []
+                cards = self.game.players[self.my_id].get_grave_cards(playable_only=True)
+            case "zoom":
+                row = action["row"]
+                if row in ["grave", "grave_OPP"]:
+                    player_id = self.my_id if row == "grave" else 1 - self.my_id
+                    cards = self.game.get_player(player_id).get_grave_cards(playable_only=False)
+                elif row == "weather":
+                    cards = self.game.board.weather.cards
+                else:
+                    cards = self.game.board.get_row_by_name(row, self.my_id).cards
+            case _:
+                cards = []
+
+        if len(cards) > 0:
+            self.view.current_scene.show_card_carousel(cards, action["carousel"])
+            self.view.current_scene.deselect()
+        else:
+            self.view.unlock()
+
+    def handle_carousel(self, action):
+        match action["carousel"]:
+            case "medic":
+                self.medic_dictionary["medic_targets"].append(action["card_id"])
+                if action["end"]:
+                    self.notify({
+                        "type": "play",
+                        "card_id": self.medic_dictionary["medic_id"],
+                        "row": self.medic_dictionary["medic_row"],
+                        "targets": self.medic_dictionary["medic_targets"]
+                    })
+                    self.medic_dictionary.clear()
+            case _:
+                pass
+
+        if action["end"]:
+            self.view.current_scene.discard_card_carousel()
+
+        self.view.unlock()
+
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:
             self.game_state = "playing"
@@ -309,6 +360,7 @@ class GamePresenter:
     def return_to_menu(self):
         self.game_state = "menu"
         self.disconnect()
+        self.game.end_game()
         scene = self.view.current_scene
         self.view.change_scene(self.view.menu)
         scene.reset_all()
