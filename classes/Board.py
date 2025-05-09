@@ -1,4 +1,4 @@
-from classes.Row import Row
+from classes.Row import Row, RowType
 from classes.Weather import Weather
 
 
@@ -78,6 +78,11 @@ class Board:
             return rows1[::-1] + rows0
         else:
             return rows0[::-1] + rows1
+
+    def get_row_by_name(self, row_name, player_id):
+        row_type = RowType[row_name.upper()]
+        row_index, _ = self.row_index(row_type, player_id)
+        return self.rows[row_index]
 
     def rows_tostring(self, player_id):
         rows = self.get_ordered_rows(player_id)

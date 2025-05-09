@@ -9,6 +9,7 @@ class Player:
         self.hand = Hand()
         self.grave = Grave()
         self.commander = commander
+        self.faction = commander.faction
         self.points = 0
         self.hp = 2
         self.passed = False

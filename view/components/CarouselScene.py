@@ -7,14 +7,23 @@ from view.components.Button import Button
 
 
 class CarouselScene(Scene):
-    def __init__(self, screen, framerate, font, cards, draw_card):
+    def __init__(self, screen, framerate, font, cards, draw_card, carousel_type):
         super().__init__(screen, framerate, font, "resources/board.jpg")
         self.cards = list(cards)
         self.draw_card = draw_card
         self.selected_index = 0
-        self.buttons = [
-            Button("Wybierz", (self.screen_width // 2 - 150, self.screen_height - 200),
-                   (300, 100), {"type": "select"}, font) ]
+        self.carousel_type = carousel_type
+        self.choosable = carousel_type in ["medic", "redraw"]
+        self.cancellable = carousel_type in ["redraw", "peek", "zoom"]
+        self.buttons = []
+
+        if self.choosable:
+            self.buttons.append(Button("Wybierz", (self.screen_width // 2 - 400, self.screen_height - 200),
+                   (300, 100), {"type": "select"}, font))
+
+        if self.cancellable:
+            self.buttons.append(Button("Zamknij", (self.screen_width // 2 + 100, self.screen_height - 200),
+                   (300, 100), {"type": "cancel"}, font))
 
     @overrides
     def draw(self):
@@ -63,7 +72,20 @@ class CarouselScene(Scene):
                     return
             for btn in self.buttons:
                 if btn.check_click(event.pos):
+                    if btn.action["type"] == "cancel":
+                        return {
+                            "type": "carousel",
+                            "carousel": self.carousel_type,
+                            "card_id": None,
+                            "end": True
+                        }
+
                     card = self.cards[self.selected_index]
                     self.cards.remove(card)
                     self.lock()
-                    return card
+                    return {
+                        "type": "carousel",
+                        "carousel": self.carousel_type,
+                        "card_id": card.id,
+                        "end": not card.is_medic()
+                    }
