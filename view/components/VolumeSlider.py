@@ -1,5 +1,7 @@
 import pygame
 
+from view import Constants as C
+
 class VolumeSlider:
     def __init__(self, pos, size=(200, 20)):
         self.pos = pos
@@ -11,10 +13,10 @@ class VolumeSlider:
         self.volume = 0
         self.action = { "type": "ui_action" }
 
-        self.bg_color = (139, 69, 19)
-        self.hover_color = (160, 82, 45)
-        self.shadow_color = (50, 50, 50)
-        self.handle_color = (220, 220, 220)
+        self.bg_color = C.COLOR_BUTTON
+        self.hover_color = C.COLOR_BUTTON_HOVER
+        self.shadow_color = C.COLOR_GRAY
+        self.handle_color = C.COLOR_LIGHTGRAY
 
     def draw(self, screen):
         # Cień

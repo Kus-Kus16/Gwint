@@ -1,5 +1,7 @@
+from abc import ABC
 
-class CardHolder:
+
+class CardHolder(ABC):
     def __init__(self, cards=None):
         if cards is None:
             cards = []

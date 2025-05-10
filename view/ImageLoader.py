@@ -1,6 +1,7 @@
 import os
 
 import pygame
+from view import Constants as C
 
 image_cache = {}
 
@@ -14,7 +15,7 @@ def load_image(path):
 
     image = pygame.image.load(path).convert_alpha()
     if "large" in path:
-        image = pygame.transform.scale(image, (image.get_width() // 2, image.get_height() // 2))
+        image = pygame.transform.scale(image, C.LARGE_CARD_SIZE)
 
     image_cache[path] = image
     return image

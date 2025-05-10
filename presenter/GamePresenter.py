@@ -17,7 +17,7 @@ class GamePresenter:
         self.game = None
         self.game_state = "menu"
         self.actions = queue.Queue()
-        self.medic_dictionary = {}
+        self.carousel_dict = {}
 
         self.deck = deck
         self.commander = commander
@@ -210,7 +210,7 @@ class GamePresenter:
                 case "game-over":
                     self.handle_gameover(action)
                 case "show_carousel":
-                    self.handle_show_carousel(action)
+                    self.handle_show_carousel(action) if action["carousel"] != "zoom" else self.handle_show_zoom(action)
                 case "carousel":
                     self.handle_carousel(action)
                 case _:
@@ -264,9 +264,13 @@ class GamePresenter:
         card_id = action["card_id"]
         row = action["row"]
         targets = action.get("targets", [])
-        if not self.play_card(self.my_id, card_id, row, targets):
+        result = self.play_card(self.my_id, card_id, row, targets)
+        if not result:
             self.turn_switch()
             return
+
+        if not result is True:
+            self.view.current_scene.show_card_carousel(result, "peek")
 
         response, data = self.n.send(("play", ["card", card_id, row, targets]))
         # Opponent disconnected
@@ -293,51 +297,68 @@ class GamePresenter:
         else:
             self.return_to_menu()
 
-    def handle_show_carousel(self, action):
-        match action["carousel"]:
-            case "medic":
-                self.medic_dictionary.clear()
-                self.medic_dictionary["medic_id"] = action["card_id"]
-                self.medic_dictionary["medic_row"] = action["row"]
-                self.medic_dictionary["medic_targets"] = []
-                cards = self.game.players[self.my_id].get_grave_cards(playable_only=True)
-            case "zoom":
-                row = action["row"]
-                if row in ["grave", "grave_OPP"]:
-                    player_id = self.my_id if row == "grave" else 1 - self.my_id
-                    cards = self.game.get_player(player_id).get_grave_cards(playable_only=False)
-                elif row == "weather":
-                    cards = self.game.board.weather.cards
-                else:
-                    cards = self.game.board.get_row_by_name(row, self.my_id).cards
-            case _:
-                cards = []
+    def handle_show_zoom(self, action):
+        row = action["row"]
+        if row in ["GRAVE", "GRAVE_OPP"]:
+            player_id = self.my_id if row == "GRAVE" else 1 - self.my_id
+            cards = self.game.get_player(player_id).get_grave_cards(playable_only=False)
+        elif row in ["COMMANDER", "COMMANDER_OPP"]:
+            player_id = self.my_id if row == "COMMANDER" else 1 - self.my_id
+            cards = [self.game.get_player(player_id).commander]
+        elif row == "WEATHER":
+            cards = self.game.board.weather.cards
+        else:
+            cards = self.game.board.get_row_by_name(row, self.my_id).cards
 
         if len(cards) > 0:
-            self.view.current_scene.show_card_carousel(cards, action["carousel"])
-            self.view.current_scene.deselect()
+            self.show_carousel(cards, choose_count=0, cancelable=True)
         else:
             self.view.unlock()
 
-    def handle_carousel(self, action):
-        match action["carousel"]:
+    def handle_show_carousel(self, action):
+        self.carousel_dict["card_id"] = action["card_id"]
+        self.carousel_dict["row"] = action["row"]
+        self.carousel_dict["targets"] = []
+        self.view.current_scene.deselect()
+
+        cards = []
+        match action["ability"]:
             case "medic":
-                self.medic_dictionary["medic_targets"].append(action["card_id"])
-                if action["end"]:
-                    self.notify({
-                        "type": "play",
-                        "card_id": self.medic_dictionary["medic_id"],
-                        "row": self.medic_dictionary["medic_row"],
-                        "targets": self.medic_dictionary["medic_targets"]
-                    })
-                    self.medic_dictionary.clear()
-            case _:
-                pass
+                if not self.game.gamerule("healRandom"):
+                    cards = self.game.get_player(self.my_id).get_grave_cards(playable_only=True)
+                    if cards:
+                        self.show_carousel(cards, choose_count=-1, cancelable=False)
+            case "chooseEnemyGrave":
+                cards = self.game.get_player(1 - self.my_id).get_grave_cards(playable_only=True)
+                if cards:
+                    self.show_carousel(cards, choose_count=1, cancelable=False)
+
+        if len(cards) == 0:
+            self.notify({
+                "type": "play",
+                "card_id": action["card_id"],
+                "row": action["row"]
+            })
+
+    def handle_carousel(self, action):
+        if action["card_id"] is not None:
+            self.carousel_dict["targets"].append(action["card_id"])
+            if action["end"]:
+                self.notify({
+                    "type": "play",
+                    "card_id": self.carousel_dict["card_id"],
+                    "row": self.carousel_dict["row"],
+                    "targets": self.carousel_dict["targets"]
+                })
+                self.carousel_dict.clear()
 
         if action["end"]:
             self.view.current_scene.discard_card_carousel()
 
         self.view.unlock()
+
+    def show_carousel(self, cards, choose_count=0, cancelable=False):
+        self.view.current_scene.show_card_carousel(cards, choose_count, cancelable)
 
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:

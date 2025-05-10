@@ -19,6 +19,9 @@ with open("./data/bond.json", "r", encoding="utf-8") as file:
 with open("./data/recall.json", "r", encoding="utf-8") as file:
     recall_dict = json.load(file)
 
+with open("./data/find.json", "r", encoding="utf-8") as file:
+    find_dict = json.load(file)
+
 # Dictionary
 def find_card(predicate):
     for card in card_dict:
@@ -46,7 +49,8 @@ def create_verified_deck(data, commander_id):
     if commander_data is None:
         return False, None
 
-    commander = Commander(commander_data, faction)
+    commander_data["faction"] = faction
+    commander = Commander(commander_data)
 
     processed = {}
     # id -> cnt, maxcnt, data
@@ -91,3 +95,7 @@ def get_recall(card_id):
     card_id = recall_dict[f"{card_id}"]
     card_data = find_card_by_id(card_id)
     return Card(card_data)
+
+# Find
+def get_find(card_id):
+    return find_dict[f"{card_id}"]

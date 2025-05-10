@@ -3,7 +3,7 @@ from classes.CardHolder import CardHolder
 
 class Grave(CardHolder):
 
-    def redo_deck(self, deck_container):
+    def return_to_deck(self, deck):
         remove = []
         for card in self.cards:
             if card.is_avenging():
@@ -12,4 +12,4 @@ class Grave(CardHolder):
         for card in remove:
             self.remove_card(card)
 
-        self.transfer_all_cards(deck_container)
+        self.transfer_all_cards(deck)

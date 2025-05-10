@@ -1,72 +1,19 @@
-from enum import Enum
+from overrides import overrides
 
-class CardType(Enum):
-    SPECIAL = 0
-    UNIT = 1
-    HERO = 2
-    COMMANDER = 3
+from classes.CardBase import CardBase, CardType
 
-class Card:
+
+class Card(CardBase):
     def __init__(self, data):
-        self.id = data['id']
-        self.name = data['name']
-        self.faction = data['faction']
+        super().__init__(data)
         self.base_power = data['power']
         self.power = self.base_power
-        self.owner = None
         self.rows = data['rows']
-        self.abilities = data['abilities']
-        self.filename = data['filename']
         self.type = (
             CardType.SPECIAL if self.power is None
             else CardType.HERO if "hero" in self.abilities
             else CardType.UNIT
         )
-
-    def is_unit(self):
-        return self.type == CardType.UNIT
-
-    def is_hero(self):
-        return self.type == CardType.HERO
-
-    def is_special(self):
-        return self.type == CardType.SPECIAL
-
-    def is_commander(self):
-        return self.type == CardType.COMMANDER
-
-    def is_weather(self):
-        if not self.type == CardType.SPECIAL:
-            return False
-
-        return any(ability in self.abilities for ability in ["frost", "fog", "rain", "storm", "clear"])
-
-    def is_boost(self):
-        if not self.type == CardType.SPECIAL:
-            return False
-
-        return any(ability in self.abilities for ability in ["horn", "mardroeme", "sangreal"])
-
-    def is_targeting(self):
-        if not self.type == CardType.SPECIAL:
-            return False
-
-        return any(ability in self.abilities for ability in ["decoy"])
-
-    def is_medic(self):
-        return any(ability in self.abilities for ability in ["medic"])
-
-    def is_recalling(self):
-        return any(ability in self.abilities for ability in ["recall"])
-
-    def is_avenging(self):
-        return any(ability in self.abilities for ability in ["avenger"])
-
-    def is_absolute(self):
-        if not self.type == CardType.SPECIAL:
-            return False
-
-        return any(ability in self.abilities for ability in ["scorch"])
 
     def set_power(self, power):
         if self.is_hero() or self.is_special():
@@ -77,6 +24,7 @@ class Card:
     def reset_power(self):
         self.power = self.base_power
 
+    @overrides
     def is_row_playable(self, row_type):
         if self.is_special():
             return True

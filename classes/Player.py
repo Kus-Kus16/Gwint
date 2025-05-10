@@ -58,7 +58,7 @@ class Player:
                 card.send_to_owner_grave()
 
     def deck_from_grave(self):
-        self.grave.redo_deck(self.deck)
+        self.grave.return_to_deck(self.deck)
 
     def get_grave_cards(self, playable_only=False):
         if not playable_only:
@@ -72,6 +72,16 @@ class Player:
             cards.append(card)
 
         return cards
+
+    def get_from_hand(self, card_id):
+        return self.hand.get_card_by_id(card_id)
+
+    def get_from_deck(self, card_id):
+        return self.deck.get_card_by_id(card_id)
+
+    def get_commander(self, card_id):
+        card = self.commander
+        return card if card.id == card_id else None
 
     def __str__(self):
         return str(self.hand) + "\n" + f'\nH: {self.hand.size()} D: {self.deck.size()}, G: {self.grave.size()} PTS: {self.points}'

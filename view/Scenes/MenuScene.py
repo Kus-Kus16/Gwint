@@ -1,6 +1,7 @@
 import pygame
 from overrides import overrides
 
+from view import Constants as C
 from view.Scenes.Scene import Scene
 from view.components.Button import Button
 
@@ -9,17 +10,18 @@ class MenuScene(Scene):
 	def __init__(self, screen, framerate, font):
 		super().__init__(screen, framerate, font, "resources/menu.png")
 
-		button_x = self.screen_width // 2 - 200
+		button_width, button_height = C.BUTTON_SIZE_WIDE
+		button_x = (self.screen_width - button_width) // 2
 		button_y = self.screen_height // 2
-		button_size = (400, 80)
+		button_size = C.BUTTON_SIZE_WIDE
 		self.menu_buttons = [
 			Button("Nowa gra", (button_x, button_y), button_size,
 				   { "type": "mode_change", "mode": "start_game" }, font),
-			Button("Autorzy", (button_x, button_y + 100), button_size,
+			Button("Autorzy", (button_x, button_y + (button_height + 20)), button_size,
 				   { "type": "mode_change", "mode": "credits" }, font),
-			Button("Twoja talia", (button_x, button_y + 200), button_size,
+			Button("Twoja talia", (button_x, button_y + 2 * (button_height + 20)), button_size,
 				   { "type": "mode_change", "mode": "deck" }, font),
-			Button("Wyjście", (button_x, button_y + 300), button_size,
+			Button("Wyjście", (button_x, button_y + 3 * (button_height + 20)), button_size,
 				   { "type": "mode_change", "mode": "exit" }, font)
 		]
 

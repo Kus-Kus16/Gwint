@@ -1,6 +1,6 @@
 import pygame
 
-from view import ImageLoader
+from view import ImageLoader, Constants as C
 
 def load_image(name):
     path = f"resources/ico/{name}.png"
@@ -23,7 +23,7 @@ class Notification:
         screen.blit(overlay, self.rect.topleft)
 
         screen.blit(self.image, (440, 385))
-        text = self.font.render(self.text, True, (197, 152, 79))
+        text = self.font.render(self.text, True, C.COLOR_GOLD)
         screen.blit(text, (890, self.rect.centery - text.get_height() // 2))
 
 

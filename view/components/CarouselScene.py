@@ -1,39 +1,47 @@
 import pygame
 from overrides import overrides
 
-from view import ImageLoader
+from view import Constants as C
 from view.Scenes.Scene import Scene
 from view.components.Button import Button
 
 
 class CarouselScene(Scene):
-    def __init__(self, screen, framerate, font, cards, draw_card, carousel_type):
+    def __init__(self, screen, framerate, font, draw_card, cards, choose_count, cancelable):
         super().__init__(screen, framerate, font, "resources/board.jpg")
+        self.pos = (0, 0)
+        self.size = screen.get_size()
+        self.rect = pygame.Rect(self.pos, self.size)
         self.cards = list(cards)
         self.draw_card = draw_card
         self.selected_index = 0
-        self.carousel_type = carousel_type
-        self.choosable = carousel_type in ["medic", "redraw"]
-        self.cancellable = carousel_type in ["redraw", "peek", "zoom"]
+        self.choose_count = choose_count
+        print(choose_count)
+        self.choosable = choose_count != 0
+        self.cancellable = cancelable
         self.buttons = []
 
+        button_width, button_height = C.BUTTON_SIZE_WIDE
         if self.choosable:
-            self.buttons.append(Button("Wybierz", (self.screen_width // 2 - 400, self.screen_height - 200),
-                   (300, 100), {"type": "select"}, font))
+            self.buttons.append(Button("Wybierz", (self.screen_width // 2 - button_width - 100, self.screen_height - 200),
+                   C.BUTTON_SIZE, {"type": "select"}, font))
 
         if self.cancellable:
             self.buttons.append(Button("Zamknij", (self.screen_width // 2 + 100, self.screen_height - 200),
-                   (300, 100), {"type": "cancel"}, font))
+                   C.BUTTON_SIZE, {"type": "cancel"}, font))
 
     @overrides
     def draw(self):
-        # 668x1164
+        overlay = pygame.Surface(self.size, pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 128))
+        self.screen.blit(overlay, self.rect.topleft)
+
         center_x = self.screen_width // 2
         center_y = self.screen_height // 2
 
         visible_cards = 3
         half_visible = visible_cards // 2
-        card_width, card_height = 668//2, 1164//2
+        card_width, card_height = C.LARGE_CARD_SIZE
 
         for i in range(-half_visible, half_visible + 1):
             card_index = self.selected_index + i
@@ -61,7 +69,7 @@ class CarouselScene(Scene):
             mouse_x, mouse_y = event.pos
             center_x = self.screen_width // 2
             center_y = self.screen_height // 2
-            card_width, card_height = 668 // 2, 1164 // 2
+            card_width, card_height = C.LARGE_CARD_SIZE
             offset = card_width + 140
 
             for i in range(-1, 2):
@@ -75,17 +83,16 @@ class CarouselScene(Scene):
                     if btn.action["type"] == "cancel":
                         return {
                             "type": "carousel",
-                            "carousel": self.carousel_type,
                             "card_id": None,
                             "end": True
                         }
 
                     card = self.cards[self.selected_index]
                     self.cards.remove(card)
+                    self.choose_count -= 1
                     self.lock()
                     return {
                         "type": "carousel",
-                        "carousel": self.carousel_type,
                         "card_id": card.id,
-                        "end": not card.is_medic()
+                        "end": self.choose_count == 0 or len(self.cards) == 0 or not card.is_choosing()
                     }

@@ -7,35 +7,35 @@
                 "id": 30,
                 "name": "Foltest",
                 "nickname": "Król Temerii",
-                "ability": "findFog",
+                "abilities": ["findFog"],
                 "filename": "foltest1"
             },
             {
                 "id": 31,
                 "name": "Foltest",
                 "nickname": "Dowódca Północy",
-                "ability": "clear",
+                "abilities": ["clear"],
                 "filename": "foltest2"
             },
             {
                 "id": 32,
                 "name": "Foltest",
                 "nickname": "Zdobywca",
-                "ability": "hornSiege",
+                "abilities": ["hornSiege"],
                 "filename": "foltest3"
             },
             {
                 "id": 33,
                 "name": "Foltest",
                 "nickname": "Żelazny Władca",
-                "ability": "scorchSiege",
+                "abilities": ["scorchSiege"],
                 "filename": "foltest4"
             },
             {
                 "id": 34,
                 "name": "Foltest",
                 "nickname": "Syn Medella",
-                "ability": "scorchRanged",
+                "abilities": ["scorchRanged"],
                 "filename": "foltest5"
             }
         ]
@@ -48,35 +48,35 @@
                 "id": 80,
                 "name": "Emhyr var Emreis",
                 "nickname": "Jeż z Erlenwaldu",
-                "ability": "findRain",
+                "abilities": ["findRain"],
                 "filename": "emhyr1"
             },
             {
                 "id": 81,
                 "name": "Emhyr var Emreis",
                 "nickname": "Cesarz Nilfgaardu",
-                "ability": "show3Enemy",
+                "abilities": ["show3Enemy"],
                 "filename": "emhyr2"
             },
             {
                 "id": 82,
                 "name": "Emhyr var Emreis",
                 "nickname": "Biały Płomień Tańczący na Kurchanach Wrogów",
-                "ability": "blockAbility",
+                "abilities": ["blockAbility"],
                 "filename": "emhyr3"
             },
             {
                 "id": 83,
                 "name": "Emhyr var Emreis",
                 "nickname": "Pan Południa",
-                "ability": "chooseEnemyGrave",
+                "abilities": ["chooseEnemyGrave"],
                 "filename": "emhyr4"
             },
             {
                 "id": 84,
                 "name": "Emhyr var Emreis",
                 "nickname": "Najeźdźca Północy",
-                "ability": "graveRandom",
+                "abilities": ["healRandom"],
                 "filename": "emhyr5"
             }
         ]
@@ -89,35 +89,35 @@
                 "id": 130,
                 "name": "Eredin Bréac Glas",
                 "nickname": "Król Dzikiego Gonu",
-                "ability": "chooseDeckWeather",
+                "abilities": ["chooseDeckWeather"],
                 "filename": "eredin1"
             },
             {
                 "id": 131,
                 "name": "Eredin Bréac Glas",
                 "nickname": "Dowódca Czerwonych Jeźdźców",
-                "ability": "hornClose",
+                "abilities": ["hornClose"],
                 "filename": "eredin2"
             },
             {
                 "id": 132,
                 "name": "Eredin Bréac Glas",
                 "nickname": "Władca Tir ná Lia",
-                "ability": "discard2Choose1",
+                "abilities": ["discard2Choose1"],
                 "filename": "eredin3"
             },
             {
                 "id": 133,
                 "name": "Eredin Bréac Glas",
                 "nickname": "Zabójca Auberona",
-                "ability": "chooseGrave",
+                "abilities": ["chooseGrave"],
                 "filename": "eredin4"
             },
             {
                 "id": 134,
                 "name": "Eredin Bréac Glas",
                 "nickname": "Zdradziecki",
-                "ability": "spiesDouble",
+                "abilities": ["spiesDouble"],
                 "filename": "eredin5"
             }
         ]
@@ -130,35 +130,35 @@
                 "id": 180,
                 "name": "Francesca Findabair",
                 "nickname": "Elfka Czystej Krwi",
-                "ability": "findFrost",
+                "abilities": ["findFrost"],
                 "filename": "francesca1"
             },
             {
                 "id": 181,
                 "name": "Francesca Findabair",
                 "nickname": "Stokrotka z Dolin",
-                "ability": "plusCard",
+                "abilities": ["plusCard"],
                 "filename": "francesca2"
             },
             {
                 "id": 182,
                 "name": "Francesca Findabair",
                 "nickname": "Najpiękniejsza Kobieta na Świecie",
-                "ability": "hornRanged",
+                "abilities": ["hornRanged"],
                 "filename": "francesca3"
             },
             {
                 "id": 183,
                 "name": "Francesca Findabair",
                 "nickname": "Królowa Dol Blathanna",
-                "ability": "scorchClose",
+                "abilities": ["scorchClose"],
                 "filename": "francesca4"
             },
             {
                 "id": 184,
                 "name": "Francesca Findabair",
                 "nickname": "Nadzieja Dol Blathanna",
-                "ability": "optimise",
+                "abilities": ["optimise"],
                 "filename": "francesca5"
             }
         ]
@@ -171,31 +171,31 @@
                 "id": 230,
                 "name": "Bran Tuirseach",
                 "nickname": "Król Skellige",
-                "ability": "weatherHalf"
+                "abilities": ["weatherHalf"]
             },
             {
                 "id": 231,
                 "name": "Crach an Craite",
                 "nickname": "Dzik Morski",
-                "ability": "reshuffleGraves"
+                "abilities": ["reshuffleGraves"]
             },
             {
                 "id": 232,
                 "name": "Eist Tuirseach",
                 "nickname": "Łowca z An Skellig",
-                "ability": "scorchEnemyLow"
+                "abilities": ["scorchEnemyLow"]
             },
             {
                 "id": 233,
                 "name": "Harald an Craite",
                 "nickname": "Chromy",
-                "ability": "redraw4"
+                "abilities": ["redraw4"]
             },
             {
                 "id": 234,
                 "name": "Erlend an Craite",
                 "nickname": "Kamienna Pięść",
-                "ability": "findStorm"
+                "abilities": ["findStorm"]
             }
         ]
     }

@@ -8,7 +8,8 @@ class Board:
         self.rows = [Row() for _ in range(6)]
         self.weather = Weather()
 
-    def row_index(self, row_type, player_id):
+    @classmethod
+    def row_index(cls, row_type, player_id):
         row_index = row_type.value
         if player_id == 1:
             row_index = (row_index + 3) % 6

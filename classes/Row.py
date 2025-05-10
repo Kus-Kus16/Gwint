@@ -155,11 +155,17 @@ class Row(CardHolder):
                     self.effects["horn"].remove(card)
 
     def clear_boosts(self):
+        remove = []
         for card in self.effects["horn"]:
             if card.is_special():
                 self.effects["horn"].remove(card)
                 card.send_to_owner_grave()
                 break
+            if card.is_commander():
+                remove.append(card)
+
+        for card in remove:
+            self.effects["horn"].remove(card)
 
     def clear_row(self, player):
         remove = []

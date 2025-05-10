@@ -1,7 +1,7 @@
 import pygame
 from overrides import overrides
 
-from view import ImageLoader
+from view import ImageLoader, Constants as C
 from view.Scenes.Scene import Scene
 from view.components.Button import Button
 
@@ -23,7 +23,7 @@ class EndScreen(Scene):
 
         button_x = self.screen_width // 2
         button_y = self.screen_height - 180
-        button_size = (300, 60)
+        button_size = C.BUTTON_SIZE
         self.buttons = [
             Button("Menu", (button_x - 400, button_y), button_size,
                    {"type": "game-over", "rematch": False}, font),
@@ -50,8 +50,8 @@ class EndScreen(Scene):
         y = self.screen_height // 2 + 100
         y_offset = 60
 
-        me = self.font.render("Ty", True, (197, 152, 79))
-        opp = self.font.render("Przeciwnik", True, (197, 152, 79))
+        me = self.font.render("Ty", True, C.COLOR_GOLD)
+        opp = self.font.render("Przeciwnik", True, C.COLOR_GOLD)
 
         me_rect = me.get_rect()
         me_rect.topleft = (x_center - 2 * x_offset, y - me.get_height() // 2)
@@ -64,7 +64,7 @@ class EndScreen(Scene):
 
         for i, text in enumerate(["Runda 1", "Runda 2", "Runda 3"]):
             x = x_center + (i - 1) * x_offset
-            label = self.font.render(text, True, (200, 200, 200))
+            label = self.font.render(text, True, C.COLOR_LIGHTGRAY)
             label_rect = label.get_rect(center=(x, y - y_offset))
             self.screen.blit(label, label_rect)
 
@@ -72,19 +72,19 @@ class EndScreen(Scene):
                 me_score, opp_score = self.round_history[i]
 
                 if me_score > opp_score:
-                    me_color = (197, 152, 79)
-                    opp_color = (255, 255, 255)
+                    me_color = C.COLOR_GOLD
+                    opp_color = C.COLOR_WHITE
                 elif opp_score > me_score:
-                    me_color = (255, 255, 255)
-                    opp_color = (197, 152, 79)
+                    me_color = C.COLOR_WHITE
+                    opp_color = C.COLOR_GOLD
                 else:
-                    me_color = opp_color = (255, 255, 255)
+                    me_color = opp_color = C.COLOR_WHITE
 
                 me_result = self.font.render(str(me_score), True, me_color)
                 opp_result = self.font.render(str(opp_score), True, opp_color)
             else:
-                me_result = self.font.render("-", True, (255, 255, 255))
-                opp_result = self.font.render("-", True, (255, 255, 255))
+                me_result = self.font.render("-", True, C.COLOR_WHITE)
+                opp_result = self.font.render("-", True, C.COLOR_WHITE)
 
             me_result_rect = me_result.get_rect(center=(x, y))
             opp_result_rect = opp_result.get_rect(center=(x, y + y_offset))
