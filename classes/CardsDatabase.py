@@ -22,6 +22,14 @@ with open("./data/recall.json", "r", encoding="utf-8") as file:
 with open("./data/find.json", "r", encoding="utf-8") as file:
     find_dict = json.load(file)
 
+def faction_to_nickname(fullname):
+    match fullname:
+        case "Królestwa Północy": return "polnoc"
+        case "Cesarstwo Nilfgaardu": return "nilfgaard"
+        case "Potwory": return "potwory"
+        case "Scoia'tael": return "scoiatael"
+        case "Skellige": return "skellige"
+
 # Dictionary
 def find_card(predicate):
     for card in card_dict:

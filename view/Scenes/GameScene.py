@@ -1,26 +1,31 @@
 import pygame
 from overrides import overrides
 
+from classes import CardsDatabase
 from view import ImageLoader, Constants as C
 from view.Scenes.Scene import Scene
-from view.components.CarouselScene import CarouselScene
-from view.components.EndScreen import EndScreen
+from view.Scenes.CarouselScene import CarouselScene
+from view.Scenes.EndScreen import EndScreen
 
 def load_small_image(card):
     path = f"resources/small/{card.faction}/{card.filename}.png"
-    return ImageLoader.load_image(path)
+    return ImageLoader.load_image(path, C.SMALL_CARD_SIZE)
 
 def load_large_image(card):
     faction = card.owner.faction if card.faction == "Neutralne" else card.faction
     path = f"resources/large/{faction}/{card.filename}.png"
-    return ImageLoader.load_image(path)
+    return ImageLoader.load_image(path, C.LARGE_CARD_SIZE)
 
-def load_image(card, size):
+def load_card_image(card, size):
     return load_small_image(card) if size == "small" else load_large_image(card)
 
+def load_image(filename, size=None):
+    path = f"resources/ico/{filename}.png"
+    return ImageLoader.load_image(path, size)
+
 class GameScene(Scene):
-    def __init__(self, screen, framerate, font):
-        super().__init__(screen, framerate, font, "resources/board.jpg")
+    def __init__(self, screen):
+        super().__init__(screen, "resources/board.jpg")
         self.game = None
         self.ended = False
         self.end_screen = None
@@ -260,16 +265,14 @@ class GameScene(Scene):
         super().draw()
 
         self.draw_highlights()
-
         self.draw_rows()
         self.draw_hand()
         self.draw_weather()
         self.draw_selected()
-        self.draw_stats()
-
-        self.display_cursor_position()
-
+        self.draw_players()
         self.draw_temporary()
+
+        # self.display_cursor_position()
 
         if self.ended and len(self.temporary_drawable) == 0:
             self.end_screen.draw()
@@ -285,37 +288,90 @@ class GameScene(Scene):
         row_names = C.ROW_NAMES
 
         for i, row in enumerate(rows):
-            data = getattr(C, row_names[i])
+            row_name = row_names[i]
+            data = getattr(C, row_name)
             row_rect = data["UNIT_RECT"]
-            text_x_center, text_y_center = data["TEXT_CENTER"]
-            self.draw_row(row, row_rect)
-            self.draw_text(f"{row.points}", text_x_center, text_y_center, color=C.COLOR_BLACK, center=True)
+            text_x, text_y = data["TEXT_CENTER"]
+            self.draw_row(row, row_rect, row_name)
+            self.draw_text(f"{row.points}", text_x, text_y, color=C.COLOR_BLACK, center=True, font=C.CINZEL_30_BOLD)
 
-    def draw_stats(self):
-        #PLAYER HP TEMPORARY
-        self.draw_text(f"{self.game.players[self.player_id].hp}", x=400, y=715, color=(255, 255, 255))
-        self.draw_text(f"{self.game.players[1 - self.player_id].hp}", x=400, y=312, color=(255, 255, 255))
+    def draw_players(self):
+        self.draw_player(self.player_id, C.INFO_RECT)
+        self.draw_player(1 - self.player_id, C.INFO_OPP_RECT, opponent=True)
 
-        #Player points
-        self.draw_text(f"{self.game.get_player(self.player_id).points}", *C.POINTS_POS, color=C.COLOR_BLACK, center=True)
-        self.draw_text(f"{self.game.get_player(1 - self.player_id).points}", *C.POINTS_OPP_POS, color=C.COLOR_BLACK, center=True)
+    def draw_player(self, player_id, info_rect, opponent=False):
+        player = self.game.get_player(player_id)
+        x, y = info_rect.topleft
+        size = info_rect.size
 
-        #PLAYER GRAVE TEMPORARY
-        self.draw_text(f"{self.game.players[self.player_id].grave.size()}", x=1550, y=900, color=(255, 255, 255))
-        self.draw_text(f"{self.game.players[1 - self.player_id].grave.size()}", x=1550, y=150, color=(255, 255, 255))
+        if self.game.current_player_id == player_id:
+            pygame.draw.line(self.screen, C.COLOR_YELLOW, (info_rect.left, info_rect.top),
+            (info_rect.right, info_rect.top), 3)
+            pygame.draw.line(self.screen, C.COLOR_YELLOW, (info_rect.left, info_rect.bottom - 1),
+            (info_rect.right, info_rect.bottom - 1), 3)
 
-        #PLAYER DECK TEMPORARY
-        self.draw_text(f"{self.game.players[self.player_id].deck.size()}", x=1777, y=900, color=(255, 255, 255))
-        self.draw_text(f"{self.game.players[1 - self.player_id].deck.size()}", x=1777, y=150, color=(255, 255, 255))
+        overlay = pygame.Surface(size, pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 100))
+        self.screen.blit(overlay, (x, y))
 
-        #MOVE TEXT TEMPORARY
-        if self.game.current_player_id == self.player_id:
-            self.draw_text("Wciśnij spację by spasować", 570, 1000)
-        else:
-            self.draw_text("Oczekiwanie na ruch przeciwnika", 570, 1000)
+        self.draw_icon("player_border", (116, 122), x + 60, y + 11)
+        self.draw_icon("profile", (89, 90), x + 74, y + 30)
+        self.draw_icon(f"tarcza_{CardsDatabase.faction_to_nickname(player.faction)}", (45, 50), x + 52, y + 12)
+        self.draw_icon(f"total_{"opp" if opponent else "me"}", None, x + 427, y + 45)
 
-    def draw_row(self, row, row_rect):
+        if self.game.is_winning_round(player_id):
+            self.draw_icon("high_score", None, x + 403, y + 40)
+
+        self.draw_gems(player.hp, x, y)
+        self.draw_icon("cards", None, x + 201, y + 88)
+        self.draw_text(player.hand.size(), x + 257, y + 108, color=C.COLOR_GOLD, center=True)
+
+        self.draw_text("Przeciwnik" if opponent else "Ty", x + 201, y + 12, color=C.COLOR_GOLD, font=C.CINZEL_20_BOLD)
+        self.draw_text(player.faction, x + 201, y + 45, color=C.COLOR_LIGHTGRAY, font=C.CINZEL_15)
+
+        points_pos = C.POINTS_OPP_POS if opponent else C.POINTS_POS
+        self.draw_text(f"{player.points}", *points_pos, color=C.COLOR_BLACK, center=True, font=C.CINZEL_30_BOLD)
+
+        filename = f"rewers_{CardsDatabase.faction_to_nickname(player.faction)}"
+        self.draw_stack(player.deck, C.DECK_OPP_RECT if opponent else C.DECK_RECT,
+                        image=load_image(filename, C.DECK_CARD_SIZE), label=True)
+        self.draw_stack(player.grave, C.GRAVE_OPP_RECT if opponent else C.GRAVE_RECT)
+
+    def draw_icon(self, filename, size, x, y):
+        image = load_image(filename, size)
+        rect = image.get_rect(topleft=(x, y))
+        self.screen.blit(image, rect)
+
+    def draw_stack(self, container, rect, image=None, label=False):
+        card_size = image.get_rect().size if image is not None else C.SMALL_CARD_SIZE
+        x, y = rect.centerx - card_size[0] // 2, rect.centery - card_size[1] // 2
+
+        for card in container.cards:
+            if image is None:
+                self.draw_card(card, x, y, "small")
+            else:
+                rect = image.get_rect(topleft=(x, y))
+                self.screen.blit(image, rect)
+            x, y = x - 1, y - 1
+
+        if label:
+            overlay = pygame.Surface((60, 36), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 190))
+            overlay_x = rect.centerx - 30
+            overlay_y = rect.bottom - 36
+            self.screen.blit(overlay, (overlay_x, overlay_y))
+            self.draw_text(container.size(), rect.centerx, rect.bottom - 18, center=True)
+
+    def draw_gems(self, hp, x, y):
+        gem_on = load_image("gem_on")
+        gem_off = load_image("gem_off")
+        self.screen.blit(gem_on if hp >= 2 else gem_off, (x + 306, y + 86))
+        self.screen.blit(gem_on if hp >= 1 else gem_off, (x + 353, y + 86))
+
+    def draw_row(self, row, row_rect, row_name):
         self.draw_card_holder(row, row_rect, self.card_rects)
+        if row.effects["weather"]:
+            self.draw_icon(f"weather_{row_name.lower()}", None, row_rect.left - C.BOOST_ROW_SIZE[0], row_rect.top)
 
     def draw_hand(self):
         self.hand_rects.clear()
@@ -326,13 +382,20 @@ class GameScene(Scene):
         self.draw_commanders(self.hand_rects)
 
     def draw_card_holder(self, container, rect, card_rects_output):
+        width = rect.width
         x, y = rect.left, rect.top
-        offset = 0
+        count = container.size()
+        offset = 90
 
-        for card in container.cards:
-            card_rect = self.draw_card(card, x + offset, y, "small")
+        total_width = offset * count
+
+        if total_width > width:
+            offset = offset * width / total_width
+
+        for i, card in enumerate(container.cards):
+            card_x = x + offset * i
+            card_rect = self.draw_card(card, card_x - 4, y, "small")
             card_rects_output.append((card, card_rect))
-            offset += 90
 
     def draw_commanders(self, card_rect_output):
         commander_opp = self.game.get_player(1 - self.player_id).commander
@@ -343,11 +406,14 @@ class GameScene(Scene):
         card_rect_output.append((commander, commander_rect))
 
     def draw_commander(self, commander, pos):
+        x, y = pos
         self.draw_card(commander, *pos, "small")
         if not commander.active:
             overlay = pygame.Surface(C.COMM_SIZE, pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 200)) #20%
             self.screen.blit(overlay, pos)
+        else:
+            self.draw_icon("leader", None, x + 120, y + 50)
 
     def draw_weather(self):
         weather = self.game.board.weather
@@ -417,7 +483,7 @@ class GameScene(Scene):
         self.draw_card(self.selected_card, *C.SELECTED_CARD_POS, "large")
 
     def draw_card(self, card, x, y, size):
-        image = load_image(card, size)
+        image = load_card_image(card, size)
         rect = image.get_rect(topleft=(x, y))
         self.screen.blit(image, rect)
 
@@ -435,12 +501,13 @@ class GameScene(Scene):
             else:
                 color = C.COLOR_BLACK
 
-            self.draw_text(card.power, rect.x + 12, rect.y + 1, color=color)
+            font = C.MASON_30 if card.power < 10 else C.MASON_20
+            self.draw_text(card.power, rect.x + 20, rect.y + 19, color=color, font=font, center=True)
 
         return rect
 
-    def draw_text(self, text, x, y, color=C.COLOR_WHITE, center=False):
-        text_surface = self.font.render(str(text), True, color)
+    def draw_text(self, text, x, y, color=C.COLOR_WHITE, font=C.CINZEL_30, center=False):
+        text_surface = font.render(str(text), True, color)
         text_rect = text_surface.get_rect()
         if center:
             text_rect.center = (x, y)
@@ -464,7 +531,7 @@ class GameScene(Scene):
 
     def end_game(self, result, round_history):
         self.lock()
-        self.end_screen = EndScreen(self.screen, result, round_history, self.framerate, self.font)
+        self.end_screen = EndScreen(self.screen, result, round_history)
         self.ended = True
 
     def reset_all(self):
@@ -504,8 +571,6 @@ class GameScene(Scene):
     def show_card_carousel(self, cards, choose_count, cancelable):
         self.carousel_scene = CarouselScene(
             self.screen,
-            self.framerate,
-            self.font,
             self.draw_card,
             cards,
             choose_count,

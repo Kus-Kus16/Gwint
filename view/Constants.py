@@ -10,6 +10,12 @@ def __row(row_y, text_y_center):
 def __rect(pos, size):
     return pygame.Rect(*pos, *size)
 
+def __font(name, size):
+    return pygame.font.Font(f"resources/fonts/{name}.ttf", size)
+
+
+
+
 UNIT_X = 707
 BOOST_X = 570
 TEXT_X_CENTER = 536
@@ -25,9 +31,11 @@ HAND_SIZE = (936, 125)
 BOARD_POS = (570, 17)
 BOARD_SIZE = (949, 807)
 
-DECK_SIZE = (112, 146)
-GRAVE_OPP_POS = (1544, 71)
+DECK_SIZE = (112, 147)
+GRAVE_OPP_POS = (1544, 69)
 GRAVE_POS = (1544, 827)
+DECK_OPP_POS = (1725, 69)
+DECK_POS = (1724, 827)
 
 COMM_SIZE = (101, 134)
 COMM_OPP_POS = (138, 80)
@@ -53,15 +61,33 @@ GRAVE_RECT = __rect(GRAVE_POS, DECK_SIZE)
 GRAVE_OPP_RECT = __rect(GRAVE_OPP_POS, DECK_SIZE)
 GRAVES = [("GRAVE", GRAVE_RECT), ("GRAVE_OPP", GRAVE_OPP_RECT)]
 
+DECK_RECT = __rect(DECK_POS, DECK_SIZE)
+DECK_OPP_RECT = __rect(DECK_OPP_POS, DECK_SIZE)
+DECKS = [("DECK", DECK_RECT), ("DECK_OPP", DECK_OPP_RECT)]
+
 COMM_RECT = __rect(COMM_POS, COMM_SIZE)
 COMM_OPP_RECT = __rect(COMM_OPP_POS, COMM_SIZE)
 COMMANDERS = [("COMMANDER", COMM_RECT), ("COMMANDER_OPP", COMM_OPP_RECT)]
+
+INFO_SIZE = (451, 145)
+INFO_POS = (0, 662)
+INFO_OPP_POS = (0, 260)
+INFO_RECT = __rect(INFO_POS, INFO_SIZE)
+INFO_OPP_RECT = __rect(INFO_OPP_POS, INFO_SIZE)
+
+BUTTON_SIZE = (300, 100)
+BUTTON_SIZE_WIDE = (400, 80)
+
+DECK_CARD_SIZE = (83, 140)
+SMALL_CARD_SIZE = (94, 123)
+LARGE_CARD_SIZE = (293, 512)
+SELECTED_CARD_POS = (1544, 265)
 
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 COLOR_GOLD = (197, 152, 79)
 COLOR_YELLOW = (212, 175, 55)
-COLOR_GREEN = (20, 140, 60)
+COLOR_GREEN = (15, 112, 47)
 COLOR_RED = (237, 56, 24)
 COLOR_LIGHTGRAY = (200, 200, 200)
 COLOR_GRAY = (50, 50, 50)
@@ -71,8 +97,13 @@ ALPHA_HIGHLIGHT = 50
 COLOR_BUTTON = (139, 69, 19)
 COLOR_BUTTON_HOVER = (160, 82, 45)
 
-BUTTON_SIZE = (300, 100)
-BUTTON_SIZE_WIDE = (400, 80)
-
-LARGE_CARD_SIZE = (293, 512)
-SELECTED_CARD_POS = (1544, 265)
+FRAMERATE = 60
+MASON_20 = __font("mason", 20)
+MASON_30 = __font("mason", 30)
+MASON_50 = __font("mason", 50)
+CINZEL_15 = __font("Cinzel-Regular", 15)
+CINZEL_30 = __font("Cinzel-Regular", 30)
+CINZEL_40 = __font("Cinzel-Regular", 40)
+CINZEL_20_BOLD = __font("Cinzel-SemiBold", 20)
+CINZEL_30_BOLD = __font("Cinzel-SemiBold", 30)
+CINZEL_50_BOLD = __font("Cinzel-SemiBold", 50)

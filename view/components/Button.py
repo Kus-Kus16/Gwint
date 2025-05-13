@@ -4,7 +4,7 @@ from view import Constants as C
 
 class Button:
 	def __init__(self, text, pos, size, action=None, font=None):
-		self.font = font if font else pygame.font.SysFont(None, 40)
+		self.font = font if font is not None else C.CINZEL_30
 		self.text = text
 		self.pos = pos
 		self.size = size

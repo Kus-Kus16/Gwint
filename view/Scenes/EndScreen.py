@@ -12,23 +12,23 @@ def load_image(name):
 
 class EndScreen(Scene):
 
-    def __init__(self, screen, result, round_history, framerate, font=None):
-        super().__init__(screen, framerate, font, "resources/board.jpg")
+    def __init__(self, screen, result, round_history):
+        super().__init__(screen, "resources/board.jpg")
         self.pos = (0, 0)
         self.size = screen.get_size()
         self.rect = pygame.Rect(self.pos, self.size)
         self.round_history = round_history
         self.image = load_image(result)
-        self.spacing_frames = framerate // 2
+        self.spacing_frames = C.FRAMERATE // 2
 
         button_x = self.screen_width // 2
         button_y = self.screen_height - 180
         button_size = C.BUTTON_SIZE
         self.buttons = [
             Button("Menu", (button_x - 400, button_y), button_size,
-                   {"type": "game-over", "rematch": False}, font),
+                   {"type": "game-over", "rematch": False}),
             Button("Replay", (button_x + 100, button_y), button_size,
-                   {"type": "game-over", "rematch": True}, font),
+                   {"type": "game-over", "rematch": True}),
         ]
 
     @overrides
@@ -50,8 +50,11 @@ class EndScreen(Scene):
         y = self.screen_height // 2 + 100
         y_offset = 60
 
-        me = self.font.render("Ty", True, C.COLOR_GOLD)
-        opp = self.font.render("Przeciwnik", True, C.COLOR_GOLD)
+        regular = C.CINZEL_30
+        bold = C.CINZEL_30_BOLD
+
+        me = bold.render("Ty", True, C.COLOR_GOLD)
+        opp = bold.render("Przeciwnik", True, C.COLOR_GOLD)
 
         me_rect = me.get_rect()
         me_rect.topleft = (x_center - 2 * x_offset, y - me.get_height() // 2)
@@ -64,7 +67,7 @@ class EndScreen(Scene):
 
         for i, text in enumerate(["Runda 1", "Runda 2", "Runda 3"]):
             x = x_center + (i - 1) * x_offset
-            label = self.font.render(text, True, C.COLOR_LIGHTGRAY)
+            label = bold.render(text, True, C.COLOR_LIGHTGRAY)
             label_rect = label.get_rect(center=(x, y - y_offset))
             self.screen.blit(label, label_rect)
 
@@ -80,11 +83,11 @@ class EndScreen(Scene):
                 else:
                     me_color = opp_color = C.COLOR_WHITE
 
-                me_result = self.font.render(str(me_score), True, me_color)
-                opp_result = self.font.render(str(opp_score), True, opp_color)
+                me_result = regular.render(str(me_score), True, me_color)
+                opp_result = regular.render(str(opp_score), True, opp_color)
             else:
-                me_result = self.font.render("-", True, C.COLOR_WHITE)
-                opp_result = self.font.render("-", True, C.COLOR_WHITE)
+                me_result = regular.render("-", True, C.COLOR_WHITE)
+                opp_result = regular.render("-", True, C.COLOR_WHITE)
 
             me_result_rect = me_result.get_rect(center=(x, y))
             opp_result_rect = opp_result.get_rect(center=(x, y + y_offset))

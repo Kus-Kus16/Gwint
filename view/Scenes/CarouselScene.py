@@ -7,8 +7,8 @@ from view.components.Button import Button
 
 
 class CarouselScene(Scene):
-    def __init__(self, screen, framerate, font, draw_card, cards, choose_count, cancelable):
-        super().__init__(screen, framerate, font, "resources/board.jpg")
+    def __init__(self, screen, draw_card, cards, choose_count, cancelable):
+        super().__init__(screen, "resources/board.jpg")
         self.pos = (0, 0)
         self.size = screen.get_size()
         self.rect = pygame.Rect(self.pos, self.size)
@@ -16,19 +16,29 @@ class CarouselScene(Scene):
         self.draw_card = draw_card
         self.selected_index = 0
         self.choose_count = choose_count
-        print(choose_count)
         self.choosable = choose_count != 0
         self.cancellable = cancelable
         self.buttons = []
 
-        button_width, button_height = C.BUTTON_SIZE_WIDE
-        if self.choosable:
-            self.buttons.append(Button("Wybierz", (self.screen_width // 2 - button_width - 100, self.screen_height - 200),
-                   C.BUTTON_SIZE, {"type": "select"}, font))
+        button_width, button_height = C.BUTTON_SIZE
+        button_margin = 150
+        button_y = self.screen_height - 200
 
+        button_data = []
+        if self.choosable:
+            button_data.append(("Wybierz", {"type": "select"}))
         if self.cancellable:
-            self.buttons.append(Button("Zamknij", (self.screen_width // 2 + 100, self.screen_height - 200),
-                   C.BUTTON_SIZE, {"type": "cancel"}, font))
+            button_data.append(("Zamknij", {"type": "cancel"}))
+
+        total_width = len(button_data) * button_width + (len(button_data) - 1) * button_margin
+        start_x = self.screen_width // 2 - total_width // 2
+
+        print(button_width, total_width)
+        print(self.screen_width, start_x)
+
+        for i, (label, action) in enumerate(button_data):
+            x = start_x + i * (button_width + button_margin)
+            self.buttons.append(Button(label, (x, button_y), C.BUTTON_SIZE, action))
 
     @overrides
     def draw(self):

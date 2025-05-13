@@ -134,8 +134,8 @@ class GamePresenter:
         else:
             self.one_passed = False
             notif = (
-                "win_round" if self.game.winning_round(self.my_id)
-                else "lose_round" if self.game.winning_round(1 - self.my_id)
+                "win_round" if self.game.is_winning_round(self.my_id)
+                else "lose_round" if self.game.is_winning_round(1 - self.my_id)
                 else "draw_round"
             )
             self.notification(notif)

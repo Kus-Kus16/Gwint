@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 
 from view.components.Notification import Notification
 from view.components.VolumeSlider import VolumeSlider
+from view import Constants as C
 
 
 class Scene(ABC):
-    def __init__(self, screen, framerate, font, background_path):
+    def __init__(self, screen, background_path):
         self.screen = screen
-        self.framerate = framerate
-        self.font = font
+        self.framerate = C.FRAMERATE
         self.screen_width, self.screen_height = screen.get_size()
         self.background = pygame.image.load(background_path)
         self.background = pygame.transform.scale(self.background, (self.screen_width, self.screen_height))
@@ -61,7 +61,7 @@ class Scene(ABC):
     def notification(self, name, frames, locking):
         pos = (0, self.screen_height // 2 - 60)
         size = (self.screen_width, 120)
-        notification = Notification(pos, size, name, frames, locking, self.font)
+        notification = Notification(pos, size, name, frames, locking)
 
         if len(self.temporary_drawable) == 0:
             self.spacing_frames = self.framerate // 2

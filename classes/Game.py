@@ -304,7 +304,7 @@ class Game:
     def set_seed(self, seed):
         self.rng = random.Random(seed)
 
-    def winning_round(self, player_id):
+    def is_winning_round(self, player_id):
         return self.players[player_id].points > self.players[1- player_id].points
 
     def get_round_history(self, player_id):
