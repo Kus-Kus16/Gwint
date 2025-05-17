@@ -211,6 +211,29 @@ class Game:
 
         return True
 
+    def redraw_cards(self, player_id, targets):
+        player = self.players[player_id]
+        if not targets:
+            player.redraws = 0
+            return True
+
+        if len(targets) > player.redraws:
+            print("Illegal redraw")
+            return False
+
+        for card_id in targets:
+            card = player.hand.find_card_by_id(card_id)
+            if card is None:
+                return False
+
+            player.hand.remove_card(card)
+            player.draw_card()
+            player.deck.add_card(card)
+            player.shuffle_deck(self.rng)
+            player.redraws -= 1
+
+        return True
+
     def next_turn(self):
         next_player = self.players[1 - self.current_player_id]
 
@@ -234,6 +257,7 @@ class Game:
 
         for player in self.players:
             player.hp = 2
+            player.redraws = 2
             player.commander.enable()
             player.shuffle_deck(self.rng)
             player.draw_cards(10)
@@ -248,15 +272,9 @@ class Game:
                     self.gamerules["healRandom"] = True
                     player.commander.disable()
 
-    def end_game(self):
-        self.board.clear_rows(self.players)
-        self.board.clear_weather()
-        self.update_points()
-
-        for player in self.players:
-            player.return_cards()
-        for player in self.players:
-            player.deck_from_grave()
+    def start_round(self):
+        self.current_round += 1
+        self.current_player_id = (1 - self.first_player_id + self.current_round) % 2
 
     def end_round(self):
         #TODO round end
@@ -281,9 +299,15 @@ class Game:
         self.board.clear_weather()
         self.update_points()
 
-    def start_round(self):
-        self.current_round += 1
-        self.current_player_id = (1 - self.first_player_id + self.current_round) % 2
+    def end_game(self):
+        self.board.clear_rows(self.players)
+        self.board.clear_weather()
+        self.update_points()
+
+        for player in self.players:
+            player.return_cards()
+        for player in self.players:
+            player.deck_from_grave()
 
     def to_string(self, player_id):
         return self.board.rows_tostring(player_id) + "\n\n" + str(self.players[player_id])

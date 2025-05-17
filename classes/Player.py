@@ -12,6 +12,7 @@ class Player:
         self.faction = commander.faction
         self.points = 0
         self.hp = 2
+        self.redraws = 2
         self.passed = False
 
         self.own_cards()

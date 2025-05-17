@@ -7,16 +7,19 @@ from view.Scenes.GameScene import GameScene
 from view.Scenes.MenuScene import MenuScene
 from view.Scenes.WaitingScene import WaitingScene
 from view import ImageLoader, Constants as C
+from view.components.VolumeSlider import VolumeSlider
 
 
 class PygameView:
     def __init__(self):
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.screen_width, self.screen_height = self.screen.get_size()
 
         pygame.display.set_caption("Gwint LAN")
         self.clock = pygame.time.Clock()
         self.framerate = C.FRAMERATE
         self.cursor = ImageLoader.load_image("resources/ico/cursor.png")
+        self.volume_slider = VolumeSlider((self.screen_width - 240, self.screen_height - 60))
 
         self.running = True
         self.observer = None
@@ -27,14 +30,14 @@ class PygameView:
         # Soundtrack
         pygame.mixer.init()
         pygame.mixer.music.load("resources/soundtrack.mp3")
-        pygame.mixer.music.set_volume(0)
+        pygame.mixer.music.set_volume(0.5)
         pygame.mixer.music.play(-1)
 
         #Screens initiation
-        self.menu = MenuScene(self.screen)
+        self.menu = MenuScene(self.screen, self.volume_slider)
         self.credits = CreditsScene(self.screen)
         self.waiting = WaitingScene(self.screen)
-        self.game = GameScene(self.screen)
+        self.game = GameScene(self.screen, self.volume_slider)
         self.current_scene = self.menu
 
     def run(self):

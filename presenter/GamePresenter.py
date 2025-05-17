@@ -58,8 +58,12 @@ class GamePresenter:
 
                 case "waiting-for-game":
                     self.handle_waitingforgame()
-                case "start-game":
-                    self.handle_startgame()
+                case "setup-game":
+                    self.handle_setupgame()
+                case "redraw":
+                    pass
+                case "waiting-for-redraw":
+                    self.handle_opponentredraw()
                 case "playing":
                     pass
                 case "waiting":
@@ -72,29 +76,99 @@ class GamePresenter:
                     return
 
     def handle_waitingforgame(self):
-        response, data = self.n.send(("waiting-for-game", []))
+        response, data = self.n.send(("waiting", []))
 
-        if response == "start-game":
-            self.opponent = Player(data[0], data[1])
-            self.game = Game(self.seed)
+        # Still waiting
+        if response == "ok":
+            return
 
-            players = [self.me, self.opponent] if self.my_id == 0 else [self.opponent, self.me]
-            for p in players:
-                self.game.add_player(p)
+        # Opponent disconnected
+        if response == "error":
+            self.return_to_menu()
+            return
 
-            self.game_state = "start-game"
-            self.view.game.set_game(self.game, self.my_id)
-            self.view.change_scene(self.view.game)
+        self.opponent = Player(data[0], data[1])
+        self.game = Game(self.seed)
 
-    def handle_startgame(self):
+        players = [self.me, self.opponent] if self.my_id == 0 else [self.opponent, self.me]
+        for p in players:
+            self.game.add_player(p)
+
+        self.game_state = "setup-game"
+        self.view.game.set_game(self.game, self.my_id)
+        self.view.change_scene(self.view.game)
+        self.view.lock()
+
+    def handle_setupgame(self):
+        self.game.start_game()  # Commanders!
         # Scoia'tael choosing here
-        self.game.start_game()
         notif = "start" if self.game.first_player_id == self.my_id else "op_start"
         self.notification(notif)
-        # Redraw here
+
+        self.game_state = "redraw"
+        self.carousel_dict["targets"] = []
+        player = self.game.get_player(self.my_id)
+        cards = player.hand.cards
+        self.show_carousel(cards, choose_count=player.redraws, cancelable=True)
+
+    def handle_opponentredraw(self):
+        response, data = self.n.send(("waiting", []))
+
+        #Still waiting
+        if response == "ok":
+            return
+
+        #Opponent disconnected
+        if response == "error":
+            self.return_to_menu()
+            return
+
+        if not self.redraw_cards(1 - self.my_id, data):
+            raise ValueError("Illegal opponent redraw")
+
+        self.redraw_cards(1 - self.my_id, [])
         self.start_round()
         self.notification("round_start")
         self.turn_switch()
+
+    def handle_opponentturn(self):
+        response, data = self.n.send(("waiting", []))
+
+        #Still waiting
+        if response == "ok":
+            return
+
+        #Opponent disconnected
+        if response == "error":
+            self.return_to_menu()
+            return
+
+        valid = False
+        match data[0]:
+            case "card":
+                valid = self.play_card(1 - self.my_id, data[1], data[2], data[3])
+            case "pass":
+                self.notification("pass_op")
+                valid = self.pass_round(1 - self.my_id)
+
+        if not valid:
+            raise ValueError("Illegal opponent move")
+
+        self.turn_switch()
+
+    def handle_waitingforendgame(self):
+        response, data = self.n.send(("waiting", []))
+
+        #Still waiting
+        if response == "ok":
+            return
+
+        #Opponent disconnected
+        if response == "error" or not data[0]:
+            self.return_to_menu()
+            return
+
+        self.game_state = 'setup-game'
 
     def start_round(self):
         self.game.start_round()
@@ -150,49 +224,8 @@ class GamePresenter:
 
         return True
 
-    def handle_opponentturn(self):
-        response, data = self.n.send(("waiting", []))
-
-        #Still waiting
-        if response == "ok":
-            return
-
-        #Opponent disconnected
-        if response == "error":
-            self.return_to_menu()
-            return
-
-        valid = False
-        match data[0]:
-            case "card":
-                valid = self.play_card(1 - self.my_id, data[1], data[2], data[3])
-            case "pass":
-                self.notification("pass_op")
-                valid = self.pass_round(1 - self.my_id)
-
-        if not valid:
-            raise ValueError("Illegal opponent move")
-
-        self.turn_switch()
-
-    def handle_waitingforendgame(self):
-        response, data = self.n.send(("waiting-for-endgame", []))
-
-        #Still waiting
-        if response == "ok":
-            return
-
-        #Opponent disconnected
-        if response == "error" or not data[0]:
-            self.return_to_menu()
-            return
-
-        self.seed = data[1]
-        self.game.set_seed(data[1])
-        self.game_state = 'start-game'
-
-    def is_waiting_for_player(self):
-        return self.game_state == "waiting-for-game"
+    def redraw_cards(self, player_id, targets):
+        return self.game.redraw_cards(player_id, targets)
 
     # Called by view after user input
     def notify(self, action):
@@ -292,6 +325,8 @@ class GamePresenter:
             return
 
         if rematch:
+            self.seed = data[0]
+            self.game.set_seed(data[0])
             self.game_state = "waiting-for-endgame"
             self.view.current_scene.reset()
         else:
@@ -341,24 +376,56 @@ class GamePresenter:
             })
 
     def handle_carousel(self, action):
-        if action["card_id"] is not None:
-            self.carousel_dict["targets"].append(action["card_id"])
-            if action["end"]:
-                self.notify({
-                    "type": "play",
-                    "card_id": self.carousel_dict["card_id"],
-                    "row": self.carousel_dict["row"],
-                    "targets": self.carousel_dict["targets"]
-                })
-                self.carousel_dict.clear()
+        if self.game_state == "redraw":
+            self.handle_redrawcarousel(action)
+        else:
+            self.handle_playcarousel(action)
 
         if action["end"]:
             self.view.current_scene.discard_card_carousel()
 
-        self.view.unlock()
+    def handle_redrawcarousel(self, action):
+        if action["card_id"] is not None:
+            card_id = action["card_id"]
+            if not self.redraw_cards(self.my_id, [card_id]):
+                raise ValueError("Illegal redraw") #TODO TEST REMOVE
+
+            self.carousel_dict["targets"].append(card_id)
+            new_cards = self.game.get_player(self.my_id).hand.cards
+            self.view.current_scene.set_card_carousel(list(new_cards))
+
+        if action["end"]:
+            response, data = self.n.send(("play", self.carousel_dict["targets"]))
+
+            # Opponent disconnected
+            if response == "error":
+                self.return_to_menu()
+                return
+
+            self.redraw_cards(self.my_id, [])
+            self.carousel_dict.clear()
+            self.game_state = "waiting-for-redraw"
+        else:
+            self.view.unlock()
+
+    def handle_playcarousel(self, action):
+        if action["card_id"] is None:
+            return
+
+        self.carousel_dict["targets"].append(action["card_id"])
+        if action["end"]:
+            self.notify({
+                "type": "play",
+                "card_id": self.carousel_dict["card_id"],
+                "row": self.carousel_dict["row"],
+                "targets": self.carousel_dict["targets"]
+            })
+            self.carousel_dict.clear()
+        else:
+            self.view.unlock()
 
     def show_carousel(self, cards, choose_count=0, cancelable=False):
-        self.view.current_scene.show_card_carousel(cards, choose_count, cancelable)
+        self.view.run_later(lambda: self.view.current_scene.show_card_carousel(cards, choose_count, cancelable))
 
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:
@@ -375,7 +442,7 @@ class GamePresenter:
             self.view.unlock()
 
     def notification(self, name, seconds=1.5):
-        return
+        # return
         self.view.run_later(lambda: self.view.notification(name, seconds=seconds))
 
     def return_to_menu(self):

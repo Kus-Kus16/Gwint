@@ -7,13 +7,13 @@ from view import Constants as C
 
 
 class Scene(ABC):
-    def __init__(self, screen, background_path):
+    def __init__(self, screen, background_path, volume_slider=None):
         self.screen = screen
         self.framerate = C.FRAMERATE
         self.screen_width, self.screen_height = screen.get_size()
         self.background = pygame.image.load(background_path)
         self.background = pygame.transform.scale(self.background, (self.screen_width, self.screen_height))
-        self.volume_slider = VolumeSlider((self.screen_width - 240, self.screen_height - 60))
+        self.volume_slider = volume_slider
         self.temporary_drawable = []
         self.spacing_frames = 0
         self.locked = False

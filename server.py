@@ -50,26 +50,18 @@ def threaded_client(conn, game_id, player_id):
                 break
 
             match request:
-                case "waiting-for-game":
+                case "waiting": # For game, for redraw, for move, for endgame
                     opponent_state = game_state.get_state(1 - player_id)
-                    send( ("ok", []) if opponent_state is None else ("start-game", opponent_state) )
+                    send(("ok", []) if opponent_state is None else ("response", opponent_state))
 
                 case "play":
                     game_state.add_state(player_id, data)
                     send( ("ok", []) )
 
-                case "waiting":
-                    opponent_state = game_state.get_state(1 - player_id)
-                    send( ("ok", []) if opponent_state is None else ("play", opponent_state) )
-
                 case "rematch":
                     game_state.reseed()
                     game_state.add_state(player_id, data)
-                    send( ("ok", []) )
-
-                case "waiting-for-endgame":
-                    opponent_state = game_state.get_state(1 - player_id)
-                    send( ("ok", []) if opponent_state is None else ("replay-game", opponent_state + [game_state.seed]) )
+                    send( ("ok", [game_state.seed]) )
 
                 case _:
                     send(("error", ["illegal request"]) )

@@ -10,13 +10,13 @@ class VolumeSlider:
         self.handle_radius = 15
         self.handle_x = pos[0] + size[0]//2
         self.dragging = False
-        self.volume = 0
+        self.volume = 0.5
         self.action = { "type": "ui_action" }
 
         self.bg_color = C.COLOR_BUTTON
         self.hover_color = C.COLOR_BUTTON_HOVER
         self.shadow_color = C.COLOR_GRAY
-        self.handle_color = C.COLOR_LIGHTGRAY
+        self.handle_color = C.COLOR_WHITE
 
     def draw(self, screen):
         # Cień

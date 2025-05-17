@@ -7,8 +7,8 @@ from view.components.Button import Button
 
 
 class MenuScene(Scene):
-	def __init__(self, screen):
-		super().__init__(screen, "resources/menu.png")
+	def __init__(self, screen, volume_slider):
+		super().__init__(screen, "resources/menu.png", volume_slider)
 
 		button_width, button_height = C.BUTTON_SIZE_WIDE
 		button_x = (self.screen_width - button_width) // 2

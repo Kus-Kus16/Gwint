@@ -7,8 +7,9 @@ from view.components.Button import Button
 
 
 class CarouselScene(Scene):
-    def __init__(self, screen, draw_card, cards, choose_count, cancelable):
+    def __init__(self, screen, draw_card, cards, choose_count, cancelable, font=None):
         super().__init__(screen, "resources/board.jpg")
+        self.font = font if font is not None else C.CINZEL_30
         self.pos = (0, 0)
         self.size = screen.get_size()
         self.rect = pygame.Rect(self.pos, self.size)
@@ -33,9 +34,6 @@ class CarouselScene(Scene):
         total_width = len(button_data) * button_width + (len(button_data) - 1) * button_margin
         start_x = self.screen_width // 2 - total_width // 2
 
-        print(button_width, total_width)
-        print(self.screen_width, start_x)
-
         for i, (label, action) in enumerate(button_data):
             x = start_x + i * (button_width + button_margin)
             self.buttons.append(Button(label, (x, button_y), C.BUTTON_SIZE, action))
@@ -43,11 +41,22 @@ class CarouselScene(Scene):
     @overrides
     def draw(self):
         overlay = pygame.Surface(self.size, pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 128))
+        overlay.fill((0, 0, 0, 64))
         self.screen.blit(overlay, self.rect.topleft)
 
         center_x = self.screen_width // 2
         center_y = self.screen_height // 2
+
+        if self.choose_count > 0:
+            height = C.BUTTON_SIZE[1]
+            overlay = pygame.Surface((self.screen_width, height), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 192))
+            self.screen.blit(overlay, (0, 100))
+
+            text = self.font.render(f"Wybierz do {self.choose_count} kart, które chcesz wymienić.", True, C.COLOR_GOLD)
+            text_rect = text.get_rect()
+            text_rect.center = (self.screen_width // 2, 100 + height // 2)
+            self.screen.blit(text, text_rect)
 
         visible_cards = 3
         half_visible = visible_cards // 2
@@ -86,7 +95,7 @@ class CarouselScene(Scene):
                 card_x = center_x + i * offset - card_width // 2
                 card_y = center_y - card_height // 2
                 if card_x <= mouse_x <= card_x + card_width and card_y <= mouse_y <= card_y + card_height:
-                    self.selected_index = (self.selected_index + i) % len(self.cards)
+                    self.selected_index = max(0, min(len(self.cards) - 1, self.selected_index + i))
                     return
             for btn in self.buttons:
                 if btn.check_click(event.pos):
@@ -97,12 +106,23 @@ class CarouselScene(Scene):
                             "end": True
                         }
 
+
                     card = self.cards[self.selected_index]
                     self.cards.remove(card)
                     self.choose_count -= 1
                     self.lock()
+
+                    end = False
+                    if self.choose_count == 0 or len(self.cards) == 0:
+                        end = True
+                    if self.choose_count < 0 and not card.is_choosing():
+                        end = True
+
                     return {
                         "type": "carousel",
                         "card_id": card.id,
-                        "end": self.choose_count == 0 or len(self.cards) == 0 or not card.is_choosing()
+                        "end": end
                     }
+
+    def set_cards(self, cards):
+        self.cards = cards

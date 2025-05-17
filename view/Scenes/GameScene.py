@@ -24,8 +24,8 @@ def load_image(filename, size=None):
     return ImageLoader.load_image(path, size)
 
 class GameScene(Scene):
-    def __init__(self, screen):
-        super().__init__(screen, "resources/board.jpg")
+    def __init__(self, screen, volume_slider):
+        super().__init__(screen, "resources/board.jpg", volume_slider)
         self.game = None
         self.ended = False
         self.end_screen = None
@@ -277,7 +277,7 @@ class GameScene(Scene):
         if self.ended and len(self.temporary_drawable) == 0:
             self.end_screen.draw()
 
-        if self.show_carousel:
+        if self.show_carousel and len(self.temporary_drawable) == 0:
             self.carousel_scene.draw()
 
         self.volume_slider.draw(self.screen)
@@ -298,6 +298,18 @@ class GameScene(Scene):
     def draw_players(self):
         self.draw_player(self.player_id, C.INFO_RECT)
         self.draw_player(1 - self.player_id, C.INFO_OPP_RECT, opponent=True)
+
+        if self.game.current_player_id == self.player_id:
+            x, y = C.INFO_POS
+            overlay = pygame.Surface((308, 40), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 100))
+
+            overlay_rect = overlay.get_rect(left=x + 126, bottom=y - 8)
+            self.screen.blit(overlay, overlay_rect)
+
+            centerx, centery = overlay_rect.center
+            self.draw_text("Wciśnij spację aby spasować", centerx, centery, center=True,
+                           color=C.COLOR_LIGHTGRAY, font=C.CINZEL_20_BOLD)
 
     def draw_player(self, player_id, info_rect, opponent=False):
         player = self.game.get_player(player_id)
@@ -581,3 +593,6 @@ class GameScene(Scene):
     def discard_card_carousel(self):
         self.show_carousel = False
         self.carousel_scene = None
+
+    def set_card_carousel(self, cards):
+        self.carousel_scene.set_cards(cards)
