@@ -84,7 +84,7 @@ class GamePresenter:
 
         # Opponent disconnected
         if response == "error":
-            self.return_to_menu()
+            self.return_to_menu("Przeciwnik rozłączył się")
             return
 
         self.opponent = Player(data[0], data[1])
@@ -120,13 +120,13 @@ class GamePresenter:
 
         #Opponent disconnected
         if response == "error":
-            self.return_to_menu()
+            self.return_to_menu("Przeciwnik rozłączył się.")
             return
 
         if not self.redraw_cards(1 - self.my_id, data):
             raise ValueError("Illegal opponent redraw")
 
-        self.redraw_cards(1 - self.my_id, [])
+        self.game.end_redraws()
         self.start_round()
         self.notification("round_start")
         self.turn_switch()
@@ -140,9 +140,10 @@ class GamePresenter:
 
         #Opponent disconnected
         if response == "error":
-            self.return_to_menu()
+            self.return_to_menu("Przeciwnik rozłączył się.")
             return
 
+        print("RECEIVED:", data)
         valid = False
         match data[0]:
             case "card":
@@ -152,7 +153,7 @@ class GamePresenter:
                 valid = self.pass_round(1 - self.my_id)
 
         if not valid:
-            raise ValueError("Illegal opponent move")
+            raise ValueError("Illegal opponent move", data)
 
         self.turn_switch()
 
@@ -165,7 +166,7 @@ class GamePresenter:
 
         #Opponent disconnected
         if response == "error" or not data[0]:
-            self.return_to_menu()
+            self.return_to_menu("Przeciwnik rozłączył się.")
             return
 
         self.game_state = 'setup-game'
@@ -246,9 +247,6 @@ class GamePresenter:
                     self.handle_show_carousel(action) if action["carousel"] != "zoom" else self.handle_show_zoom(action)
                 case "carousel":
                     self.handle_carousel(action)
-                case _:
-                    pass
-                    self.view.unlock()
 
     def handle_mode_change(self, action):
         match action["mode"]:
@@ -282,13 +280,13 @@ class GamePresenter:
             self.notification("pass")
 
             if not self.pass_round(self.my_id):
-                self.turn_switch()
+                self.relock()
                 return
 
             response, data = self.n.send(("play", ["pass"]))
             # Opponent disconnected
             if response == "error":
-                self.return_to_menu()
+                self.return_to_menu("Przeciwnik rozłączył się.")
                 return
 
             self.turn_switch()
@@ -299,7 +297,7 @@ class GamePresenter:
         targets = action.get("targets", [])
         result = self.play_card(self.my_id, card_id, row, targets)
         if not result:
-            self.turn_switch()
+            self.relock()
             return
 
         if not result is True:
@@ -308,7 +306,7 @@ class GamePresenter:
         response, data = self.n.send(("play", ["card", card_id, row, targets]))
         # Opponent disconnected
         if response == "error":
-            self.return_to_menu()
+            self.return_to_menu("Przeciwnik rozłączył się.")
             return
 
         self.view.current_scene.deselect()
@@ -321,7 +319,7 @@ class GamePresenter:
         response, data = self.n.send(("rematch", [rematch]))
         # Opponent disconnected
         if response == "error":
-            self.return_to_menu()
+            self.return_to_menu("Przeciwnik rozłączył się.")
             return
 
         if rematch:
@@ -330,7 +328,7 @@ class GamePresenter:
             self.game_state = "waiting-for-endgame"
             self.view.current_scene.reset()
         else:
-            self.return_to_menu()
+            self.return_to_menu(None)
 
     def handle_show_zoom(self, action):
         row = action["row"]
@@ -348,7 +346,7 @@ class GamePresenter:
         if len(cards) > 0:
             self.show_carousel(cards, choose_count=0, cancelable=True)
         else:
-            self.view.unlock()
+            self.relock()
 
     def handle_show_carousel(self, action):
         self.carousel_dict["card_id"] = action["card_id"]
@@ -380,9 +378,7 @@ class GamePresenter:
             self.handle_redrawcarousel(action)
         else:
             self.handle_playcarousel(action)
-
-        if action["end"]:
-            self.view.current_scene.discard_card_carousel()
+            self.relock()
 
     def handle_redrawcarousel(self, action):
         if action["card_id"] is not None:
@@ -399,17 +395,20 @@ class GamePresenter:
 
             # Opponent disconnected
             if response == "error":
-                self.return_to_menu()
+                self.return_to_menu("Przeciwnik rozłączył się.")
                 return
 
-            self.redraw_cards(self.my_id, [])
             self.carousel_dict.clear()
             self.game_state = "waiting-for-redraw"
+
+            self.view.current_scene.discard_card_carousel()
+            self.view.lock()
         else:
             self.view.unlock()
 
     def handle_playcarousel(self, action):
         if action["card_id"] is None:
+            self.view.current_scene.discard_card_carousel()
             return
 
         self.carousel_dict["targets"].append(action["card_id"])
@@ -421,6 +420,7 @@ class GamePresenter:
                 "targets": self.carousel_dict["targets"]
             })
             self.carousel_dict.clear()
+            self.view.current_scene.discard_card_carousel()
         else:
             self.view.unlock()
 
@@ -430,14 +430,18 @@ class GamePresenter:
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:
             self.game_state = "playing"
-            self.view.unlock()
             if not self.one_passed:
                 self.notification("playing")
         elif self.game.current_player_id == 1 - self.my_id:
             self.game_state = "waiting"
-            self.view.lock()
             if not self.one_passed:
                 self.notification("waiting")
+
+        self.relock()
+
+    def relock(self):
+        if self.game.current_player_id == 1 - self.my_id:
+            self.view.lock()
         else:
             self.view.unlock()
 
@@ -445,10 +449,14 @@ class GamePresenter:
         # return
         self.view.run_later(lambda: self.view.notification(name, seconds=seconds))
 
-    def return_to_menu(self):
+    def return_to_menu(self, reason):
         self.game_state = "menu"
         self.disconnect()
         self.game.end_game()
+
         scene = self.view.current_scene
         self.view.change_scene(self.view.menu)
         scene.reset_all()
+
+        if reason is not None:
+            self.notification(reason)

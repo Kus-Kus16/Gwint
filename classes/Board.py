@@ -62,14 +62,18 @@ class Board:
 
     def clear_rows(self, players):
         player0, player1 = players
+        add = []
 
         for i in range(0, 3):
             self.rows[i].clear_boosts()
-            self.rows[i].clear_row(player0)
+            add += self.rows[i].clear_row(player0)
 
         for i in range(3, 6):
             self.rows[i].clear_boosts()
-            self.rows[i].clear_row(player1)
+            add += self.rows[i].clear_row(player1)
+
+        for card, player_id in add:
+            self.play_card(card, RowType[card.rows[0].upper()], player_id)
 
     def get_ordered_rows(self, player_id):
         rows0 = self.rows[0:3]

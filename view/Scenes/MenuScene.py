@@ -33,6 +33,7 @@ class MenuScene(Scene):
 		for btn in self.menu_buttons:
 			btn.draw(self.screen, mouse_pos)
 
+		self.draw_temporary()
 		self.volume_slider.draw(self.screen)
 
 	@overrides

@@ -5,6 +5,7 @@ class GameStates:
     def __init__(self):
         self.states = [[], []]
         self.seed = int(time.time())
+        self.reseeded = False
         self.lock = threading.Lock()
 
     def add_state(self, player_id, state):
@@ -16,4 +17,9 @@ class GameStates:
             return self.states[player_id].pop(0) if self.states[player_id] else None
 
     def reseed(self):
-        self.seed = int(time.time())
+        with self.lock:
+            self.reseeded = not self.reseeded
+            if self.reseeded:
+                self.seed = int(time.time())
+
+            return self.seed

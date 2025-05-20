@@ -60,4 +60,5 @@ class Notification:
                 self.image = load_image("notif_win_round")
                 self.text = "Wygrałeś tę rundę!"
             case _:
-                self.image = load_image("anim_scorch")
+                self.image = load_image("notif_shield")
+                self.text = name

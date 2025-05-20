@@ -47,6 +47,9 @@ class GameScene(Scene):
         if self.show_carousel:
             return self.carousel_scene.handle_events(event)
 
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+            return self.handle_right_click(event)
+
         if self.locked:
             return None
 
@@ -56,9 +59,6 @@ class GameScene(Scene):
 
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             return self.handle_left_click(event)
-
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
-            return self.handle_right_click(event)
 
     def handle_left_click(self, event):
         # Check hand clicks
@@ -291,8 +291,10 @@ class GameScene(Scene):
             row_name = row_names[i]
             data = getattr(C, row_name)
             row_rect = data["UNIT_RECT"]
+            boost_rect = data["BOOST_RECT"]
             text_x, text_y = data["TEXT_CENTER"]
             self.draw_row(row, row_rect, row_name)
+            self.draw_row_boosts(row, boost_rect)
             self.draw_text(f"{row.points}", text_x, text_y, color=C.COLOR_BLACK, center=True, font=C.CINZEL_30_BOLD)
 
     def draw_players(self):
@@ -381,22 +383,26 @@ class GameScene(Scene):
         self.screen.blit(gem_on if hp >= 1 else gem_off, (x + 353, y + 86))
 
     def draw_row(self, row, row_rect, row_name):
-        self.draw_card_holder(row, row_rect, self.card_rects)
+        self.draw_card_holder(row.cards, row_rect, self.card_rects)
         if row.effects["weather"]:
             self.draw_icon(f"weather_{row_name.lower()}", None, row_rect.left - C.BOOST_ROW_SIZE[0], row_rect.top)
+
+    def draw_row_boosts(self, row, boost_rect):
+        cards = row.get_effect_cards()
+        self.draw_card_holder(cards, boost_rect, self.card_rects)
 
     def draw_hand(self):
         self.hand_rects.clear()
         hand = self.game.players[self.player_id].hand
 
         rect = C.HAND_RECT
-        self.draw_card_holder(hand, rect, self.hand_rects)
+        self.draw_card_holder(hand.cards, rect, self.hand_rects)
         self.draw_commanders(self.hand_rects)
 
-    def draw_card_holder(self, container, rect, card_rects_output):
+    def draw_card_holder(self, cards, rect, card_rects_output):
         width = rect.width
         x, y = rect.left, rect.top
-        count = container.size()
+        count = len(cards)
         offset = 90
 
         total_width = offset * count
@@ -404,7 +410,7 @@ class GameScene(Scene):
         if total_width > width:
             offset = offset * width / total_width
 
-        for i, card in enumerate(container.cards):
+        for i, card in enumerate(cards):
             card_x = x + offset * i
             card_rect = self.draw_card(card, card_x - 4, y, "small")
             card_rects_output.append((card, card_rect))

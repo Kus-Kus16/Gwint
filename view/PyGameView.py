@@ -84,8 +84,8 @@ class PygameView:
     def set_observer(self, observer):
         self.observer = observer
 
-    def run_later(self, runable):
-        self.tasks.put(runable)
+    def run_later(self, runnable):
+        self.tasks.put(runnable)
 
     def notification(self, name, seconds=0, frames=0):
         if frames == 0:

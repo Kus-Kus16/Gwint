@@ -146,7 +146,6 @@ class Game:
                             targets = []
                         else:
                             target = self.rng.choice(cards).id
-                            print(target)
                             targets = [target]
 
                     if len(targets) == 0:
@@ -224,15 +223,20 @@ class Game:
         for card_id in targets:
             card = player.hand.find_card_by_id(card_id)
             if card is None:
+                print("No card in hand")
                 return False
 
             player.hand.remove_card(card)
-            player.draw_card()
             player.deck.add_card(card)
-            player.shuffle_deck(self.rng)
+            player.draw_card()
             player.redraws -= 1
 
         return True
+
+    def end_redraws(self):
+        for player in self.players:
+            player.redraws = 0
+            player.shuffle_deck(self.rng)
 
     def next_turn(self):
         next_player = self.players[1 - self.current_player_id]
@@ -248,7 +252,6 @@ class Game:
         self.players[1].points = player1_pts
 
     def start_game(self):
-        #TODO game start
         self.reset_gamerules()
         self.current_round = 0
         self.round_history = []
@@ -277,7 +280,6 @@ class Game:
         self.current_player_id = (1 - self.first_player_id + self.current_round) % 2
 
     def end_round(self):
-        #TODO round end
         self.current_player_id = None
         player0, player1 = self.players[0], self.players[1]
 

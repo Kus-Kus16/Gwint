@@ -174,15 +174,22 @@ class Row(CardHolder):
             if card.is_recalling():
                 extra = CardsDatabase.get_recall(card.id)
                 extra.owner = player
-                add.append(extra)
+                add.append((extra, player.id))
 
             remove.append(card)
 
         for card in remove:
             self.transfer_card(card, player.grave)
 
-        for card in add:
-            self.add_card(card)
+        return add
+
+    def get_effect_cards(self):
+        cards = []
+        for card in self.effects["horn"]:
+            if card.is_special():
+                cards.append(card)
+
+        return cards
 
     def __str__(self):
         return str(self.points) + " :: " + ", ".join(str(card) for card in self.cards)
