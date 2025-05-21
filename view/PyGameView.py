@@ -43,7 +43,7 @@ class PygameView:
         self.game = GameScene(self.screen, self.volume_slider)
         self.current_scene = self.menu
 
-        with open("./data/exampledecks.json", "r", encoding="utf-8") as file:
+        with open("./data/yourdecks.json", "r", encoding="utf-8") as file:
             decks = json.load(file)
 
         self.deck = DeckScene(self.screen, card_dict, decks)

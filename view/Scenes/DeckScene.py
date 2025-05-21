@@ -34,10 +34,10 @@ class DeckScene(Scene):
         self.scroll_offset_all = 0
         self.scroll_offset_deck = 0
 
-        self.filtered_cards = [card for card in self.all_cards if card["faction"] == "Królestwa Północy"]
-
-        self.factions = ["Królestwa Północy", "Cesarstwo Nilfgaardu", "Potwory", "Scoia'tael", "Skellige"]  # Przykład frakcji
+        self.factions = ["Królestwa Północy", "Cesarstwo Nilfgaardu", "Potwory", "Scoia'tael", "Skellige"]
         self.current_faction_index = 0
+        self.current_deck_index = 0  # <-- dodane
+
         self.filtered_cards = None
         self.update_filtered_cards()
 
@@ -45,15 +45,26 @@ class DeckScene(Scene):
         self.back_button = Button("Powrót do Menu",
                                   ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
                                   C.BUTTON_SIZE_WIDE,
-                                  { "type": "mode_change", "mode": "menu" })
+                                  {"type": "mode_change", "mode": "menu"})
 
-        self.prev_faction_button = Button("<", (50, 50), (50, 50),
-                                          {"type": "change_faction", "direction": -1})
-        self.next_faction_button = Button(">", (self.screen_width - 100, 50), (50, 50),
-                                          {"type": "change_faction", "direction": 1})
+        self.prev_faction_button = None
+        self.next_faction_button = None
+        self.update_faction_buttons()
 
         self.darken = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
         self.darken.fill((0, 0, 0, 150))
+
+    def update_faction_buttons(self):
+        prev_index = (self.current_faction_index - 1) % len(self.factions)
+        next_index = (self.current_faction_index + 1) % len(self.factions)
+
+        prev_name = self.factions[prev_index]
+        next_name = self.factions[next_index]
+
+        self.prev_faction_button = Button(f"< {prev_name}", (50, 50), (400, 50),
+                                          {"type": "change_faction", "direction": -1})
+        self.next_faction_button = Button(f"{next_name} >", (self.screen_width - 450, 50), (450, 50),
+                                          {"type": "change_faction", "direction": 1})
 
     @overrides
     def draw(self):
@@ -77,8 +88,7 @@ class DeckScene(Scene):
             y = 100 + row * (C.LARGE_CARD_SIZE[1] + CARD_MARGIN)
             self.screen.blit(image, (x, y))
 
-        deck_cards = self.get_deck_cards(0)
-
+        deck_cards = self.get_deck_cards(self.current_deck_index)  # <-- zmienione
         expanded_deck_cards = []
         for entry in deck_cards:
             expanded_deck_cards.extend([entry["card"]] * entry["count"])
@@ -89,12 +99,33 @@ class DeckScene(Scene):
             image = load_card_image(card, "large")
             row = idx // COLS
             col = idx % COLS
-
             total_width = COLS * C.LARGE_CARD_SIZE[0] + (COLS - 1) * CARD_MARGIN
             x_start = self.screen_width - total_width - 50
             x = x_start + col * (C.LARGE_CARD_SIZE[0] + CARD_MARGIN)
             y = 100 + row * (C.LARGE_CARD_SIZE[1] + CARD_MARGIN)
             self.screen.blit(image, (x, y))
+
+        total_count, hero_count, special_count, total_strength = self.calculate_deck_stats()
+
+        stats_font = pygame.font.SysFont(None, 50)
+        lines = [
+            "Karty:",
+            f"{total_count}",
+            "Bohaterowie:",
+            f"{hero_count}",
+            "Specjalne:",
+            f"{special_count}",
+            "Siła:",
+            f"{total_strength}"
+        ]
+
+        line_height = stats_font.get_height()
+        start_y = 300
+        for i, line in enumerate(lines):
+            stats_surface = stats_font.render(line, True, (255, 255, 255))
+            stats_x = self.screen_width // 2 - stats_surface.get_width() // 2
+            stats_y = start_y + i * (line_height + 10)
+            self.screen.blit(stats_surface, (stats_x, stats_y))
 
         self.back_button.draw(self.screen, pygame.mouse.get_pos())
 
@@ -111,25 +142,31 @@ class DeckScene(Scene):
 
                 if self.prev_faction_button.check_click(event.pos):
                     self.current_faction_index = (self.current_faction_index - 1) % len(self.factions)
+                    self.current_deck_index = self.current_faction_index  # <-- synchronizacja indeksu talii
                     self.update_filtered_cards()
+                    self.update_faction_buttons()
+                    self.scroll_offset_deck = 0  # reset scrolla prawej listy
 
                 if self.next_faction_button.check_click(event.pos):
                     self.current_faction_index = (self.current_faction_index + 1) % len(self.factions)
+                    self.current_deck_index = self.current_faction_index  # <-- synchronizacja indeksu talii
                     self.update_filtered_cards()
+                    self.update_faction_buttons()
+                    self.scroll_offset_deck = 0  # reset scrolla prawej listy
 
             elif event.button in (4, 5):  # Scroll
                 mouse_x, _ = pygame.mouse.get_pos()
                 is_left_side = mouse_x < self.screen_width // 2
 
                 if is_left_side:
-                    if event.button == 4:  # Scroll up
+                    if event.button == 4:
                         self.scroll_offset_all = max(0, self.scroll_offset_all - COLS)
-                    elif event.button == 5:  # Scroll down
+                    elif event.button == 5:
                         max_scroll = max(0, len(self.filtered_cards) - CARDS_PER_PAGE)
                         self.scroll_offset_all = min(max_scroll, self.scroll_offset_all + COLS)
                 else:
-                    deck_cards = self.get_deck_cards(0)
-                    if event.button == 4: # Scroll up
+                    deck_cards = self.get_deck_cards(self.current_deck_index)  # <-- zmienione
+                    if event.button == 4:
                         self.scroll_offset_deck = max(0, self.scroll_offset_deck - COLS)
                     elif event.button == 5:
                         max_scroll = max(0, len(deck_cards) - CARDS_PER_PAGE)
@@ -149,3 +186,25 @@ class DeckScene(Scene):
         faction = self.factions[self.current_faction_index]
         self.filtered_cards = [card for card in self.all_cards if card["faction"] == faction]
         self.scroll_offset_all = 0
+
+    def calculate_deck_stats(self):
+        deck_cards = self.get_deck_cards(self.current_deck_index)
+        total_count = 0
+        hero_count = 0
+        special_count = 0
+        total_strength = 0
+
+        for entry in deck_cards:
+            card = entry["card"]
+            count = entry["count"]
+            total_count += count
+            print(card)
+            if "hero" in card.get('abilities'):
+                hero_count += count
+            elif card.get('abilities'):
+                special_count += count
+
+            total_strength += card.get('power', 0) * count
+
+        return total_count, hero_count, special_count, total_strength
+
