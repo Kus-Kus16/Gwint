@@ -10,7 +10,7 @@ def load_image(path, size=None):
 
     if not os.path.exists(path):
         placeholder = "resources/placeholder_large2.png" if "large" in path else "resources/placeholder.png"
-        return load_image(placeholder)
+        return load_image(placeholder,size)
 
     image = pygame.image.load(path).convert_alpha()
     if size is not None:

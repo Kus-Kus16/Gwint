@@ -1,8 +1,11 @@
+import json
 import queue
 
 import pygame
 
+from classes.CardsDatabase import card_dict
 from view.Scenes.CreditsScene import CreditsScene
+from view.Scenes.DeckScene import DeckScene
 from view.Scenes.GameScene import GameScene
 from view.Scenes.MenuScene import MenuScene
 from view.Scenes.WaitingScene import WaitingScene
@@ -39,6 +42,11 @@ class PygameView:
         self.waiting = WaitingScene(self.screen)
         self.game = GameScene(self.screen, self.volume_slider)
         self.current_scene = self.menu
+
+        with open("./data/exampledecks.json", "r", encoding="utf-8") as file:
+            decks = json.load(file)
+
+        self.deck = DeckScene(self.screen, card_dict, decks)
 
     def run(self):
         while self.running:

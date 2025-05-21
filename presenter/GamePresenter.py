@@ -55,7 +55,6 @@ class GamePresenter:
                     pass
                 case "deck":
                     pass
-
                 case "waiting-for-game":
                     self.handle_waitingforgame()
                 case "setup-game":
@@ -264,9 +263,9 @@ class GamePresenter:
                 self.view.change_scene(self.view.credits)
             case "deck":
                 pass
-                # self.game_state = "deck"
-                # self.disconnect()
-                # self.view.change_scene(self.view.deck)
+                self.game_state = "deck"
+                self.disconnect()
+                self.view.change_scene(self.view.deck)
             case "exit":
                 self.game_state = "exit"
                 self.disconnect()
