@@ -51,31 +51,17 @@ class GamePresenter:
             time.sleep(0.01)
             self.process_actions()
             match self.game_state:
-                case "menu":
-                    pass
-                case "credits":
-                    pass
-                case "deck":
-                    pass
-                case "choose_deck":
-                    pass
                 case "waiting-for-game":
                     self.handle_waitingforgame()
                 case "setup-game":
                     self.handle_setupgame()
-                case "redraw":
-                    pass
                 case "waiting-for-redraw":
                     self.handle_opponentredraw()
-                case "playing":
-                    pass
                 case "waiting":
                     self.handle_opponentturn()
-                case "game-over":
-                    pass
                 case "waiting-for-endgame":
                     self.handle_waitingforendgame()
-                case _:
+                case "exit":
                     return
 
     def handle_waitingforgame(self):
@@ -254,10 +240,10 @@ class GamePresenter:
     def handle_mode_change(self, action):
         match action["mode"]:
             case "start_game":
-                self.game_state = "choose_deck"
+                self.game_state = "load_deck"
                 self.disconnect()
                 self.view.change_scene(self.view.deck, mode="start")
-            case "choose_deck":
+            case "load_deck":
                 with open("./data/yourdecks.json", "r", encoding="utf-8") as file:
                     decks = json.load(file)
 

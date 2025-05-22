@@ -68,7 +68,7 @@ class DeckScene(Scene):
         self.start_button = Button("Rozpocznij grę",
                                   ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30 - button_height - 30),
                                   C.BUTTON_SIZE_WIDE,
-                                  {"type": "mode_change", "mode": "choose_deck", "deck_id": self.current_deck_index, "commander_id": self.current_commander_id})
+                                  {"type": "mode_change", "mode": "load_deck", "deck_id": self.current_deck_index, "commander_id": self.current_commander_id})
 
         self.prev_faction_button = None
         self.next_faction_button = None
