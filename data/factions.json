@@ -171,31 +171,36 @@
                 "id": 230,
                 "name": "Bran Tuirseach",
                 "nickname": "Król Skellige",
-                "abilities": ["weatherHalf"]
+                "abilities": ["weatherHalf"],
+                "filename": "bran"
             },
             {
                 "id": 231,
                 "name": "Crach an Craite",
                 "nickname": "Dzik Morski",
-                "abilities": ["reshuffleGraves"]
+                "abilities": ["reshuffleGraves"],
+                "filename": "crach"
             },
             {
                 "id": 232,
                 "name": "Eist Tuirseach",
                 "nickname": "Łowca z An Skellig",
-                "abilities": ["scorchEnemyLow"]
+                "abilities": ["scorchEnemyLow"],
+                "filename": ""
             },
             {
                 "id": 233,
                 "name": "Harald an Craite",
                 "nickname": "Chromy",
-                "abilities": ["redraw4"]
+                "abilities": ["redraw4"],
+                "filename": ""
             },
             {
                 "id": 234,
                 "name": "Erlend an Craite",
                 "nickname": "Kamienna Pięść",
-                "abilities": ["findStorm"]
+                "abilities": ["findStorm"],
+                "filename": ""
             }
         ]
     }

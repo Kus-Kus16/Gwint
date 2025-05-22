@@ -1,8 +1,11 @@
+import json
 import queue
 
 import pygame
 
+from classes.CardsDatabase import card_dict
 from view.Scenes.CreditsScene import CreditsScene
+from view.Scenes.DeckScene import DeckScene
 from view.Scenes.GameScene import GameScene
 from view.Scenes.MenuScene import MenuScene
 from view.Scenes.WaitingScene import WaitingScene
@@ -40,6 +43,11 @@ class PygameView:
         self.game = GameScene(self.screen, self.volume_slider)
         self.current_scene = self.menu
 
+        with open("./data/yourdecks.json", "r", encoding="utf-8") as file:
+            decks = json.load(file)
+
+        self.deck = DeckScene(self.screen, card_dict, decks)
+
     def run(self):
         while self.running:
             self.draw()
@@ -71,9 +79,14 @@ class PygameView:
     def unlock(self):
         self.current_scene.unlock()
 
-    def change_scene(self, scene):
+    def change_scene(self, scene, **kwargs):
         self.current_scene.clear_temporary()
         self.current_scene.unlock()
+
+        # Choosing deck
+        if scene == self.deck and "mode" in kwargs:
+            self.deck.set_mode(kwargs["mode"])
+
         self.current_scene = scene
 
     def draw(self):

@@ -1,13 +1,15 @@
+import json
 import queue
 import time
 
+from classes import CardsDatabase
 from classes.Game import Game
 from classes.Player import Player
 from network.network import Network
 
 
 class GamePresenter:
-    def __init__(self, deck, commander,view):
+    def __init__(self, view):
         self.view = view
         self.n = Network()
         self.my_id = None
@@ -19,8 +21,8 @@ class GamePresenter:
         self.actions = queue.Queue()
         self.carousel_dict = {}
 
-        self.deck = deck
-        self.commander = commander
+        self.deck = None
+        self.commander = None
 
         self.one_passed = False
 
@@ -49,30 +51,17 @@ class GamePresenter:
             time.sleep(0.01)
             self.process_actions()
             match self.game_state:
-                case "menu":
-                    pass
-                case "credits":
-                    pass
-                case "deck":
-                    pass
-
                 case "waiting-for-game":
                     self.handle_waitingforgame()
                 case "setup-game":
                     self.handle_setupgame()
-                case "redraw":
-                    pass
                 case "waiting-for-redraw":
                     self.handle_opponentredraw()
-                case "playing":
-                    pass
                 case "waiting":
                     self.handle_opponentturn()
-                case "game-over":
-                    pass
                 case "waiting-for-endgame":
                     self.handle_waitingforendgame()
-                case _:
+                case "exit":
                     return
 
     def handle_waitingforgame(self):
@@ -251,9 +240,26 @@ class GamePresenter:
     def handle_mode_change(self, action):
         match action["mode"]:
             case "start_game":
-                if self.connect(self.deck, self.commander):
+                self.game_state = "load_deck"
+                self.disconnect()
+                self.view.change_scene(self.view.deck, mode="start")
+            case "load_deck":
+                with open("./data/yourdecks.json", "r", encoding="utf-8") as file:
+                    decks = json.load(file)
+
+                deck_data = decks[action["deck_id"]]
+                commander_id = deck_data["commander_id"]
+                cards = deck_data["cards"]
+
+                valid, payload = CardsDatabase.create_verified_deck(cards, commander_id)
+                if not valid:
+                    raise ValueError(f"Illegal deck, problem with card or commander: {payload}")
+
+                deck, commander = payload
+                if self.connect(deck, commander):
                     self.game_state = "waiting-for-game"
                     self.view.change_scene(self.view.waiting)
+
             case "menu":
                 self.game_state = "menu"
                 self.disconnect()
@@ -263,16 +269,19 @@ class GamePresenter:
                 self.disconnect()
                 self.view.change_scene(self.view.credits)
             case "deck":
-                pass
-                # self.game_state = "deck"
-                # self.disconnect()
-                # self.view.change_scene(self.view.deck)
+                self.game_state = "deck"
+                self.disconnect()
+                self.view.change_scene(self.view.deck, mode="menu")
             case "exit":
                 self.game_state = "exit"
                 self.disconnect()
                 self.view.running = False
 
         self.view.unlock()
+
+    def set_deck_and_commander(self, deck, commander):
+        self.deck = deck
+        self.commander = commander
 
     def handle_play(self, action):
         if action["card_id"] is None:
@@ -301,7 +310,7 @@ class GamePresenter:
             return
 
         if not result is True:
-            self.view.current_scene.show_card_carousel(result, "peek")
+            self.show_carousel(result)
 
         response, data = self.n.send(("play", ["card", card_id, row, targets]))
         # Opponent disconnected

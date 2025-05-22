@@ -120,7 +120,7 @@ class CarouselScene(Scene):
 
                     return {
                         "type": "carousel",
-                        "card_id": card.id,
+                        "card_id": card.id if hasattr(card, "id") else card["id"],
                         "end": end
                     }
 

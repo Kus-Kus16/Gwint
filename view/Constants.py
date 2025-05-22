@@ -77,9 +77,12 @@ INFO_OPP_RECT = __rect(INFO_OPP_POS, INFO_SIZE)
 
 BUTTON_SIZE = (300, 100)
 BUTTON_SIZE_WIDE = (400, 80)
+BUTTON_SIZE_NARROW = (200, 60)
+
 
 DECK_CARD_SIZE = (83, 140)
 SMALL_CARD_SIZE = (94, 123)
+MEDIUM_CARD_SIZE = (210, 365)
 LARGE_CARD_SIZE = (293, 512)
 SELECTED_CARD_POS = (1544, 265)
 
@@ -105,5 +108,6 @@ CINZEL_15 = __font("Cinzel-Regular", 15)
 CINZEL_30 = __font("Cinzel-Regular", 30)
 CINZEL_40 = __font("Cinzel-Regular", 40)
 CINZEL_20_BOLD = __font("Cinzel-SemiBold", 20)
+CINZEL_25_BOLD = __font("Cinzel-SemiBold", 25)
 CINZEL_30_BOLD = __font("Cinzel-SemiBold", 30)
 CINZEL_50_BOLD = __font("Cinzel-SemiBold", 50)
