@@ -524,15 +524,6 @@ class GameScene(Scene):
 
         return rect
 
-    def draw_text(self, text, x, y, color=C.COLOR_WHITE, font=C.CINZEL_30, center=False):
-        text_surface = font.render(str(text), True, color)
-        text_rect = text_surface.get_rect()
-        if center:
-            text_rect.center = (x, y)
-        else:
-            text_rect.topleft = (x, y)
-        self.screen.blit(text_surface, text_rect)
-
     def set_game(self, game, player_id):
         self.game = game
         self.player_id = player_id

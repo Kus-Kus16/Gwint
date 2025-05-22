@@ -2,7 +2,6 @@ import pygame
 from abc import ABC, abstractmethod
 
 from view.components.Notification import Notification
-from view.components.VolumeSlider import VolumeSlider
 from view import Constants as C
 
 
@@ -70,3 +69,12 @@ class Scene(ABC):
 
     def clear_temporary(self):
         self.temporary_drawable.clear()
+
+    def draw_text(self, text, x, y, color=C.COLOR_WHITE, font=C.CINZEL_30, center=False):
+        text_surface = font.render(str(text), True, color)
+        text_rect = text_surface.get_rect()
+        if center:
+            text_rect.center = (x, y)
+        else:
+            text_rect.topleft = (x, y)
+        self.screen.blit(text_surface, text_rect)

@@ -6,7 +6,6 @@ from overrides import overrides
 from view import Constants as C, ImageLoader
 from view.Constants import BUTTON_SIZE_WIDE
 from view.Scenes.CarouselScene import CarouselScene
-from view.Scenes.GameScene import GameScene
 from view.Scenes.Scene import Scene
 from view.components.Button import Button
 
@@ -45,7 +44,7 @@ class DeckScene(Scene):
         # Commander
         with open("./data/factions.json", "r", encoding="utf-8") as f:
             self.factions_data = json.load(f)
-        self.factions = [f["name"] for f in self.factions_data]
+        self.factions = [f["name"] for f in self.factions_data]#[0:2] # TODO v1 2 decks only
         self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
         self.commander_rect= None
 
@@ -59,15 +58,15 @@ class DeckScene(Scene):
         self.left_card_rects = []
         self.right_card_rects = []
 
-        button_width, button_height = C.BUTTON_SIZE_WIDE
-        self.back_button = Button("Powrót do Menu",
+        button_width, button_height = C.BUTTON_SIZE_NARROW
+        self.back_button = Button("Menu",
                                   ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30),
-                                  C.BUTTON_SIZE_WIDE,
+                                  C.BUTTON_SIZE_NARROW,
                                   {"type": "mode_change", "mode": "menu"})
 
-        self.start_button = Button("Rozpocznij grę",
-                                  ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30 - button_height - 30),
-                                  C.BUTTON_SIZE_WIDE,
+        self.start_button = Button("Rozpocznij",
+                                  ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30 - button_height - 10),
+                                  C.BUTTON_SIZE_NARROW,
                                   {"type": "mode_change", "mode": "load_deck", "deck_id": self.current_deck_index, "commander_id": self.current_commander_id})
 
         self.prev_faction_button = None
@@ -135,7 +134,7 @@ class DeckScene(Scene):
         # Faction name
         font = C.CINZEL_50_BOLD
         faction_name = self.factions[self.current_faction_index]
-        text_surface = font.render(f"Frakcja: {faction_name}{self.current_commander_id}", True, C.COLOR_GOLD)
+        text_surface = font.render(f"Frakcja: {faction_name}", True, C.COLOR_GOLD)
         self.screen.blit(text_surface, (self.screen_width // 2 - text_surface.get_width() // 2, 50))
         # Commander
         commander = self.get_commander_by_id(self.current_commander_id)
@@ -146,7 +145,7 @@ class DeckScene(Scene):
 
     def show_deck_stats(self):
         total_count, hero_count, special_count, total_strength = self.calculate_deck_stats()
-        stats_font = C.CINZEL_25_BOLD
+        stats_font = C.CINZEL_30_BOLD
         lines = [
             "Karty (min. 22)",
             f"{total_count}",
@@ -173,12 +172,15 @@ class DeckScene(Scene):
 
     def show_deck_cards(self):
         deck_cards = self.get_deck_cards(self.current_deck_index)
-        expanded_deck_cards = []
-        for entry in deck_cards:
-            expanded_deck_cards.extend([entry["card"]] * entry["count"])
+        # expanded_deck_cards = []
+        # for entry in deck_cards:
+        #     expanded_deck_cards.extend([entry["card"]] * entry["count"])
+
         self.right_card_rects = []
-        visible_deck_cards = expanded_deck_cards[self.scroll_offset_deck:self.scroll_offset_deck + CARDS_PER_PAGE]
-        for idx, card in enumerate(visible_deck_cards):
+        visible_deck_cards = deck_cards[self.scroll_offset_deck:self.scroll_offset_deck + CARDS_PER_PAGE]
+
+        for idx, entry in enumerate(visible_deck_cards):
+            card = entry["card"]
             image = load_card_image(card, "large", self.factions[self.current_faction_index])
             row = idx // COLS
             col = idx % COLS
@@ -188,6 +190,15 @@ class DeckScene(Scene):
             y = 270 + row * (C.MEDIUM_CARD_SIZE[1] + CARD_MARGIN)
             self.screen.blit(image, (x, y))
             self.right_card_rects.append((pygame.Rect(x, y, *C.MEDIUM_CARD_SIZE), card))
+
+            count = entry["count"]
+            if count > 1:
+                overlay = pygame.Surface((60, 36), pygame.SRCALPHA)
+                overlay.fill((0, 0, 0, 190))
+                overlay_x = x + C.MEDIUM_CARD_SIZE[0] - 60
+                overlay_y = y
+                self.screen.blit(overlay, (overlay_x, overlay_y))
+                self.draw_text(count, overlay_x + 30, overlay_y + 18, center=True)
 
     def show_all_available_cards(self):
         self.left_card_rects = []
@@ -233,6 +244,7 @@ class DeckScene(Scene):
                 if self.prev_faction_button.check_click(event.pos):
                     self.current_faction_index = (self.current_faction_index - 1) % len(self.factions)
                     self.current_deck_index = self.current_faction_index
+                    self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
                     self.update_filtered_cards()
                     self.update_faction_buttons()
                     self.scroll_offset_deck = 0
@@ -241,6 +253,7 @@ class DeckScene(Scene):
                 if self.next_faction_button.check_click(event.pos):
                     self.current_faction_index = (self.current_faction_index + 1) % len(self.factions)
                     self.current_deck_index = self.current_faction_index
+                    self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
                     self.update_filtered_cards()
                     self.update_faction_buttons()
                     self.scroll_offset_deck = 0
@@ -303,6 +316,10 @@ class DeckScene(Scene):
 
     def set_commander(self, data):
         commander_id = data['card_id']
+
+        if commander_id is None:
+            return
+
         self.current_commander_id = commander_id
         self.current_decks[self.current_deck_index]["commander_id"] = commander_id
 
@@ -322,13 +339,13 @@ class DeckScene(Scene):
             card = entry["card"]
             count = entry["count"]
             total_count += count
+
             if "hero" in card.get('abilities'):
                 hero_count += count
-            elif card.get('abilities'):
+            if card.get('power') is None:
                 special_count += count
-
-            total_strength += (card.get('power') or 0) * count
-
+            else:
+                total_strength += card.get('power') * count
 
         return total_count, hero_count, special_count, total_strength
 
