@@ -26,6 +26,8 @@ def load_large_image(card):
 def load_card_image(card, size):
     return load_small_image(card) if size == "small" else load_large_image(card)
 
+
+
 class DeckScene(Scene):
     def __init__(self, screen, all_cards, current_decks):
         super().__init__(screen, "resources/menu.png")
@@ -233,7 +235,7 @@ class DeckScene(Scene):
 
     def update_filtered_cards(self):
         faction = self.factions[self.current_faction_index]
-        self.filtered_cards = [card for card in self.all_cards if card["faction"] == faction]
+        self.filtered_cards = [card for card in self.all_cards if card["faction"] == faction or card["faction"] == "Neutralne"]
         self.scroll_offset_all = 0
 
     def calculate_deck_stats(self):
@@ -260,8 +262,11 @@ class DeckScene(Scene):
         deck = self.current_decks[self.current_deck_index]
         for entry in deck:
             if entry["id"] == card["id"]:
-                entry["count"] += 1
-                break
+                if entry["count"] < card["count"]:
+                    entry["count"] += 1
+                    break
+                else:
+                    return
         else:
             deck.append({"id": card["id"], "count": 1})
 
@@ -269,7 +274,8 @@ class DeckScene(Scene):
         deck = self.current_decks[self.current_deck_index]
         for entry in deck:
             if entry["id"] == card["id"]:
-                entry["count"] -= 1
-                if entry["count"] <= 0:
+                if entry["count"] > 1:
+                    entry["count"] -= 1
+                else:
                     deck.remove(entry)
                 break
