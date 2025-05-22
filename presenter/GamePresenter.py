@@ -1,6 +1,8 @@
+import json
 import queue
 import time
 
+from classes import CardsDatabase
 from classes.Game import Game
 from classes.Player import Player
 from network.network import Network
@@ -54,6 +56,8 @@ class GamePresenter:
                 case "credits":
                     pass
                 case "deck":
+                    pass
+                case "choose_deck":
                     pass
                 case "waiting-for-game":
                     self.handle_waitingforgame()
@@ -250,7 +254,18 @@ class GamePresenter:
     def handle_mode_change(self, action):
         match action["mode"]:
             case "start_game":
-                if self.connect(self.deck, self.commander):
+                self.game_state = "choose_deck"
+                self.disconnect()
+                self.view.change_scene(self.view.deck, mode="start")
+            case "choose_deck":
+                commander_id = 83
+                with open("./data/yourdecks.json", "r", encoding="utf-8") as file:
+                    deck = json.load(file)[action["deck_id"]]
+                valid, payload = CardsDatabase.create_verified_deck(deck, commander_id)
+                if not valid:
+                    raise ValueError(f"Illegal deck, problem with card or commander: {payload}")
+                deck, commander = payload
+                if self.connect(deck, commander):
                     self.game_state = "waiting-for-game"
                     self.view.change_scene(self.view.waiting)
             case "menu":
@@ -262,16 +277,19 @@ class GamePresenter:
                 self.disconnect()
                 self.view.change_scene(self.view.credits)
             case "deck":
-                pass
                 self.game_state = "deck"
                 self.disconnect()
-                self.view.change_scene(self.view.deck)
+                self.view.change_scene(self.view.deck, mode="menu")
             case "exit":
                 self.game_state = "exit"
                 self.disconnect()
                 self.view.running = False
 
         self.view.unlock()
+
+    def set_deck_and_commander(self, deck, commander):
+        self.deck = deck
+        self.commander = commander
 
     def handle_play(self, action):
         if action["card_id"] is None:
