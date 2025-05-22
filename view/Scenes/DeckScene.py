@@ -301,8 +301,9 @@ class DeckScene(Scene):
                     return commander
         return None
 
-    def set_commander(self, commander_id):
-        self.current_commander_id = commander_id['card_id']
+    def set_commander(self, data):
+        commander_id = data['card_id']
+        self.current_commander_id = commander_id
         self.current_decks[self.current_deck_index]["commander_id"] = commander_id
 
     def update_filtered_cards(self):

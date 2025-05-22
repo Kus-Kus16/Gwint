@@ -9,7 +9,7 @@ from network.network import Network
 
 
 class GamePresenter:
-    def __init__(self, deck, commander,view):
+    def __init__(self, view):
         self.view = view
         self.n = Network()
         self.my_id = None
@@ -21,8 +21,8 @@ class GamePresenter:
         self.actions = queue.Queue()
         self.carousel_dict = {}
 
-        self.deck = deck
-        self.commander = commander
+        self.deck = None
+        self.commander = None
 
         self.one_passed = False
 
@@ -262,7 +262,7 @@ class GamePresenter:
                     decks = json.load(file)
 
                 deck_data = decks[action["deck_id"]]
-                commander_id = deck_data["commander_id"]["card_id"]
+                commander_id = deck_data["commander_id"]
                 cards = deck_data["cards"]
 
                 valid, payload = CardsDatabase.create_verified_deck(cards, commander_id)
