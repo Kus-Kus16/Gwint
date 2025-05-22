@@ -16,16 +16,16 @@ ROWS = 2
 COLS = 3
 CARDS_PER_PAGE = ROWS * COLS
 
-def load_small_image(card):
-    path = f"resources/small/{card['faction']}/{card['filename']}.png"
-    return ImageLoader.load_image(path, C.SMALL_CARD_SIZE)
-
-def load_large_image(card, faction):
+def load_medium_image(card, faction):
     path = f"resources/large/{faction}/{card['filename']}.png"
     return ImageLoader.load_image(path, C.MEDIUM_CARD_SIZE)
 
+def load_large_image(card, faction):
+    path = f"resources/large/{faction}/{card['filename']}.png"
+    return ImageLoader.load_image(path, C.LARGE_CARD_SIZE)
+
 def load_card_image(card, size, faction):
-    return load_small_image(card) if size == "small" else load_large_image(card, faction)
+    return load_medium_image(card, faction) if size == "medium" else load_large_image(card, faction)
 
 class DeckScene(Scene):
     def __init__(self, screen, all_cards, current_decks):
@@ -112,7 +112,7 @@ class DeckScene(Scene):
             # Draw the commander
             commander = self.get_commander_by_id(self.current_commander_id)
             if commander:
-                commander_image = load_card_image(commander, "large", self.factions[self.current_faction_index])
+                commander_image = load_card_image(commander, "medium", self.factions[self.current_faction_index])
                 self.screen.blit(commander_image, (self.screen_width // 2 - C.MEDIUM_CARD_SIZE[0] // 2, 170))
                 commander_pos = (self.screen_width // 2 - C.MEDIUM_CARD_SIZE[0] // 2, 170)
                 self.commander_rect = pygame.Rect(commander_pos, C.MEDIUM_CARD_SIZE)
@@ -181,7 +181,7 @@ class DeckScene(Scene):
 
         for idx, entry in enumerate(visible_deck_cards):
             card = entry["card"]
-            image = load_card_image(card, "large", self.factions[self.current_faction_index])
+            image = load_card_image(card, "medium", self.factions[self.current_faction_index])
             row = idx // COLS
             col = idx % COLS
             total_width = COLS * C.MEDIUM_CARD_SIZE[0] + (COLS - 1) * CARD_MARGIN
@@ -195,8 +195,8 @@ class DeckScene(Scene):
             if count > 1:
                 overlay = pygame.Surface((60, 36), pygame.SRCALPHA)
                 overlay.fill((0, 0, 0, 190))
-                overlay_x = x + C.MEDIUM_CARD_SIZE[0] - 60
-                overlay_y = y
+                overlay_x = x + C.MEDIUM_CARD_SIZE[0] - 60 - 10
+                overlay_y = y + 10
                 self.screen.blit(overlay, (overlay_x, overlay_y))
                 self.draw_text(count, overlay_x + 30, overlay_y + 18, center=True)
 
@@ -204,7 +204,7 @@ class DeckScene(Scene):
         self.left_card_rects = []
         visible_cards = self.filtered_cards[self.scroll_offset_all:self.scroll_offset_all + CARDS_PER_PAGE]
         for idx, card in enumerate(visible_cards):
-            image = load_card_image(card, "large", self.factions[self.current_faction_index])
+            image = load_card_image(card, "medium", self.factions[self.current_faction_index])
             row = idx // COLS
             col = idx % COLS
             x = 70 + col * (C.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)

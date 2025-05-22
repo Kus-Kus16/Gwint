@@ -310,7 +310,7 @@ class GamePresenter:
             return
 
         if not result is True:
-            self.view.current_scene.show_card_carousel(result, "peek")
+            self.show_carousel(result)
 
         response, data = self.n.send(("play", ["card", card_id, row, targets]))
         # Opponent disconnected
