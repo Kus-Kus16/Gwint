@@ -258,16 +258,22 @@ class GamePresenter:
                 self.disconnect()
                 self.view.change_scene(self.view.deck, mode="start")
             case "choose_deck":
-                commander_id = 83
                 with open("./data/yourdecks.json", "r", encoding="utf-8") as file:
-                    deck = json.load(file)[action["deck_id"]]
-                valid, payload = CardsDatabase.create_verified_deck(deck, commander_id)
+                    decks = json.load(file)
+
+                deck_data = decks[action["deck_id"]]
+                commander_id = deck_data["commander_id"]["card_id"]
+                cards = deck_data["cards"]
+
+                valid, payload = CardsDatabase.create_verified_deck(cards, commander_id)
                 if not valid:
                     raise ValueError(f"Illegal deck, problem with card or commander: {payload}")
+
                 deck, commander = payload
                 if self.connect(deck, commander):
                     self.game_state = "waiting-for-game"
                     self.view.change_scene(self.view.waiting)
+
             case "menu":
                 self.game_state = "menu"
                 self.disconnect()

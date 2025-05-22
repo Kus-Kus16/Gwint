@@ -5,6 +5,8 @@ from overrides import overrides
 
 from view import Constants as C, ImageLoader
 from view.Constants import BUTTON_SIZE_WIDE
+from view.Scenes.CarouselScene import CarouselScene
+from view.Scenes.GameScene import GameScene
 from view.Scenes.Scene import Scene
 from view.components.Button import Button
 
@@ -37,9 +39,18 @@ class DeckScene(Scene):
         self.scroll_offset_all = 0
         self.scroll_offset_deck = 0
 
-        self.factions = ["Królestwa Północy", "Cesarstwo Nilfgaardu", "Potwory", "Scoia'tael", "Skellige"]
         self.current_faction_index = 0
         self.current_deck_index = 0
+
+        # Commander
+        with open("./data/factions.json", "r", encoding="utf-8") as f:
+            self.factions_data = json.load(f)
+        self.factions = [f["name"] for f in self.factions_data]
+        self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
+        self.commander_rect= None
+
+        self.carousel_scene = None
+        self.show_carousel = False
 
         self.filtered_cards = None
         self.update_filtered_cards()
@@ -57,7 +68,7 @@ class DeckScene(Scene):
         self.start_button = Button("Rozpocznij grę",
                                   ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30 - button_height - 30),
                                   C.BUTTON_SIZE_WIDE,
-                                  {"type": "mode_change", "mode": "choose_deck", "deck_id": self.current_deck_index})
+                                  {"type": "mode_change", "mode": "choose_deck", "deck_id": self.current_deck_index, "commander_id": self.current_commander_id})
 
         self.prev_faction_button = None
         self.next_faction_button = None
@@ -83,18 +94,29 @@ class DeckScene(Scene):
 
     @overrides
     def draw(self):
-        super().draw()
-        self.screen.blit(self.darken, (0, 0))
+        if self.show_carousel:
+            self.carousel_scene.draw()
+        else:
+            super().draw()
+            self.screen.blit(self.darken, (0, 0))
 
-        self.draw_texts()
+            self.draw_texts()
 
-        self.show_all_available_cards()
+            self.show_all_available_cards()
 
-        self.show_deck_cards()
+            self.show_deck_cards()
 
-        self.show_deck_stats()
+            self.show_deck_stats()
 
-        self.draw_buttons()
+            self.draw_buttons()
+
+            # Draw the commander
+            commander = self.get_commander_by_id(self.current_commander_id)
+            if commander:
+                commander_image = load_card_image(commander, "large", self.factions[self.current_faction_index])
+                self.screen.blit(commander_image, (self.screen_width // 2 - C.MEDIUM_CARD_SIZE[0] // 2, 170))
+                commander_pos = (self.screen_width // 2 - C.MEDIUM_CARD_SIZE[0] // 2, 170)
+                self.commander_rect = pygame.Rect(commander_pos, C.MEDIUM_CARD_SIZE)
 
     def draw_buttons(self):
         self.prev_faction_button.draw(self.screen, pygame.mouse.get_pos())
@@ -113,12 +135,18 @@ class DeckScene(Scene):
         # Faction name
         font = C.CINZEL_50_BOLD
         faction_name = self.factions[self.current_faction_index]
-        text_surface = font.render(f"Frakcja: {faction_name}", True, C.COLOR_GOLD)
+        text_surface = font.render(f"Frakcja: {faction_name}{self.current_commander_id}", True, C.COLOR_GOLD)
         self.screen.blit(text_surface, (self.screen_width // 2 - text_surface.get_width() // 2, 50))
+        # Commander
+        commander = self.get_commander_by_id(self.current_commander_id)
+        if commander:
+            font = C.CINZEL_30_BOLD
+            text_surface = font.render("Dowódca", True, C.COLOR_GOLD)
+            self.screen.blit(text_surface, (self.screen_width // 2 - text_surface.get_width() // 2, 130))
 
     def show_deck_stats(self):
         total_count, hero_count, special_count, total_strength = self.calculate_deck_stats()
-        stats_font = C.CINZEL_30_BOLD
+        stats_font = C.CINZEL_25_BOLD
         lines = [
             "Karty (min. 22)",
             f"{total_count}",
@@ -130,7 +158,7 @@ class DeckScene(Scene):
             f"{total_strength}"
         ]
         line_height = stats_font.get_height()
-        start_y = 480
+        start_y = 550
         for i, line in enumerate(lines):
             color = C.COLOR_GOLD
             if i == 1:  # Total count
@@ -140,7 +168,7 @@ class DeckScene(Scene):
 
             stats_surface = stats_font.render(line, True, color)
             stats_x = self.screen_width // 2 - stats_surface.get_width() // 2
-            stats_y = start_y + i * (line_height + 5)
+            stats_y = start_y + i * (line_height + 3)
             self.screen.blit(stats_surface, (stats_x, stats_y))
 
     def show_deck_cards(self):
@@ -175,6 +203,13 @@ class DeckScene(Scene):
 
     @overrides
     def handle_events(self, event):
+        if self.show_carousel:
+            result = self.carousel_scene.handle_events(event)
+            if result is not None:
+                self.set_commander(result)
+                self.close_carousel()
+            return
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 # Back button
@@ -191,6 +226,7 @@ class DeckScene(Scene):
                         with open("./data/yourdecks.json", "w", encoding="utf-8") as f:
                             json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
                         self.start_button.action["deck_id"] = self.current_deck_index
+                        self.start_button.action["commander_id"] = self.current_commander_id
                         return self.start_button.action
 
                 # Prev faction button
@@ -220,6 +256,9 @@ class DeckScene(Scene):
                     if rect.collidepoint(event.pos):
                         self.remove_card_from_deck(card)
                         break
+                # Commander selection
+                if self.commander_rect.collidepoint(event.pos):
+                    self.open_carousel()
 
             # Scroll up/down
             elif event.button in (4, 5):
@@ -246,13 +285,25 @@ class DeckScene(Scene):
 
     def get_deck_cards(self, index):
         deck = self.current_decks[index]
+        cards_list = deck.get("cards", [])
         return [
             {
                 "card": next(card for card in self.all_cards if card["id"] == entry["id"]),
                 "count": entry["count"]
             }
-            for entry in deck
+            for entry in cards_list
         ]
+
+    def get_commander_by_id(self, commander_id):
+        for faction in self.factions_data:
+            for commander in faction["commanders"]:
+                if commander["id"] == commander_id:
+                    return commander
+        return None
+
+    def set_commander(self, commander_id):
+        self.current_commander_id = commander_id['card_id']
+        self.current_decks[self.current_deck_index]["commander_id"] = commander_id
 
     def update_filtered_cards(self):
         faction = self.factions[self.current_faction_index]
@@ -282,7 +333,9 @@ class DeckScene(Scene):
 
     def add_card_to_deck(self, card):
         deck = self.current_decks[self.current_deck_index]
-        for entry in deck:
+        cards_list = deck["cards"]
+
+        for entry in cards_list:
             if entry["id"] == card["id"]:
                 if entry["count"] < card["count"]:
                     entry["count"] += 1
@@ -290,16 +343,18 @@ class DeckScene(Scene):
                 else:
                     return
         else:
-            deck.append({"id": card["id"], "count": 1})
+            cards_list.append({"id": card["id"], "count": 1})
 
     def remove_card_from_deck(self, card):
         deck = self.current_decks[self.current_deck_index]
-        for entry in deck:
+        cards_list = deck["cards"]
+
+        for entry in cards_list:
             if entry["id"] == card["id"]:
                 if entry["count"] > 1:
                     entry["count"] -= 1
                 else:
-                    deck.remove(entry)
+                    cards_list.remove(entry)
                 break
 
     def can_start_game(self):
@@ -307,3 +362,17 @@ class DeckScene(Scene):
         if total_count >= 22 and special_count <= 10:
             return True
         return False
+
+    def close_carousel(self):
+        self.show_carousel = False
+        self.carousel_scene = None
+
+    def open_carousel(self):
+        cards_to_show = self.factions_data[self.current_faction_index]["commanders"]
+        self.carousel_scene = CarouselScene(self.screen, self.draw_card, cards_to_show, choose_count=1, cancelable=True)
+        self.show_carousel = True
+
+    def draw_card(self, card, x, y, size):
+        image = load_card_image(card, size, self.factions[self.current_faction_index])
+        rect = image.get_rect(topleft=(x, y))
+        self.screen.blit(image, rect)
