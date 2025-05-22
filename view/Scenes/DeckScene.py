@@ -4,29 +4,27 @@ import pygame
 from overrides import overrides
 
 from view import Constants as C, ImageLoader
+from view.Constants import BUTTON_SIZE_WIDE
 from view.Scenes.Scene import Scene
 from view.components.Button import Button
 
-CARD_MARGIN = 10
-VISIBLE_CARDS = 4
+CARD_MARGIN = 20
+VISIBLE_CARDS = 6
 
 ROWS = 2
-COLS = 2
+COLS = 3
 CARDS_PER_PAGE = ROWS * COLS
 
 def load_small_image(card):
     path = f"resources/small/{card['faction']}/{card['filename']}.png"
     return ImageLoader.load_image(path, C.SMALL_CARD_SIZE)
 
-def load_large_image(card):
-    faction = card['owner']['faction'] if card['faction'] == "Neutralne" and 'owner' in card else card['faction']
+def load_large_image(card, faction):
     path = f"resources/large/{faction}/{card['filename']}.png"
-    return ImageLoader.load_image(path, C.LARGE_CARD_SIZE)
+    return ImageLoader.load_image(path, C.MEDIUM_CARD_SIZE)
 
-def load_card_image(card, size):
-    return load_small_image(card) if size == "small" else load_large_image(card)
-
-
+def load_card_image(card, size, faction):
+    return load_small_image(card) if size == "small" else load_large_image(card, faction)
 
 class DeckScene(Scene):
     def __init__(self, screen, all_cards, current_decks):
@@ -52,12 +50,12 @@ class DeckScene(Scene):
 
         button_width, button_height = C.BUTTON_SIZE_WIDE
         self.back_button = Button("Powrót do Menu",
-                                  ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
+                                  ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30),
                                   C.BUTTON_SIZE_WIDE,
                                   {"type": "mode_change", "mode": "menu"})
 
         self.start_button = Button("Rozpocznij grę",
-                                  ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
+                                  ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30 - button_height - 30),
                                   C.BUTTON_SIZE_WIDE,
                                   {"type": "mode_change", "mode": "choose_deck", "deck_id": self.current_deck_index})
 
@@ -66,7 +64,7 @@ class DeckScene(Scene):
         self.update_faction_buttons()
 
         self.darken = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
-        self.darken.fill((0, 0, 0, 200))
+        self.darken.fill((0, 0, 0, 230))
 
     def set_mode(self, mode):
         self.mode = mode
@@ -78,9 +76,9 @@ class DeckScene(Scene):
         prev_name = self.factions[prev_index]
         next_name = self.factions[next_index]
 
-        self.prev_faction_button = Button(f"< {prev_name}", (50, 50), (400, 50),
+        self.prev_faction_button = Button(f"< {prev_name}", (50, 50), BUTTON_SIZE_WIDE,
                                           {"type": "change_faction", "direction": -1})
-        self.next_faction_button = Button(f"{next_name} >", (self.screen_width - 450, 50), (450, 50),
+        self.next_faction_button = Button(f"{next_name} >", (self.screen_width - 450, 50), BUTTON_SIZE_WIDE,
                                           {"type": "change_faction", "direction": 1})
 
     @overrides
@@ -88,89 +86,112 @@ class DeckScene(Scene):
         super().draw()
         self.screen.blit(self.darken, (0, 0))
 
+        self.draw_texts()
+
+        self.show_all_available_cards()
+
+        self.show_deck_cards()
+
+        self.show_deck_stats()
+
+        self.draw_buttons()
+
+    def draw_buttons(self):
         self.prev_faction_button.draw(self.screen, pygame.mouse.get_pos())
         self.next_faction_button.draw(self.screen, pygame.mouse.get_pos())
+        self.back_button.draw(self.screen, pygame.mouse.get_pos())
+        if self.mode == "start" and self.can_start_game():
+            self.start_button.draw(self.screen, pygame.mouse.get_pos())
 
-        font = C.CINZEL_40
+    def draw_texts(self):
+        # Titles
+        font = C.CINZEL_30_BOLD
+        text_surface = font.render(f"Kolekcja kart", True, C.COLOR_GOLD)
+        self.screen.blit(text_surface, (50, 180))
+        text_surface = font.render(f"Karty w talii", True, C.COLOR_GOLD)
+        self.screen.blit(text_surface, (self.screen_width - text_surface.get_width() - 50, 180))
+        # Faction name
+        font = C.CINZEL_50_BOLD
         faction_name = self.factions[self.current_faction_index]
         text_surface = font.render(f"Frakcja: {faction_name}", True, C.COLOR_GOLD)
-        self.screen.blit(text_surface, (self.screen_width // 2 - text_surface.get_width() // 2, 60))
+        self.screen.blit(text_surface, (self.screen_width // 2 - text_surface.get_width() // 2, 50))
 
-        self.left_card_rects = []
-        visible_cards = self.filtered_cards[self.scroll_offset_all:self.scroll_offset_all + CARDS_PER_PAGE]
-        for idx, card in enumerate(visible_cards):
-            image = load_card_image(card, "large")
-            row = idx // COLS
-            col = idx % COLS
-            x = 50 + col * (C.LARGE_CARD_SIZE[0] + CARD_MARGIN)
-            y = 100 + row * (C.LARGE_CARD_SIZE[1] + CARD_MARGIN)
-            self.screen.blit(image, (x, y))
-            self.left_card_rects.append((pygame.Rect(x, y, *C.LARGE_CARD_SIZE), card))
-
-        deck_cards = self.get_deck_cards(self.current_deck_index)
-        expanded_deck_cards = []
-        for entry in deck_cards:
-            expanded_deck_cards.extend([entry["card"]] * entry["count"])
-
-        self.right_card_rects = []
-        visible_deck_cards = expanded_deck_cards[self.scroll_offset_deck:self.scroll_offset_deck + CARDS_PER_PAGE]
-        for idx, card in enumerate(visible_deck_cards):
-            image = load_card_image(card, "large")
-            row = idx // COLS
-            col = idx % COLS
-            total_width = COLS * C.LARGE_CARD_SIZE[0] + (COLS - 1) * CARD_MARGIN
-            x_start = self.screen_width - total_width - 50
-            x = x_start + col * (C.LARGE_CARD_SIZE[0] + CARD_MARGIN)
-            y = 100 + row * (C.LARGE_CARD_SIZE[1] + CARD_MARGIN)
-            self.screen.blit(image, (x, y))
-            self.right_card_rects.append((pygame.Rect(x, y, *C.LARGE_CARD_SIZE), card))
-
+    def show_deck_stats(self):
         total_count, hero_count, special_count, total_strength = self.calculate_deck_stats()
-
-        stats_font = C.CINZEL_40
+        stats_font = C.CINZEL_30_BOLD
         lines = [
-            "Karty",
+            "Karty (min. 22)",
             f"{total_count}",
             "Bohaterowie",
             f"{hero_count}",
             "Specjalne",
-            f"{special_count}",
+            f"{special_count}/10",
             "Siła",
             f"{total_strength}"
         ]
         line_height = stats_font.get_height()
-        start_y = 300
+        start_y = 480
         for i, line in enumerate(lines):
-            stats_surface = stats_font.render(line, True, C.COLOR_GOLD)
+            color = C.COLOR_GOLD
+            if i == 1:  # Total count
+                color = C.COLOR_GREEN if total_count >= 22 else C.COLOR_RED
+            elif i == 5:  # Special count
+                color = C.COLOR_GREEN if special_count <= 10 else C.COLOR_RED
+
+            stats_surface = stats_font.render(line, True, color)
             stats_x = self.screen_width // 2 - stats_surface.get_width() // 2
-            stats_y = start_y + i * (line_height + 10)
+            stats_y = start_y + i * (line_height + 5)
             self.screen.blit(stats_surface, (stats_x, stats_y))
 
-        if self.mode == "menu":
-            self.back_button.draw(self.screen, pygame.mouse.get_pos())
-        else:
-            self.start_button.draw(self.screen, pygame.mouse.get_pos())
+    def show_deck_cards(self):
+        deck_cards = self.get_deck_cards(self.current_deck_index)
+        expanded_deck_cards = []
+        for entry in deck_cards:
+            expanded_deck_cards.extend([entry["card"]] * entry["count"])
+        self.right_card_rects = []
+        visible_deck_cards = expanded_deck_cards[self.scroll_offset_deck:self.scroll_offset_deck + CARDS_PER_PAGE]
+        for idx, card in enumerate(visible_deck_cards):
+            image = load_card_image(card, "large", self.factions[self.current_faction_index])
+            row = idx // COLS
+            col = idx % COLS
+            total_width = COLS * C.MEDIUM_CARD_SIZE[0] + (COLS - 1) * CARD_MARGIN
+            x_start = self.screen_width - total_width - 70
+            x = x_start + col * (C.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)
+            y = 270 + row * (C.MEDIUM_CARD_SIZE[1] + CARD_MARGIN)
+            self.screen.blit(image, (x, y))
+            self.right_card_rects.append((pygame.Rect(x, y, *C.MEDIUM_CARD_SIZE), card))
+
+    def show_all_available_cards(self):
+        self.left_card_rects = []
+        visible_cards = self.filtered_cards[self.scroll_offset_all:self.scroll_offset_all + CARDS_PER_PAGE]
+        for idx, card in enumerate(visible_cards):
+            image = load_card_image(card, "large", self.factions[self.current_faction_index])
+            row = idx // COLS
+            col = idx % COLS
+            x = 70 + col * (C.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)
+            y = 270 + row * (C.MEDIUM_CARD_SIZE[1] + CARD_MARGIN)
+            self.screen.blit(image, (x, y))
+            self.left_card_rects.append((pygame.Rect(x, y, *C.MEDIUM_CARD_SIZE), card))
 
     @overrides
     def handle_events(self, event):
-        if self.locked:
-            return None
-
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                if self.mode != "menu":
+                # Back button
+                if self.back_button.check_click(event.pos):
+                    self.lock()
+                    with open("./data/yourdecks.json", "w", encoding="utf-8") as f:
+                        json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
+                    return self.back_button.action
+
+                # Start button
+                if self.mode == "start" and self.can_start_game():
                     if self.start_button.check_click(event.pos):
                         self.lock()
                         with open("./data/yourdecks.json", "w", encoding="utf-8") as f:
                             json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
                         self.start_button.action["deck_id"] = self.current_deck_index
                         return self.start_button.action
-                else:
-                    if self.back_button.check_click(event.pos):
-                        self.lock()
-                        with open("./data/yourdecks.json", "w", encoding="utf-8") as f:
-                            json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
-                        return self.back_button.action
 
                 # Prev faction button
                 if self.prev_faction_button.check_click(event.pos):
@@ -254,7 +275,8 @@ class DeckScene(Scene):
             elif card.get('abilities'):
                 special_count += count
 
-            total_strength += card.get('power', 0) * count
+            total_strength += (card.get('power') or 0) * count
+
 
         return total_count, hero_count, special_count, total_strength
 
@@ -279,3 +301,9 @@ class DeckScene(Scene):
                 else:
                     deck.remove(entry)
                 break
+
+    def can_start_game(self):
+        total_count, hero_count, special_count, total_strength = self.calculate_deck_stats()
+        if total_count >= 22 and special_count <= 10:
+            return True
+        return False
