@@ -27,7 +27,7 @@ class EndScreen(Scene):
         self.buttons = [
             Button("Menu", (button_x - 400, button_y), button_size,
                    {"type": "game-over", "rematch": False}),
-            Button("Replay", (button_x + 100, button_y), button_size,
+            Button("Rewanż", (button_x + 100, button_y), button_size,
                    {"type": "game-over", "rematch": True}),
         ]
 

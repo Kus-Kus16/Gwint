@@ -1,3 +1,4 @@
+import random
 import pygame
 
 def __row(row_y, text_y_center):
@@ -13,7 +14,14 @@ def __rect(pos, size):
 def __font(name, size):
     return pygame.font.Font(f"resources/fonts/{name}.ttf", size)
 
+def __theme():
+    themes = [("ciri", "BLUE"), ("geralt", "ORANGE"), ("yennefer", "GOLD"), ("nithral", "SILVER")]
+    file, color = random.choice(themes)
 
+    bck = f"resources/gwent/backgrounds/{file}.png"
+    but = (globals()[f"{color}_BUTTON_PATH"], globals()[f"{color}_BUTTON_PATH_HOVER"])
+
+    return bck, but
 
 
 UNIT_X = 707
@@ -79,7 +87,6 @@ BUTTON_SIZE = (300, 100)
 BUTTON_SIZE_WIDE = (400, 80)
 BUTTON_SIZE_NARROW = (200, 60)
 
-
 DECK_CARD_SIZE = (83, 140)
 SMALL_CARD_SIZE = (94, 123)
 MEDIUM_CARD_SIZE = (210, 365)
@@ -111,3 +118,20 @@ CINZEL_20_BOLD = __font("Cinzel-SemiBold", 20)
 CINZEL_25_BOLD = __font("Cinzel-SemiBold", 25)
 CINZEL_30_BOLD = __font("Cinzel-SemiBold", 30)
 CINZEL_50_BOLD = __font("Cinzel-SemiBold", 50)
+
+LOGO_PATH = "resources/gwent/backgrounds/logo-solo.png"
+BLUE_BUTTON_PATH = "resources/gwent/buttons/button-blue-big.png"
+BLUE_BUTTON_PATH_HOVER = "resources/gwent/buttons/button-blue-big-hover.png"
+COPPER_BUTTON_PATH = "resources/gwent/buttons/button-copper-big.png"
+COPPER_BUTTON_PATH_HOVER = "resources/gwent/buttons/button-copper-big-hover.png"
+GOLD_BUTTON_PATH = "resources/gwent/buttons/button-gold-big.png"
+GOLD_BUTTON_PATH_HOVER = "resources/gwent/buttons/button-gold-big-hover.png"
+ORANGE_BUTTON_PATH = "resources/gwent/buttons/button-orange-big.png"
+ORANGE_BUTTON_PATH_HOVER = "resources/gwent/buttons/button-orange-big-hover.png"
+SILVER_BUTTON_PATH = "resources/gwent/buttons/button-silver-big.png"
+SILVER_BUTTON_PATH_HOVER = "resources/gwent/buttons/button-silver-big-hover.png"
+DEFAULT_BUTTON_PATHS = (COPPER_BUTTON_PATH, COPPER_BUTTON_PATH_HOVER, GOLD_BUTTON_PATH)
+
+BACKGROUND_PATH, THEME_BUTTON_PATHS = __theme()
+
+AUTHORS = ["Autorzy:", "Krzysztof Pieczka", "Maciej Kus"]

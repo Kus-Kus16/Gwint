@@ -2,16 +2,15 @@ import pygame
 from abc import ABC, abstractmethod
 
 from view.components.Notification import Notification
-from view import Constants as C
+from view import Constants as C, ImageLoader
 
 
 class Scene(ABC):
-    def __init__(self, screen, background_path, volume_slider=None):
+    def __init__(self, screen, background_path=C.BACKGROUND_PATH, volume_slider=None):
         self.screen = screen
         self.framerate = C.FRAMERATE
         self.screen_width, self.screen_height = screen.get_size()
-        self.background = pygame.image.load(background_path)
-        self.background = pygame.transform.scale(self.background, (self.screen_width, self.screen_height))
+        self.background = ImageLoader.load_image(background_path, (self.screen_width, self.screen_height))
         self.volume_slider = volume_slider
         self.temporary_drawable = []
         self.spacing_frames = 0

@@ -1,33 +1,45 @@
+from tkinter import Image
+
 import pygame
 from overrides import overrides
 
-from view import Constants as C
+from view import Constants as C, ImageLoader
 from view.Scenes.Scene import Scene
 from view.components.Button import Button
 
 
 class MenuScene(Scene):
 	def __init__(self, screen, volume_slider):
-		super().__init__(screen, "resources/menu.png", volume_slider)
+		super().__init__(screen, volume_slider=volume_slider)
 
 		button_width, button_height = C.BUTTON_SIZE_WIDE
-		button_x = (self.screen_width - button_width) // 2
-		button_y = self.screen_height // 2
+		button_x = 184
+		button_y = 387
 		button_size = C.BUTTON_SIZE_WIDE
+		button_paths = C.THEME_BUTTON_PATHS
 		self.menu_buttons = [
 			Button("Nowa gra", (button_x, button_y), button_size,
-				   { "type": "mode_change", "mode": "start_game" }),
-			Button("Autorzy", (button_x, button_y + (button_height + 20)), button_size,
-				   { "type": "mode_change", "mode": "credits" }),
-			Button("Twoja talia", (button_x, button_y + 2 * (button_height + 20)), button_size,
-				   { "type": "mode_change", "mode": "deck" }),
-			Button("Wyjście", (button_x, button_y + 3 * (button_height + 20)), button_size,
-				   { "type": "mode_change", "mode": "exit" })
+				   { "type": "mode_change", "mode": "start_game" }, image_paths=button_paths),
+			Button("Twoja talia", (button_x, button_y + (button_height + 45)), button_size,
+				   {"type": "mode_change", "mode": "deck"}, image_paths=button_paths),
+			Button("Ustawienia", (button_x, button_y + 2 * (button_height + 45)), button_size,
+				   {"type": "mode_change", "mode": "menu"}, image_paths=button_paths),
+			Button("Autorzy", (button_x, button_y + 3 * (button_height + 45)), button_size,
+				   { "type": "mode_change", "mode": "credits" }, image_paths=button_paths),
+			Button("Wyjście", (button_x, button_y + 4 * (button_height + 45)), button_size,
+				   { "type": "mode_change", "mode": "exit" }, image_paths=button_paths)
 		]
 
 	@overrides
 	def draw(self):
 		super().draw()
+
+		overlay = pygame.Surface((500, self.screen_height), pygame.SRCALPHA)
+		overlay.fill((0, 0, 0, 216))
+		self.screen.blit(overlay, (134, 0))
+
+		logo = ImageLoader.load_image(C.LOGO_PATH)
+		self.screen.blit(logo, (192, 73))
 
 		mouse_pos = pygame.mouse.get_pos()
 		for btn in self.menu_buttons:

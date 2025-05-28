@@ -51,7 +51,7 @@ class CarouselScene(Scene):
         if self.label:
             height = C.BUTTON_SIZE[1]
             overlay = pygame.Surface((self.screen_width, height), pygame.SRCALPHA)
-            overlay.fill((0, 0, 0, 192))
+            overlay.fill((0, 0, 0, 205))
             self.screen.blit(overlay, (0, 100))
 
             text = self.font.render(f"Wybierz do {self.choose_count} kart, które chcesz wymienić.", True, C.COLOR_GOLD)

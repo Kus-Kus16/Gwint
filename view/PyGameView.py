@@ -2,11 +2,10 @@ import queue
 
 import pygame
 
-from view.Scenes.CreditsScene import CreditsScene
+from view.Scenes.TextScene import TextScene
 from view.Scenes.DeckScene import DeckScene
 from view.Scenes.GameScene import GameScene
 from view.Scenes.MenuScene import MenuScene
-from view.Scenes.WaitingScene import WaitingScene
 from view import ImageLoader, Constants as C
 from view.components.VolumeSlider import VolumeSlider
 
@@ -36,8 +35,8 @@ class PygameView:
 
         #Screens initiation
         self.menu = MenuScene(self.screen, self.volume_slider)
-        self.credits = CreditsScene(self.screen)
-        self.waiting = WaitingScene(self.screen)
+        self.credits = TextScene(self.screen, C.AUTHORS)
+        self.waiting = TextScene(self.screen, ["Oczekiwanie na przeciwnika"])
         self.game = GameScene(self.screen, self.volume_slider)
         self.deck = DeckScene(self.screen)
         self.current_scene = self.menu

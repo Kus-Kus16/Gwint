@@ -30,7 +30,7 @@ def load_card_image(card, size, faction):
 
 class DeckScene(Scene):
     def __init__(self, screen):
-        super().__init__(screen, "resources/menu.png")
+        super().__init__(screen)
         self.mode = "menu"
         self.all_cards = CardsDatabase.card_dict
         self.scroll_offset = 0
@@ -78,7 +78,7 @@ class DeckScene(Scene):
         self.update_faction_buttons()
 
         self.darken = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
-        self.darken.fill((0, 0, 0, 230))
+        self.darken.fill((0, 0, 0, 218))
 
     def set_mode(self, mode):
         self.mode = mode
@@ -91,9 +91,11 @@ class DeckScene(Scene):
         next_name = self.factions[next_index]
 
         self.prev_faction_button = Button(f"< {prev_name}", (50, 50), BUTTON_SIZE_WIDE,
-                                          {"type": "change_faction", "direction": -1})
+                                          {"type": "change_faction", "direction": -1},
+                                          font=C.CINZEL_25_BOLD)
         self.next_faction_button = Button(f"{next_name} >", (self.screen_width - 450, 50), BUTTON_SIZE_WIDE,
-                                          {"type": "change_faction", "direction": 1})
+                                          {"type": "change_faction", "direction": 1},
+                                          font=C.CINZEL_25_BOLD)
 
     @overrides
     def draw(self):
