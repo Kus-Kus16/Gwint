@@ -7,7 +7,7 @@ from view.components.Button import Button
 
 
 class CarouselScene(Scene):
-    def __init__(self, screen, draw_card, cards, choose_count, cancelable, font=None):
+    def __init__(self, screen, draw_card, cards, choose_count, cancelable, label=True, font=None):
         super().__init__(screen, "resources/board.jpg")
         self.font = font if font is not None else C.CINZEL_30
         self.pos = (0, 0)
@@ -19,6 +19,7 @@ class CarouselScene(Scene):
         self.choose_count = choose_count
         self.choosable = choose_count != 0
         self.cancellable = cancelable
+        self.label = label
         self.buttons = []
 
         button_width, button_height = C.BUTTON_SIZE
@@ -47,7 +48,7 @@ class CarouselScene(Scene):
         center_x = self.screen_width // 2
         center_y = self.screen_height // 2
 
-        if self.choose_count > 0:
+        if self.label:
             height = C.BUTTON_SIZE[1]
             overlay = pygame.Surface((self.screen_width, height), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 192))

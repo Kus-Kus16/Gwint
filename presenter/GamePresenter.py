@@ -244,7 +244,7 @@ class GamePresenter:
                 self.disconnect()
                 self.view.change_scene(self.view.deck, mode="start")
             case "load_deck":
-                with open("./data/yourdecks.json", "r", encoding="utf-8") as file:
+                with open("./user/yourdecks.json", "r", encoding="utf-8") as file:
                     decks = json.load(file)
 
                 deck_data = decks[action["deck_id"]]

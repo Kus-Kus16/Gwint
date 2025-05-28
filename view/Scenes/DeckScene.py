@@ -3,6 +3,7 @@ import json
 import pygame
 from overrides import overrides
 
+from classes import CardsDatabase
 from view import Constants as C, ImageLoader
 from view.Constants import BUTTON_SIZE_WIDE
 from view.Scenes.CarouselScene import CarouselScene
@@ -28,11 +29,10 @@ def load_card_image(card, size, faction):
     return load_medium_image(card, faction) if size == "medium" else load_large_image(card, faction)
 
 class DeckScene(Scene):
-    def __init__(self, screen, all_cards, current_decks):
+    def __init__(self, screen):
         super().__init__(screen, "resources/menu.png")
         self.mode = "menu"
-        self.all_cards = all_cards
-        self.current_decks = current_decks
+        self.all_cards = CardsDatabase.card_dict
         self.scroll_offset = 0
 
         self.scroll_offset_all = 0
@@ -41,10 +41,14 @@ class DeckScene(Scene):
         self.current_faction_index = 0
         self.current_deck_index = 0
 
+        # Decks
+        with open("./user/yourdecks.json", "r", encoding="utf-8") as file:
+            self.current_decks = json.load(file)
+
         # Commander
         with open("./data/factions.json", "r", encoding="utf-8") as f:
             self.factions_data = json.load(f)
-        self.factions = [f["name"] for f in self.factions_data]#[0:2] # TODO v1 2 decks only
+        self.factions = [f["name"] for f in self.factions_data][0:2] # TODO v1 2 decks only
         self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
         self.commander_rect= None
 
@@ -226,7 +230,7 @@ class DeckScene(Scene):
                 # Back button
                 if self.back_button.check_click(event.pos):
                     self.lock()
-                    with open("./data/yourdecks.json", "w", encoding="utf-8") as f:
+                    with open("./user/yourdecks.json", "w", encoding="utf-8") as f:
                         json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
                     return self.back_button.action
 
@@ -234,7 +238,7 @@ class DeckScene(Scene):
                 if self.mode == "start" and self.can_start_game():
                     if self.start_button.check_click(event.pos):
                         self.lock()
-                        with open("./data/yourdecks.json", "w", encoding="utf-8") as f:
+                        with open("./user/yourdecks.json", "w", encoding="utf-8") as f:
                             json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
                         self.start_button.action["deck_id"] = self.current_deck_index
                         self.start_button.action["commander_id"] = self.current_commander_id
@@ -387,7 +391,7 @@ class DeckScene(Scene):
 
     def open_carousel(self):
         cards_to_show = self.factions_data[self.current_faction_index]["commanders"]
-        self.carousel_scene = CarouselScene(self.screen, self.draw_card, cards_to_show, choose_count=1, cancelable=True)
+        self.carousel_scene = CarouselScene(self.screen, self.draw_card, cards_to_show, choose_count=1, cancelable=True, label=False)
         self.show_carousel = True
 
     def draw_card(self, card, x, y, size):
