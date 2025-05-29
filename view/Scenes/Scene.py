@@ -77,3 +77,8 @@ class Scene(ABC):
         else:
             text_rect.topleft = (x, y)
         self.screen.blit(text_surface, text_rect)
+
+    def reset_all(self):
+        self.temporary_drawable = []
+        self.spacing_frames = 0
+        self.locked = False

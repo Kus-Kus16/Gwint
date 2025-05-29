@@ -16,7 +16,8 @@ def __font(name, size):
 
 def __theme():
     themes = [("ciri", "BLUE"), ("geralt", "ORANGE"), ("yennefer", "GOLD"), ("nithral", "SILVER")]
-    file, color = random.choice(themes)
+    # file, color = random.choice(themes)
+    file, color = themes[0]
 
     bck = f"resources/gwent/backgrounds/{file}.png"
     but = (globals()[f"{color}_BUTTON_PATH"], globals()[f"{color}_BUTTON_PATH_HOVER"])

@@ -543,6 +543,7 @@ class GameScene(Scene):
         self.end_screen = EndScreen(self.screen, result, round_history)
         self.ended = True
 
+    @overrides
     def reset_all(self):
         self.reset()
         self.game = None

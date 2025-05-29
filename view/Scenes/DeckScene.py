@@ -42,7 +42,7 @@ class DeckScene(Scene):
         self.current_deck_index = 0
 
         # Decks
-        with open("./user/yourdecks.json", "r", encoding="utf-8") as file:
+        with open("./user/user_decks.json", "r", encoding="utf-8") as file:
             self.current_decks = json.load(file)
 
         # Commander
@@ -232,7 +232,7 @@ class DeckScene(Scene):
                 # Back button
                 if self.back_button.check_click(event.pos):
                     self.lock()
-                    with open("./user/yourdecks.json", "w", encoding="utf-8") as f:
+                    with open("./user/user_decks.json", "w", encoding="utf-8") as f:
                         json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
                     return self.back_button.action
 
@@ -240,7 +240,7 @@ class DeckScene(Scene):
                 if self.mode == "start" and self.can_start_game():
                     if self.start_button.check_click(event.pos):
                         self.lock()
-                        with open("./user/yourdecks.json", "w", encoding="utf-8") as f:
+                        with open("./user/user_decks.json", "w", encoding="utf-8") as f:
                             json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
                         self.start_button.action["deck_id"] = self.current_deck_index
                         self.start_button.action["commander_id"] = self.current_commander_id

@@ -6,6 +6,7 @@ from classes import CardsDatabase
 from classes.Game import Game
 from classes.Player import Player
 from network.network import Network
+from view import Constants as C
 
 
 class GamePresenter:
@@ -30,12 +31,12 @@ class GamePresenter:
         try:
             self.n.connect()
             response, data = self.n.send(("register", [deck, commander]))
-        except Exception:
-            print("Server not responding")
+        except ConnectionError:
+            self.return_to_menu("Serwer nie odpowiada")
             return False
 
         if response != "ok":
-            raise ValueError("No response")
+            raise ConnectionError("Server responded with '%s'" % response)
 
         self.my_id, self.seed = data
         self.me = Player(deck, commander)
@@ -43,12 +44,13 @@ class GamePresenter:
         return True
 
     def disconnect(self):
-        if self.n.is_connected():
+        if self.n.connected:
             self.n.disconnect()
 
     def run(self):
+        sleep_time = 1 / C.FRAMERATE
         while True:
-            time.sleep(0.01)
+            time.sleep(sleep_time)
             self.process_actions()
             match self.game_state:
                 case "waiting-for-game":
@@ -244,7 +246,7 @@ class GamePresenter:
                 self.disconnect()
                 self.view.change_scene(self.view.deck, mode="start")
             case "load_deck":
-                with open("./user/yourdecks.json", "r", encoding="utf-8") as file:
+                with open("./user/user_decks.json", "r", encoding="utf-8") as file:
                     decks = json.load(file)
 
                 deck_data = decks[action["deck_id"]]
@@ -393,7 +395,7 @@ class GamePresenter:
         if action["card_id"] is not None:
             card_id = action["card_id"]
             if not self.redraw_cards(self.my_id, [card_id]):
-                raise ValueError("Illegal redraw") #TODO TEST REMOVE
+                raise ValueError("Illegal self redraw")
 
             self.carousel_dict["targets"].append(card_id)
             new_cards = self.game.get_player(self.my_id).hand.cards
@@ -461,7 +463,9 @@ class GamePresenter:
     def return_to_menu(self, reason):
         self.game_state = "menu"
         self.disconnect()
-        self.game.end_game()
+
+        if self.game:
+            self.game.end_game()
 
         scene = self.view.current_scene
         self.view.change_scene(self.view.menu)
