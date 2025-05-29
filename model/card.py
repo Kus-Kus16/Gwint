@@ -1,6 +1,6 @@
 from overrides import overrides
 
-from classes.CardBase import CardBase, CardType
+from model.card_base import CardBase, CardType
 
 
 class Card(CardBase):

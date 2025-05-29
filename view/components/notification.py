@@ -1,14 +1,14 @@
 import pygame
 
-from view import ImageLoader, Constants as C
+from view import image_loader as loader, constants as c
 
 def load_image(name):
     path = f"resources/ico/{name}.png"
-    return ImageLoader.load_image(path)
+    return loader.load_image(path)
 
 class Notification:
     def __init__(self, pos, size, name, frames, locking, font=None):
-        self.font = font if font is not None else C.CINZEL_30
+        self.font = font if font is not None else c.CINZEL_30
         self.rect = pygame.Rect(pos, size)
         self.text = None
         self.image = None
@@ -23,7 +23,7 @@ class Notification:
         screen.blit(overlay, self.rect.topleft)
 
         screen.blit(self.image, (440, 385))
-        text = self.font.render(self.text, True, C.COLOR_GOLD)
+        text = self.font.render(self.text, True, c.COLOR_GOLD)
         screen.blit(text, (890, self.rect.centery - text.get_height() // 2))
 
 

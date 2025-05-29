@@ -1,7 +1,7 @@
 import threading
 
-from presenter.GamePresenter import GamePresenter
-from view.PyGameView import PygameView
+from presenter.game_presenter import GamePresenter
+from view.pygame_view import PygameView
 
 def main():
     view = PygameView()

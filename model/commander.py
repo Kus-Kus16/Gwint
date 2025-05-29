@@ -1,4 +1,4 @@
-from classes.CardBase import CardBase, CardType
+from model.card_base import CardBase, CardType
 
 
 class Commander(CardBase):

@@ -1,8 +1,8 @@
 import json
 
-from classes.Card import Card
-from classes.Commander import Commander
-from classes.Deck import Deck
+from model.card import Card
+from model.commander import Commander
+from model.deck import Deck
 
 with open("./data/cards.json", "r", encoding="utf-8") as file:
     card_dict = json.load(file)

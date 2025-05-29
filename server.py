@@ -4,7 +4,7 @@ from _thread import *
 
 import pickle
 
-from network.GameStates import GameStates
+from network.game_states import GameStates
 
 SERVER_IP = "0.0.0.0"
 PORT = 5555

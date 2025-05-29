@@ -1,27 +1,27 @@
 import pygame
 from overrides import overrides
 
-from classes import CardsDatabase
-from view import ImageLoader, Constants as C
-from view.Scenes.Scene import Scene
-from view.Scenes.CarouselScene import CarouselScene
-from view.Scenes.EndScreen import EndScreen
+from model import cards_database as db
+from view import image_loader as loader, constants as c
+from view.scenes.scene import Scene
+from view.scenes.carousel_scene import CarouselScene
+from view.scenes.endscreen import EndScreen
 
 def load_small_image(card):
     path = f"resources/small/{card.faction}/{card.filename}.png"
-    return ImageLoader.load_image(path, C.SMALL_CARD_SIZE)
+    return loader.load_image(path, c.SMALL_CARD_SIZE)
 
 def load_large_image(card):
     faction = card.owner.faction if card.faction == "Neutralne" else card.faction
     path = f"resources/large/{faction}/{card.filename}.png"
-    return ImageLoader.load_image(path, C.LARGE_CARD_SIZE)
+    return loader.load_image(path, c.LARGE_CARD_SIZE)
 
 def load_card_image(card, size):
     return load_small_image(card) if size == "small" else load_large_image(card)
 
 def load_image(filename, size=None):
     path = f"resources/ico/{filename}.png"
-    return ImageLoader.load_image(path, size)
+    return loader.load_image(path, size)
 
 class GameScene(Scene):
     def __init__(self, screen, volume_slider):
@@ -91,7 +91,7 @@ class GameScene(Scene):
 
         # Check boosts clicks
         if card.is_boost():
-            row_name = self.check_boost_click(event, C.SELF_ROW_NAMES)
+            row_name = self.check_boost_click(event, c.SELF_ROW_NAMES)
             if row_name is not None:
                 self.lock()
                 return {
@@ -106,7 +106,7 @@ class GameScene(Scene):
             if target is None:
                 return None
 
-            row_name = self.check_row_click(event, C.SELF_ROW_NAMES)
+            row_name = self.check_row_click(event, c.SELF_ROW_NAMES)
             if row_name is not None:
                 self.lock()
                 return {
@@ -139,7 +139,7 @@ class GameScene(Scene):
 
     def handle_right_click(self, event):
         # Check row clicks
-        row_name = self.check_row_click(event, C.ROW_NAMES)
+        row_name = self.check_row_click(event, c.ROW_NAMES)
         if row_name is not None:
             self.lock()
             return {
@@ -227,37 +227,37 @@ class GameScene(Scene):
     @classmethod
     def check_row_click(cls, event, row_names):
         for row_name in row_names:
-            row_rect = getattr(C, row_name.upper())["UNIT_RECT"]
+            row_rect = getattr(c, row_name.upper())["UNIT_RECT"]
             if row_rect.collidepoint(event.pos):
                 return row_name
 
     @classmethod
     def check_boost_click(cls, event, row_names):
         for row_name in row_names:
-            boost_rect = getattr(C, row_name.upper())["BOOST_RECT"]
+            boost_rect = getattr(c, row_name.upper())["BOOST_RECT"]
             if boost_rect.collidepoint(event.pos):
                 return row_name
 
     @classmethod
     def check_grave_click(cls, event):
-        for grave_name, grave_rect in C.GRAVES:
+        for grave_name, grave_rect in c.GRAVES:
             if grave_rect.collidepoint(event.pos):
                 return grave_name
 
     @classmethod
     def check_commander_click(cls, event):
-        for comm_name, comm_rect in C.COMMANDERS:
+        for comm_name, comm_rect in c.COMMANDERS:
             if comm_rect.collidepoint(event.pos):
                 return comm_name
 
     @classmethod
     def check_weather_click(cls, event):
-        weather_rect = C.WEATHER_RECT
+        weather_rect = c.WEATHER_RECT
         return weather_rect.collidepoint(event.pos)
 
     @classmethod
     def check_board_click(cls, event):
-        board_rect = C.BOARD_RECT
+        board_rect = c.BOARD_RECT
         return board_rect.collidepoint(event.pos)
 
     @overrides
@@ -285,24 +285,24 @@ class GameScene(Scene):
     def draw_rows(self):
         self.card_rects.clear()
         rows = self.game.board.get_ordered_rows(self.player_id)
-        row_names = C.ROW_NAMES
+        row_names = c.ROW_NAMES
 
         for i, row in enumerate(rows):
             row_name = row_names[i]
-            data = getattr(C, row_name)
+            data = getattr(c, row_name)
             row_rect = data["UNIT_RECT"]
             boost_rect = data["BOOST_RECT"]
             text_x, text_y = data["TEXT_CENTER"]
             self.draw_row(row, row_rect, row_name)
             self.draw_row_boosts(row, boost_rect)
-            self.draw_text(f"{row.points}", text_x, text_y, color=C.COLOR_BLACK, center=True, font=C.CINZEL_30_BOLD)
+            self.draw_text(f"{row.points}", text_x, text_y, color=c.COLOR_BLACK, center=True, font=c.CINZEL_30_BOLD)
 
     def draw_players(self):
-        self.draw_player(self.player_id, C.INFO_RECT)
-        self.draw_player(1 - self.player_id, C.INFO_OPP_RECT, opponent=True)
+        self.draw_player(self.player_id, c.INFO_RECT)
+        self.draw_player(1 - self.player_id, c.INFO_OPP_RECT, opponent=True)
 
         if self.game.current_player_id == self.player_id:
-            x, y = C.INFO_POS
+            x, y = c.INFO_POS
             overlay = pygame.Surface((308, 40), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 100))
 
@@ -311,7 +311,7 @@ class GameScene(Scene):
 
             centerx, centery = overlay_rect.center
             self.draw_text("Wciśnij spację aby spasować", centerx, centery, center=True,
-                           color=C.COLOR_LIGHTGRAY, font=C.CINZEL_20_BOLD)
+                           color=c.COLOR_LIGHTGRAY, font=c.CINZEL_20_BOLD)
 
     def draw_player(self, player_id, info_rect, opponent=False):
         player = self.game.get_player(player_id)
@@ -319,9 +319,9 @@ class GameScene(Scene):
         size = info_rect.size
 
         if self.game.current_player_id == player_id:
-            pygame.draw.line(self.screen, C.COLOR_YELLOW, (info_rect.left, info_rect.top),
+            pygame.draw.line(self.screen, c.COLOR_YELLOW, (info_rect.left, info_rect.top),
             (info_rect.right, info_rect.top), 3)
-            pygame.draw.line(self.screen, C.COLOR_YELLOW, (info_rect.left, info_rect.bottom - 1),
+            pygame.draw.line(self.screen, c.COLOR_YELLOW, (info_rect.left, info_rect.bottom - 1),
             (info_rect.right, info_rect.bottom - 1), 3)
 
         overlay = pygame.Surface(size, pygame.SRCALPHA)
@@ -330,7 +330,7 @@ class GameScene(Scene):
 
         self.draw_icon("player_border", (116, 122), x + 60, y + 11)
         self.draw_icon("profile", (89, 90), x + 74, y + 30)
-        self.draw_icon(f"tarcza_{CardsDatabase.faction_to_nickname(player.faction)}", (45, 50), x + 52, y + 12)
+        self.draw_icon(f"tarcza_{db.faction_to_nickname(player.faction)}", (45, 50), x + 52, y + 12)
         self.draw_icon(f"total_{"opp" if opponent else "me"}", None, x + 427, y + 45)
 
         if self.game.is_winning_round(player_id):
@@ -338,18 +338,18 @@ class GameScene(Scene):
 
         self.draw_gems(player.hp, x, y)
         self.draw_icon("cards", None, x + 201, y + 88)
-        self.draw_text(player.hand.size(), x + 257, y + 108, color=C.COLOR_GOLD, center=True)
+        self.draw_text(player.hand.size(), x + 257, y + 108, color=c.COLOR_GOLD, center=True)
 
-        self.draw_text("Przeciwnik" if opponent else "Ty", x + 201, y + 12, color=C.COLOR_GOLD, font=C.CINZEL_20_BOLD)
-        self.draw_text(player.faction, x + 201, y + 45, color=C.COLOR_LIGHTGRAY, font=C.CINZEL_15)
+        self.draw_text("Przeciwnik" if opponent else "Ty", x + 201, y + 12, color=c.COLOR_GOLD, font=c.CINZEL_20_BOLD)
+        self.draw_text(player.faction, x + 201, y + 45, color=c.COLOR_LIGHTGRAY, font=c.CINZEL_15)
 
-        points_pos = C.POINTS_OPP_POS if opponent else C.POINTS_POS
-        self.draw_text(f"{player.points}", *points_pos, color=C.COLOR_BLACK, center=True, font=C.CINZEL_30_BOLD)
+        points_pos = c.POINTS_OPP_POS if opponent else c.POINTS_POS
+        self.draw_text(f"{player.points}", *points_pos, color=c.COLOR_BLACK, center=True, font=c.CINZEL_30_BOLD)
 
-        filename = f"rewers_{CardsDatabase.faction_to_nickname(player.faction)}"
-        self.draw_stack(player.deck, C.DECK_OPP_RECT if opponent else C.DECK_RECT,
-                        image=load_image(filename, C.DECK_CARD_SIZE), label=True)
-        self.draw_stack(player.grave, C.GRAVE_OPP_RECT if opponent else C.GRAVE_RECT)
+        filename = f"rewers_{db.faction_to_nickname(player.faction)}"
+        self.draw_stack(player.deck, c.DECK_OPP_RECT if opponent else c.DECK_RECT,
+                        image=load_image(filename, c.DECK_CARD_SIZE), label=True)
+        self.draw_stack(player.grave, c.GRAVE_OPP_RECT if opponent else c.GRAVE_RECT)
 
     def draw_icon(self, filename, size, x, y):
         image = load_image(filename, size)
@@ -357,7 +357,7 @@ class GameScene(Scene):
         self.screen.blit(image, rect)
 
     def draw_stack(self, container, rect, image=None, label=False):
-        card_size = image.get_rect().size if image is not None else C.SMALL_CARD_SIZE
+        card_size = image.get_rect().size if image is not None else c.SMALL_CARD_SIZE
         x, y = rect.centerx - card_size[0] // 2, rect.centery - card_size[1] // 2
 
         for card in container.cards:
@@ -385,7 +385,7 @@ class GameScene(Scene):
     def draw_row(self, row, row_rect, row_name):
         self.draw_card_holder(row.cards, row_rect, self.card_rects)
         if row.effects["weather"]:
-            self.draw_icon(f"weather_{row_name.lower()}", None, row_rect.left - C.BOOST_ROW_SIZE[0], row_rect.top)
+            self.draw_icon(f"weather_{row_name.lower()}", None, row_rect.left - c.BOOST_ROW_SIZE[0], row_rect.top)
 
     def draw_row_boosts(self, row, boost_rect):
         cards = row.get_effect_cards()
@@ -395,7 +395,7 @@ class GameScene(Scene):
         self.hand_rects.clear()
         hand = self.game.players[self.player_id].hand
 
-        rect = C.HAND_RECT
+        rect = c.HAND_RECT
         self.draw_card_holder(hand.cards, rect, self.hand_rects)
         self.draw_commanders(self.hand_rects)
 
@@ -417,17 +417,17 @@ class GameScene(Scene):
 
     def draw_commanders(self, card_rect_output):
         commander_opp = self.game.get_player(1 - self.player_id).commander
-        self.draw_commander(commander_opp, C.COMM_OPP_POS)
+        self.draw_commander(commander_opp, c.COMM_OPP_POS)
         commander = self.game.get_player(self.player_id).commander
-        commander_rect = C.COMM_RECT
-        self.draw_commander(commander, C.COMM_POS)
+        commander_rect = c.COMM_RECT
+        self.draw_commander(commander, c.COMM_POS)
         card_rect_output.append((commander, commander_rect))
 
     def draw_commander(self, commander, pos):
         x, y = pos
         self.draw_card(commander, *pos, "small")
         if not commander.active:
-            overlay = pygame.Surface(C.COMM_SIZE, pygame.SRCALPHA)
+            overlay = pygame.Surface(c.COMM_SIZE, pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 200)) #20%
             self.screen.blit(overlay, pos)
         else:
@@ -435,7 +435,7 @@ class GameScene(Scene):
 
     def draw_weather(self):
         weather = self.game.board.weather
-        rect = C.WEATHER_RECT
+        rect = c.WEATHER_RECT
         x, y = rect.left, rect.top
         x_offset = 0
         y_offset = 11
@@ -450,24 +450,24 @@ class GameScene(Scene):
         if selected is None:
             return
 
-        highlight_color = C.COLOR_HIGHLIGHT
-        alpha = C.ALPHA_HIGHLIGHT
+        highlight_color = c.COLOR_HIGHLIGHT
+        alpha = c.ALPHA_HIGHLIGHT
 
         if selected.is_unit() or selected.is_hero():
             rows = selected.rows
-            rect_size = C.UNIT_ROW_SIZE
+            rect_size = c.UNIT_ROW_SIZE
 
             surface = pygame.Surface(rect_size, pygame.SRCALPHA)
             surface.fill((*highlight_color, alpha))
 
             for row_name in rows:
-                unit_rect = getattr(C, row_name.upper())["UNIT_RECT"]
+                unit_rect = getattr(c, row_name.upper())["UNIT_RECT"]
                 self.screen.blit(surface, (unit_rect.x, unit_rect.y))
 
             return
 
         if selected.is_weather():
-            rect = C.WEATHER_RECT
+            rect = c.WEATHER_RECT
             surface = pygame.Surface(rect.size, pygame.SRCALPHA)
             surface.fill((*highlight_color, alpha))
             self.screen.blit(surface, (rect.x, rect.y))
@@ -475,19 +475,19 @@ class GameScene(Scene):
             return
 
         if selected.is_boost():
-            rect_size = C.BOOST_ROW_SIZE
+            rect_size = c.BOOST_ROW_SIZE
             surface = pygame.Surface(rect_size, pygame.SRCALPHA)
             surface.fill((*highlight_color, alpha))
 
-            rows = C.SELF_ROW_NAMES
+            rows = c.SELF_ROW_NAMES
             for row_name in rows:
-                boost_rect = getattr(C, row_name)["BOOST_RECT"]
+                boost_rect = getattr(c, row_name)["BOOST_RECT"]
                 self.screen.blit(surface, (boost_rect.x, boost_rect.y))
 
             return
 
         if selected.is_absolute():
-            board_rect = C.BOARD_RECT
+            board_rect = c.BOARD_RECT
             surface = pygame.Surface(board_rect.size, pygame.SRCALPHA)
             surface.fill((*highlight_color, alpha))
             self.screen.blit(surface, (board_rect.x, board_rect.y))
@@ -498,7 +498,7 @@ class GameScene(Scene):
         if self.selected_card is None:
             return
 
-        self.draw_card(self.selected_card, *C.SELECTED_CARD_POS, "large")
+        self.draw_card(self.selected_card, *c.SELECTED_CARD_POS, "large")
 
     def draw_card(self, card, x, y, size):
         image = load_card_image(card, size)
@@ -509,17 +509,17 @@ class GameScene(Scene):
             return rect
 
         if self.selected_card == card:
-            pygame.draw.rect(self.screen, C.COLOR_YELLOW, rect, 4)
+            pygame.draw.rect(self.screen, c.COLOR_YELLOW, rect, 4)
 
         if not card.is_commander() and not card.is_special() and not card.is_hero():
             if card.power > card.base_power:
-                color = C.COLOR_GREEN
+                color = c.COLOR_GREEN
             elif card.power < card.base_power:
-                color = C.COLOR_RED
+                color = c.COLOR_RED
             else:
-                color = C.COLOR_BLACK
+                color = c.COLOR_BLACK
 
-            font = C.MASON_30 if card.power < 10 else C.MASON_20
+            font = c.MASON_30 if card.power < 10 else c.MASON_20
             self.draw_text(card.power, rect.x + 20, rect.y + 19, color=color, font=font, center=True)
 
         return rect
@@ -578,13 +578,14 @@ class GameScene(Scene):
 
         self.locked = False
 
-    def show_card_carousel(self, cards, choose_count, cancelable):
+    def show_card_carousel(self, cards, choose_count, cancelable, label):
         self.carousel_scene = CarouselScene(
             self.screen,
             self.draw_card,
             cards,
             choose_count,
-            cancelable
+            cancelable,
+            label
         )
         self.show_carousel = True
 

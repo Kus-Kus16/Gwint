@@ -1,15 +1,15 @@
 import pygame
 from overrides import overrides
 
-from view import Constants as C
-from view.Scenes.Scene import Scene
-from view.components.Button import Button
+from view import constants as c
+from view.scenes.scene import Scene
+from view.components.button import Button
 
 
 class CarouselScene(Scene):
     def __init__(self, screen, draw_card, cards, choose_count, cancelable, label=True, font=None):
         super().__init__(screen, "resources/board.jpg")
-        self.font = font if font is not None else C.CINZEL_30
+        self.font = font if font is not None else c.CINZEL_30
         self.pos = (0, 0)
         self.size = screen.get_size()
         self.rect = pygame.Rect(self.pos, self.size)
@@ -22,7 +22,7 @@ class CarouselScene(Scene):
         self.label = label
         self.buttons = []
 
-        button_width, button_height = C.BUTTON_SIZE
+        button_width, button_height = c.BUTTON_SIZE
         button_margin = 150
         button_y = self.screen_height - 200
 
@@ -37,7 +37,7 @@ class CarouselScene(Scene):
 
         for i, (label, action) in enumerate(button_data):
             x = start_x + i * (button_width + button_margin)
-            self.buttons.append(Button(label, (x, button_y), C.BUTTON_SIZE, action))
+            self.buttons.append(Button(label, (x, button_y), c.BUTTON_SIZE, action))
 
     @overrides
     def draw(self):
@@ -49,19 +49,19 @@ class CarouselScene(Scene):
         center_y = self.screen_height // 2
 
         if self.label:
-            height = C.BUTTON_SIZE[1]
+            height = c.BUTTON_SIZE[1]
             overlay = pygame.Surface((self.screen_width, height), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 205))
             self.screen.blit(overlay, (0, 100))
 
-            text = self.font.render(f"Wybierz do {self.choose_count} kart, które chcesz wymienić.", True, C.COLOR_GOLD)
+            text = self.font.render(f"Wybierz do {self.choose_count} kart, które chcesz wymienić.", True, c.COLOR_GOLD)
             text_rect = text.get_rect()
             text_rect.center = (self.screen_width // 2, 100 + height // 2)
             self.screen.blit(text, text_rect)
 
         visible_cards = 3
         half_visible = visible_cards // 2
-        card_width, card_height = C.LARGE_CARD_SIZE
+        card_width, card_height = c.LARGE_CARD_SIZE
 
         for i in range(-half_visible, half_visible + 1):
             card_index = self.selected_index + i
@@ -89,7 +89,7 @@ class CarouselScene(Scene):
             mouse_x, mouse_y = event.pos
             center_x = self.screen_width // 2
             center_y = self.screen_height // 2
-            card_width, card_height = C.LARGE_CARD_SIZE
+            card_width, card_height = c.LARGE_CARD_SIZE
             offset = card_width + 140
 
             for i in range(-1, 2):

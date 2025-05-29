@@ -1,8 +1,8 @@
-from classes.Board import Board
+from model.board import Board
 import random
 
-from classes import CardsDatabase
-from classes.Row import RowType
+from model import cards_database as db
+from model.row import RowType
 
 
 class Game:
@@ -130,7 +130,7 @@ class Game:
                 case "spy":
                     actions.append(lambda p=player: p.draw_cards(2))
                 case "muster":
-                    other_ids = CardsDatabase.get_muster(card_id)
+                    other_ids = db.get_muster(card_id)
                     for id in other_ids:
                         extra = player.get_from_hand(id) or player.get_from_deck(id)
                         if extra is not None and extra != card:
@@ -169,7 +169,7 @@ class Game:
         ability = commander.ability()
         match ability:
             case "findFrost" | "findFog" | "findRain" | "findStorm":
-                card_id = CardsDatabase.get_find(commander.id)
+                card_id = db.get_find(commander.id)
                 card = player.get_from_deck(card_id)
                 if card is not None:
                     self.play_extra_card(player.id, card, "any")

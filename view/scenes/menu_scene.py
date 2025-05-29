@@ -1,22 +1,20 @@
-from tkinter import Image
-
 import pygame
 from overrides import overrides
 
-from view import Constants as C, ImageLoader
-from view.Scenes.Scene import Scene
-from view.components.Button import Button
+from view import constants as c, image_loader as loader
+from view.scenes.scene import Scene
+from view.components.button import Button
 
 
 class MenuScene(Scene):
 	def __init__(self, screen, volume_slider):
 		super().__init__(screen, volume_slider=volume_slider)
 
-		button_width, button_height = C.BUTTON_SIZE_WIDE
+		button_width, button_height = c.BUTTON_SIZE_WIDE
 		button_x = 184
 		button_y = 387
-		button_size = C.BUTTON_SIZE_WIDE
-		button_paths = C.THEME_BUTTON_PATHS
+		button_size = c.BUTTON_SIZE_WIDE
+		button_paths = c.THEME_BUTTON_PATHS
 		self.menu_buttons = [
 			Button("Nowa gra", (button_x, button_y), button_size,
 				   { "type": "mode_change", "mode": "start_game" }, image_paths=button_paths),
@@ -38,7 +36,7 @@ class MenuScene(Scene):
 		overlay.fill((0, 0, 0, 216))
 		self.screen.blit(overlay, (134, 0))
 
-		logo = ImageLoader.load_image(C.LOGO_PATH)
+		logo = loader.load_image(c.LOGO_PATH)
 		self.screen.blit(logo, (192, 73))
 
 		mouse_pos = pygame.mouse.get_pos()

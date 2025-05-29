@@ -1,5 +1,5 @@
-from classes.Grave import Grave
-from classes.Hand import Hand
+from model.grave import Grave
+from model.hand import Hand
 
 
 class Player:

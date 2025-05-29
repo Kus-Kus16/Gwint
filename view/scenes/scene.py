@@ -1,16 +1,15 @@
-import pygame
 from abc import ABC, abstractmethod
 
-from view.components.Notification import Notification
-from view import Constants as C, ImageLoader
+from view.components.notification import Notification
+from view import constants as c, image_loader as loader
 
 
 class Scene(ABC):
-    def __init__(self, screen, background_path=C.BACKGROUND_PATH, volume_slider=None):
+    def __init__(self, screen, background_path=c.BACKGROUND_PATH, volume_slider=None):
         self.screen = screen
-        self.framerate = C.FRAMERATE
+        self.framerate = c.FRAMERATE
         self.screen_width, self.screen_height = screen.get_size()
-        self.background = ImageLoader.load_image(background_path, (self.screen_width, self.screen_height))
+        self.background = loader.load_image(background_path, (self.screen_width, self.screen_height))
         self.volume_slider = volume_slider
         self.temporary_drawable = []
         self.spacing_frames = 0
@@ -69,7 +68,7 @@ class Scene(ABC):
     def clear_temporary(self):
         self.temporary_drawable.clear()
 
-    def draw_text(self, text, x, y, color=C.COLOR_WHITE, font=C.CINZEL_30, center=False):
+    def draw_text(self, text, x, y, color=c.COLOR_WHITE, font=c.CINZEL_30, center=False):
         text_surface = font.render(str(text), True, color)
         text_rect = text_surface.get_rect()
         if center:

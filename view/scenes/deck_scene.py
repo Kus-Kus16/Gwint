@@ -3,12 +3,12 @@ import json
 import pygame
 from overrides import overrides
 
-from classes import CardsDatabase
-from view import Constants as C, ImageLoader
-from view.Constants import BUTTON_SIZE_WIDE
-from view.Scenes.CarouselScene import CarouselScene
-from view.Scenes.Scene import Scene
-from view.components.Button import Button
+from model import cards_database as db
+from view import constants as c, image_loader as loader
+from view.constants import BUTTON_SIZE_WIDE
+from view.scenes.carousel_scene import CarouselScene
+from view.scenes.scene import Scene
+from view.components.button import Button
 
 CARD_MARGIN = 20
 VISIBLE_CARDS = 6
@@ -19,11 +19,11 @@ CARDS_PER_PAGE = ROWS * COLS
 
 def load_medium_image(card, faction):
     path = f"resources/large/{faction}/{card['filename']}.png"
-    return ImageLoader.load_image(path, C.MEDIUM_CARD_SIZE)
+    return loader.load_image(path, c.MEDIUM_CARD_SIZE)
 
 def load_large_image(card, faction):
     path = f"resources/large/{faction}/{card['filename']}.png"
-    return ImageLoader.load_image(path, C.LARGE_CARD_SIZE)
+    return loader.load_image(path, c.LARGE_CARD_SIZE)
 
 def load_card_image(card, size, faction):
     return load_medium_image(card, faction) if size == "medium" else load_large_image(card, faction)
@@ -32,7 +32,7 @@ class DeckScene(Scene):
     def __init__(self, screen):
         super().__init__(screen)
         self.mode = "menu"
-        self.all_cards = CardsDatabase.card_dict
+        self.all_cards = db.card_dict
         self.scroll_offset = 0
 
         self.scroll_offset_all = 0
@@ -62,15 +62,15 @@ class DeckScene(Scene):
         self.left_card_rects = []
         self.right_card_rects = []
 
-        button_width, button_height = C.BUTTON_SIZE_NARROW
+        button_width, button_height = c.BUTTON_SIZE_NARROW
         self.back_button = Button("Menu",
                                   ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30),
-                                  C.BUTTON_SIZE_NARROW,
+                                  c.BUTTON_SIZE_NARROW,
                                   {"type": "mode_change", "mode": "menu"})
 
         self.start_button = Button("Rozpocznij",
                                   ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30 - button_height - 10),
-                                  C.BUTTON_SIZE_NARROW,
+                                  c.BUTTON_SIZE_NARROW,
                                   {"type": "mode_change", "mode": "load_deck", "deck_id": self.current_deck_index, "commander_id": self.current_commander_id})
 
         self.prev_faction_button = None
@@ -92,10 +92,10 @@ class DeckScene(Scene):
 
         self.prev_faction_button = Button(f"< {prev_name}", (50, 50), BUTTON_SIZE_WIDE,
                                           {"type": "change_faction", "direction": -1},
-                                          font=C.CINZEL_25_BOLD)
+                                          font=c.CINZEL_25_BOLD)
         self.next_faction_button = Button(f"{next_name} >", (self.screen_width - 450, 50), BUTTON_SIZE_WIDE,
                                           {"type": "change_faction", "direction": 1},
-                                          font=C.CINZEL_25_BOLD)
+                                          font=c.CINZEL_25_BOLD)
 
     @overrides
     def draw(self):
@@ -119,9 +119,9 @@ class DeckScene(Scene):
             commander = self.get_commander_by_id(self.current_commander_id)
             if commander:
                 commander_image = load_card_image(commander, "medium", self.factions[self.current_faction_index])
-                self.screen.blit(commander_image, (self.screen_width // 2 - C.MEDIUM_CARD_SIZE[0] // 2, 170))
-                commander_pos = (self.screen_width // 2 - C.MEDIUM_CARD_SIZE[0] // 2, 170)
-                self.commander_rect = pygame.Rect(commander_pos, C.MEDIUM_CARD_SIZE)
+                self.screen.blit(commander_image, (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170))
+                commander_pos = (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170)
+                self.commander_rect = pygame.Rect(commander_pos, c.MEDIUM_CARD_SIZE)
 
     def draw_buttons(self):
         self.prev_faction_button.draw(self.screen, pygame.mouse.get_pos())
@@ -132,26 +132,26 @@ class DeckScene(Scene):
 
     def draw_texts(self):
         # Titles
-        font = C.CINZEL_30_BOLD
-        text_surface = font.render(f"Kolekcja kart", True, C.COLOR_GOLD)
+        font = c.CINZEL_30_BOLD
+        text_surface = font.render(f"Kolekcja kart", True, c.COLOR_GOLD)
         self.screen.blit(text_surface, (50, 180))
-        text_surface = font.render(f"Karty w talii", True, C.COLOR_GOLD)
+        text_surface = font.render(f"Karty w talii", True, c.COLOR_GOLD)
         self.screen.blit(text_surface, (self.screen_width - text_surface.get_width() - 50, 180))
         # Faction name
-        font = C.CINZEL_50_BOLD
+        font = c.CINZEL_50_BOLD
         faction_name = self.factions[self.current_faction_index]
-        text_surface = font.render(f"Frakcja: {faction_name}", True, C.COLOR_GOLD)
+        text_surface = font.render(f"Frakcja: {faction_name}", True, c.COLOR_GOLD)
         self.screen.blit(text_surface, (self.screen_width // 2 - text_surface.get_width() // 2, 50))
         # Commander
         commander = self.get_commander_by_id(self.current_commander_id)
         if commander:
-            font = C.CINZEL_30_BOLD
-            text_surface = font.render("Dowódca", True, C.COLOR_GOLD)
+            font = c.CINZEL_30_BOLD
+            text_surface = font.render("Dowódca", True, c.COLOR_GOLD)
             self.screen.blit(text_surface, (self.screen_width // 2 - text_surface.get_width() // 2, 130))
 
     def show_deck_stats(self):
         total_count, hero_count, special_count, total_strength = self.calculate_deck_stats()
-        stats_font = C.CINZEL_30_BOLD
+        stats_font = c.CINZEL_30_BOLD
         lines = [
             "Karty (min. 22)",
             f"{total_count}",
@@ -165,11 +165,11 @@ class DeckScene(Scene):
         line_height = stats_font.get_height()
         start_y = 550
         for i, line in enumerate(lines):
-            color = C.COLOR_GOLD
+            color = c.COLOR_GOLD
             if i == 1:  # Total count
-                color = C.COLOR_GREEN if total_count >= 22 else C.COLOR_RED
+                color = c.COLOR_GREEN if total_count >= 22 else c.COLOR_RED
             elif i == 5:  # Special count
-                color = C.COLOR_GREEN if special_count <= 10 else C.COLOR_RED
+                color = c.COLOR_GREEN if special_count <= 10 else c.COLOR_RED
 
             stats_surface = stats_font.render(line, True, color)
             stats_x = self.screen_width // 2 - stats_surface.get_width() // 2
@@ -190,18 +190,18 @@ class DeckScene(Scene):
             image = load_card_image(card, "medium", self.factions[self.current_faction_index])
             row = idx // COLS
             col = idx % COLS
-            total_width = COLS * C.MEDIUM_CARD_SIZE[0] + (COLS - 1) * CARD_MARGIN
+            total_width = COLS * c.MEDIUM_CARD_SIZE[0] + (COLS - 1) * CARD_MARGIN
             x_start = self.screen_width - total_width - 70
-            x = x_start + col * (C.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)
-            y = 270 + row * (C.MEDIUM_CARD_SIZE[1] + CARD_MARGIN)
+            x = x_start + col * (c.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)
+            y = 270 + row * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN)
             self.screen.blit(image, (x, y))
-            self.right_card_rects.append((pygame.Rect(x, y, *C.MEDIUM_CARD_SIZE), card))
+            self.right_card_rects.append((pygame.Rect(x, y, *c.MEDIUM_CARD_SIZE), card))
 
             count = entry["count"]
             if count > 1:
                 overlay = pygame.Surface((60, 36), pygame.SRCALPHA)
                 overlay.fill((0, 0, 0, 190))
-                overlay_x = x + C.MEDIUM_CARD_SIZE[0] - 60 - 10
+                overlay_x = x + c.MEDIUM_CARD_SIZE[0] - 60 - 10
                 overlay_y = y + 10
                 self.screen.blit(overlay, (overlay_x, overlay_y))
                 self.draw_text(count, overlay_x + 30, overlay_y + 18, center=True)
@@ -213,10 +213,10 @@ class DeckScene(Scene):
             image = load_card_image(card, "medium", self.factions[self.current_faction_index])
             row = idx // COLS
             col = idx % COLS
-            x = 70 + col * (C.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)
-            y = 270 + row * (C.MEDIUM_CARD_SIZE[1] + CARD_MARGIN)
+            x = 70 + col * (c.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)
+            y = 270 + row * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN)
             self.screen.blit(image, (x, y))
-            self.left_card_rects.append((pygame.Rect(x, y, *C.MEDIUM_CARD_SIZE), card))
+            self.left_card_rects.append((pygame.Rect(x, y, *c.MEDIUM_CARD_SIZE), card))
 
     @overrides
     def handle_events(self, event):

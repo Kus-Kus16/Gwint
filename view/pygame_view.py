@@ -2,12 +2,12 @@ import queue
 
 import pygame
 
-from view.Scenes.TextScene import TextScene
-from view.Scenes.DeckScene import DeckScene
-from view.Scenes.GameScene import GameScene
-from view.Scenes.MenuScene import MenuScene
-from view import ImageLoader, Constants as C
-from view.components.VolumeSlider import VolumeSlider
+from view.scenes.text_scene import TextScene
+from view.scenes.deck_scene import DeckScene
+from view.scenes.game_scene import GameScene
+from view.scenes.menu_scene import MenuScene
+from view import image_loader as loader, constants as c
+from view.components.volume_slider import VolumeSlider
 
 
 class PygameView:
@@ -17,8 +17,8 @@ class PygameView:
 
         pygame.display.set_caption("Gwint LAN")
         self.clock = pygame.time.Clock()
-        self.framerate = C.FRAMERATE
-        self.cursor = ImageLoader.load_image("resources/ico/cursor.png")
+        self.framerate = c.FRAMERATE
+        self.cursor = loader.load_image("resources/ico/cursor.png")
         self.volume_slider = VolumeSlider((self.screen_width - 240, self.screen_height - 60))
 
         self.running = True
@@ -35,7 +35,7 @@ class PygameView:
 
         #Screens initiation
         self.menu = MenuScene(self.screen, self.volume_slider)
-        self.credits = TextScene(self.screen, C.AUTHORS)
+        self.credits = TextScene(self.screen, c.AUTHORS)
         self.waiting = TextScene(self.screen, ["Oczekiwanie na przeciwnika"])
         self.game = GameScene(self.screen, self.volume_slider)
         self.deck = DeckScene(self.screen)

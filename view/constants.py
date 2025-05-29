@@ -1,4 +1,3 @@
-import random
 import pygame
 
 def __row(row_y, text_y_center):

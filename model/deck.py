@@ -1,4 +1,4 @@
-from classes.CardHolder import CardHolder
+from model.card_holder import CardHolder
 
 class Deck(CardHolder):
 

@@ -1,7 +1,7 @@
 from overrides import overrides
 
-from classes import CardsDatabase
-from classes.CardHolder import CardHolder
+from model import cards_database as db
+from model.card_holder import CardHolder
 from enum import Enum
 import bisect
 
@@ -65,7 +65,7 @@ class Row(CardHolder):
 
         # Bond
         if "bond" in card.abilities:
-            bond_id = CardsDatabase.get_bond(card.id)
+            bond_id = db.get_bond(card.id)
             card.power *= self.effects["bond"][bond_id]
 
         # Morale
@@ -137,7 +137,7 @@ class Row(CardHolder):
                 case "morale":
                     self.effects["morale"].add(card)
                 case "bond":
-                    bond_id = CardsDatabase.get_bond(card.id)
+                    bond_id = db.get_bond(card.id)
                     self.effects["bond"].setdefault(bond_id, 0)
                     self.effects["bond"][bond_id] += 1
                 case "horn":
@@ -149,7 +149,7 @@ class Row(CardHolder):
                 case "morale":
                     self.effects["morale"].remove(card)
                 case "bond":
-                    bond_id = CardsDatabase.get_bond(card.id)
+                    bond_id = db.get_bond(card.id)
                     self.effects["bond"][bond_id] -= 1
                 case "horn":
                     self.effects["horn"].remove(card)
@@ -172,7 +172,7 @@ class Row(CardHolder):
         add = []
         for card in self.cards:
             if card.is_recalling():
-                extra = CardsDatabase.get_recall(card.id)
+                extra = db.get_recall(card.id)
                 extra.owner = player
                 add.append((extra, player.id))
 

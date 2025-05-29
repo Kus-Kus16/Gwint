@@ -1,5 +1,5 @@
-from classes.Row import Row, RowType
-from classes.Weather import Weather
+from model.row import Row, RowType
+from model.weather import Weather
 
 
 class Board:

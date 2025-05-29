@@ -2,11 +2,11 @@ import json
 import queue
 import time
 
-from classes import CardsDatabase
-from classes.Game import Game
-from classes.Player import Player
+from model import cards_database as db
+from model.game import Game
+from model.player import Player
 from network.network import Network
-from view import Constants as C
+from view import constants as c
 
 
 class GamePresenter:
@@ -48,7 +48,7 @@ class GamePresenter:
             self.n.disconnect()
 
     def run(self):
-        sleep_time = 1 / C.FRAMERATE
+        sleep_time = 1 / c.FRAMERATE
         while True:
             time.sleep(sleep_time)
             self.process_actions()
@@ -100,7 +100,7 @@ class GamePresenter:
         self.carousel_dict["targets"] = []
         player = self.game.get_player(self.my_id)
         cards = player.hand.cards
-        self.show_carousel(cards, choose_count=player.redraws, cancelable=True)
+        self.show_carousel(cards, choose_count=player.redraws, cancelable=True, label=True)
 
     def handle_opponentredraw(self):
         response, data = self.n.send(("waiting", []))
@@ -253,7 +253,7 @@ class GamePresenter:
                 commander_id = deck_data["commander_id"]
                 cards = deck_data["cards"]
 
-                valid, payload = CardsDatabase.create_verified_deck(cards, commander_id)
+                valid, payload = db.create_verified_deck(cards, commander_id)
                 if not valid:
                     raise ValueError(f"Illegal deck, problem with card or commander: {payload}")
 
@@ -330,7 +330,7 @@ class GamePresenter:
         response, data = self.n.send(("rematch", [rematch]))
         # Opponent disconnected
         if response == "error":
-            self.return_to_menu("Przeciwnik rozłączył się.")
+            self.return_to_menu("Przeciwnik rozłączył się." if rematch else None)
             return
 
         if rematch:
@@ -435,8 +435,8 @@ class GamePresenter:
         else:
             self.view.unlock()
 
-    def show_carousel(self, cards, choose_count=0, cancelable=False):
-        self.view.run_later(lambda: self.view.current_scene.show_card_carousel(cards, choose_count, cancelable))
+    def show_carousel(self, cards, choose_count=0, cancelable=False, label=False):
+        self.view.run_later(lambda: self.view.current_scene.show_card_carousel(cards, choose_count, cancelable, label))
 
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:
