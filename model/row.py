@@ -40,7 +40,6 @@ class Row(CardHolder):
         self.recalculate()
 
     def recalculate(self):
-        #TODO add power changes
         total = 0
 
         for card in self.cards:

@@ -1,3 +1,5 @@
+import logging
+
 from model.board import Board
 import random
 
@@ -19,42 +21,32 @@ class Game:
             "healRandom": False
         }
 
-    def play_card(self, player_id, card_id, row, targets = None):
+    def play_card(self, player_id, card_id, row, targets=None):
         returns = []
         if targets is None:
             targets = []
 
         if self.current_player_id != player_id:
-            print("wrong player")
-            return False
+            raise ValueError(f"Wrong player, expected p{self.current_player_id}")
 
         player = self.players[player_id]
         card = player.hand.find_card_by_id(card_id) or player.get_commander(card_id)
         row_type = RowType[row.upper()]
 
         if card is None:
-            print("wrong card")
-            return False
+            raise ValueError(f"Wrong card, cannot find card for p{player_id}")
 
         if not card.is_row_playable(row_type):
-            print("wrong row")
-            return False
+            raise ValueError(f"Card {card.id}:{card.name} is not playable for given row: {row}")
 
         if card.is_commander():
-            if not self.handle_commander(player, card, targets, returns):
-                print("wrong commander use")
-                return False
+            self.handle_commander(player, card, targets, returns)
             card.disable()
         elif card.is_special():
-            if not self.handle_special(player, card, row_type, targets):
-                print("wrong special action")
-                return False
+            self.handle_special(player, card, row_type, targets)
             player.play_to_board(card)
         else:
             additional_actions = self.handle_abilities(player, card, row_type, targets)
-            if additional_actions is None:
-                print("wrong ability use")
-                return False
 
             player.play_to_board(card)
             self.board.play_card(card, row_type, player_id)
@@ -64,26 +56,30 @@ class Game:
         self.update_points()
         self.next_turn()
 
-        return returns if returns else True
+        return returns
 
-    def play_extra_card(self, player_id, card, row, targets = None):
+    def play_extra_card(self, player_id, card, row, targets=None):
         # Ignores the limits except abilities
         if targets is None:
             targets = []
+
         player = self.players[player_id]
         row_type = RowType[row.upper()]
 
-        if card.is_special():
-            self.handle_special(player, card, row_type, targets)
-        else:
-            additional_actions = self.handle_abilities(player, card, row_type, targets)
-            self.board.play_card(card, row_type, player_id)
-            for action in additional_actions:
-                action()
+        try:
+            if card.is_special():
+                self.handle_special(player, card, row_type, targets)
+            else:
+                additional_actions = self.handle_abilities(player, card, row_type, targets)
+                self.board.play_card(card, row_type, player_id)
+                for action in additional_actions:
+                    action()
+        except ValueError as e:
+            logging.info(f"play_extra_card ignored exception: {str(e)}")
+
         self.update_points()
 
     def handle_special(self, player, card, row_type, targets):
-        card_id = card.id
         player_id = player.id
 
         for ability in card.abilities:
@@ -92,19 +88,23 @@ class Game:
                     target_id = targets.pop(0)
                     row, row_owner_id = self.board.get_row(row_type, player_id)
                     if row_owner_id != player_id:
-                        return False
+                        raise ValueError(f"Wrong decoy use: row_owner_id:{row_owner_id} does not match p{player_id}")
 
                     target = row.find_card_by_id(target_id)
-                    if target is None or not target.is_unit():
-                        return False
+                    if target is None:
+                        raise ValueError(f"Wrong decoy use: cannot find target {target_id} for p{player_id}")
+                    if not target.is_unit():
+                        raise ValueError(f"Wrong decoy use: target {target_id} is not a unit")
 
                     row.add_card(card)
                     row.remove_card(target)
                     player.hand.add_card(target)
                 case "horn":
                     row, row_owner_id = self.board.get_row(row_type, player_id)
-                    if row_owner_id != player_id or not row.add_horn(card):
-                        return False
+                    if row_owner_id != player_id:
+                        raise ValueError(f"Wrong horn use: row_owner_id:{row_owner_id} does not match p{player_id}")
+                    if not row.add_horn(card):
+                        raise ValueError(f"Wrong horn use: cannot add for row {row_type}")
                 case "scorch":
                     self.grave_cards(self.board.scorch())
                     card.send_to_owner_grave()
@@ -113,12 +113,6 @@ class Game:
                         card.send_to_owner_grave()
                     else:
                         self.board.add_weather(card, ability)
-                case "mardroeme":
-                    pass
-                case "sangreal":
-                    pass
-
-        return True
 
     def handle_abilities(self, player, card, row_type, targets):
         actions = []
@@ -155,7 +149,7 @@ class Game:
                     target_id = targets.pop(0)
                     target = grave.find_card_by_id(target_id)
                     if target is None:
-                        return None
+                        raise ValueError(f"Wrong medic use: cannot find target {target_id} for p{player_id}")
 
                     actions.append(lambda p=player, t=target: p.grave.remove_card(t))
                     actions.append(lambda p=player_id, c=target, r=target.rows[0]: self.play_extra_card(p, c, r, targets))
@@ -164,74 +158,66 @@ class Game:
 
     def handle_commander(self, player, commander, targets, returning_list):
         if not commander.active:
-            return False
+            raise ValueError(f"Wrong commander use: commander is not active for p{player.id}")
 
         ability = commander.ability()
+        player_id = player.id
         match ability:
             case "findFrost" | "findFog" | "findRain" | "findStorm":
                 card_id = db.get_find(commander.id)
                 card = player.get_from_deck(card_id)
                 if card is not None:
-                    self.play_extra_card(player.id, card, "any")
+                    self.play_extra_card(player_id, card, "any")
             case "clear":
                 self.board.clear_weather()
             case "hornClose" | "hornRanged"| "hornSiege":
                 row_type = RowType[ability[4:].upper()]
-                row, _ = self.board.get_row(row_type, player.id)
+                row, _ = self.board.get_row(row_type, player_id)
                 if not row.add_horn(commander):
-                    return False
+                    raise ValueError(f"Wrong commander use: cannot add horn for row {row_type}")
             case "scorchClose" | "scorchRanged"| "scorchSiege":
                 row_type = RowType[ability[6:].upper()]
-                self.grave_cards(self.board.scorch_row(row_type, 1 - player.id))
+                self.grave_cards(self.board.scorch_row(row_type, 1 - player_id))
             case "show3Enemy":
-                returning_list.extend(self.peek_cards(1 - player.id, 3))
+                returning_list.extend(self.peek_cards(1 - player_id, 3))
             case "chooseEnemyGrave":
                 if len(targets) == 0:
-                    return True
+                    return
 
-                grave = self.players[1 - player.id].grave
+                grave = self.players[1 - player_id].grave
                 target_id = targets.pop(0)
                 target = grave.find_card_by_id(target_id)
                 if target is None:
-                    return False
+                    raise ValueError(f"Wrong commander use: cannot find target {target_id} in p{1 - player_id}")
 
                 self.players[1 - player.id].grave.remove_card(target)
                 player.hand.add_card(target)
 
-        return True
-
     def pass_round(self, player_id):
         if self.current_player_id != player_id:
-            print("wrong player")
-            return False
+            raise ValueError(f"Wrong player, expected p{self.current_player_id}")
 
         self.players[player_id].passed = True
         self.next_turn()
-
-        return True
 
     def redraw_cards(self, player_id, targets):
         player = self.players[player_id]
         if not targets:
             player.redraws = 0
-            return True
+            return
 
         if len(targets) > player.redraws:
-            print("Illegal redraw")
-            return False
+            raise ValueError(f"Wrong redraw: not enough redraws for p{player_id}")
 
         for card_id in targets:
             card = player.hand.find_card_by_id(card_id)
             if card is None:
-                print("No card in hand")
-                return False
+                raise ValueError(f"Wrong redraw: cannot find card {card_id} in p{player_id}")
 
             player.hand.remove_card(card)
             player.deck.add_card(card)
             player.draw_card()
             player.redraws -= 1
-
-        return True
 
     def end_redraws(self):
         for player in self.players:
@@ -243,7 +229,6 @@ class Game:
 
         if not next_player.passed:
             self.current_player_id = next_player.id
-            return
 
     def update_points(self):
         player0_pts, player1_pts = self.board.rows_sum()
@@ -267,13 +252,17 @@ class Game:
 
         for player in self.players:
             opponent = self.players[1 - player.id]
+            if player.commander.ability() == "blockAbility":
+                player.commander.disable()
+                opponent.commander.disable()
+                return
+
+        for player in self.players:
             match player.commander.ability():
-                case "blockAbility":
-                    player.commander.disable()
-                    opponent.commander.disable()
                 case "healRandom":
                     self.gamerules["healRandom"] = True
                     player.commander.disable()
+                # More ...
 
     def start_round(self):
         self.current_round += 1
@@ -311,14 +300,10 @@ class Game:
         for player in self.players:
             player.deck_from_grave()
 
-    def to_string(self, player_id):
-        return self.board.rows_tostring(player_id) + "\n\n" + str(self.players[player_id])
-
     def add_player(self, player):
         player_count = len(self.players)
-
         if player_count > 1:
-            return None
+            raise ValueError(f"Too many players, 2 already added")
 
         self.players.append(player)
         player.id = player_count
