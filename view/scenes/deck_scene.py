@@ -4,11 +4,11 @@ import pygame
 from overrides import overrides
 
 from model import cards_database as db
-from view import constants as c, image_loader as loader
+from view import constants as c
+from view.components.button import Button
 from view.constants import BUTTON_SIZE_WIDE
 from view.scenes.carousel_scene import CarouselScene
 from view.scenes.scene import Scene
-from view.components.button import Button
 
 CARD_MARGIN = 20
 VISIBLE_CARDS = 6
@@ -16,17 +16,6 @@ VISIBLE_CARDS = 6
 ROWS = 2
 COLS = 3
 CARDS_PER_PAGE = ROWS * COLS
-
-def load_medium_image(card, faction):
-    path = f"resources/large/{faction}/{card['filename']}.png"
-    return loader.load_image(path, c.MEDIUM_CARD_SIZE)
-
-def load_large_image(card, faction):
-    path = f"resources/large/{faction}/{card['filename']}.png"
-    return loader.load_image(path, c.LARGE_CARD_SIZE)
-
-def load_card_image(card, size, faction):
-    return load_medium_image(card, faction) if size == "medium" else load_large_image(card, faction)
 
 class DeckScene(Scene):
     def __init__(self, screen):
@@ -118,7 +107,7 @@ class DeckScene(Scene):
             # Draw the commander
             commander = self.get_commander_by_id(self.current_commander_id)
             if commander:
-                commander_image = load_card_image(commander, "medium", self.factions[self.current_faction_index])
+                commander_image = self.load_card_image(commander, "medium")
                 self.screen.blit(commander_image, (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170))
                 commander_pos = (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170)
                 self.commander_rect = pygame.Rect(commander_pos, c.MEDIUM_CARD_SIZE)
@@ -187,7 +176,7 @@ class DeckScene(Scene):
 
         for idx, entry in enumerate(visible_deck_cards):
             card = entry["card"]
-            image = load_card_image(card, "medium", self.factions[self.current_faction_index])
+            image = self.load_card_image(card, "medium")
             row = idx // COLS
             col = idx % COLS
             total_width = COLS * c.MEDIUM_CARD_SIZE[0] + (COLS - 1) * CARD_MARGIN
@@ -210,7 +199,7 @@ class DeckScene(Scene):
         self.left_card_rects = []
         visible_cards = self.filtered_cards[self.scroll_offset_all:self.scroll_offset_all + CARDS_PER_PAGE]
         for idx, card in enumerate(visible_cards):
-            image = load_card_image(card, "medium", self.factions[self.current_faction_index])
+            image = self.load_card_image(card, "medium")
             row = idx // COLS
             col = idx % COLS
             x = 70 + col * (c.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)
@@ -396,7 +385,8 @@ class DeckScene(Scene):
         self.carousel_scene = CarouselScene(self.screen, self.draw_card, cards_to_show, choose_count=1, cancelable=True, label=False)
         self.show_carousel = True
 
-    def draw_card(self, card, x, y, size):
-        image = load_card_image(card, size, self.factions[self.current_faction_index])
-        rect = image.get_rect(topleft=(x, y))
-        self.screen.blit(image, rect)
+    @overrides
+    def get_card_paths(self, card, size):
+        faction = self.factions[self.current_faction_index]
+        filename = card["filename"]
+        return faction, filename

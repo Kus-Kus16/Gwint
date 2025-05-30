@@ -2,26 +2,11 @@ import pygame
 from overrides import overrides
 
 from model import cards_database as db
-from view import image_loader as loader, constants as c
-from view.scenes.scene import Scene
+from view import constants as c
 from view.scenes.carousel_scene import CarouselScene
 from view.scenes.endscreen import EndScreen
+from view.scenes.scene import Scene
 
-def load_small_image(card):
-    path = f"resources/small/{card.faction}/{card.filename}.png"
-    return loader.load_image(path, c.SMALL_CARD_SIZE)
-
-def load_large_image(card):
-    faction = card.owner.faction if card.faction == "Neutralne" else card.faction
-    path = f"resources/large/{faction}/{card.filename}.png"
-    return loader.load_image(path, c.LARGE_CARD_SIZE)
-
-def load_card_image(card, size):
-    return load_small_image(card) if size == "small" else load_large_image(card)
-
-def load_image(filename, size=None):
-    path = f"resources/ico/{filename}.png"
-    return loader.load_image(path, size)
 
 class GameScene(Scene):
     def __init__(self, screen, volume_slider):
@@ -348,11 +333,11 @@ class GameScene(Scene):
 
         filename = f"rewers_{db.faction_to_nickname(player.faction)}"
         self.draw_stack(player.deck, c.DECK_OPP_RECT if opponent else c.DECK_RECT,
-                        image=load_image(filename, c.DECK_CARD_SIZE), label=True)
+                        image=self.load_ico_image(filename, c.DECK_CARD_SIZE), label=True)
         self.draw_stack(player.grave, c.GRAVE_OPP_RECT if opponent else c.GRAVE_RECT)
 
     def draw_icon(self, filename, size, x, y):
-        image = load_image(filename, size)
+        image = self.load_ico_image(filename, size)
         rect = image.get_rect(topleft=(x, y))
         self.screen.blit(image, rect)
 
@@ -377,8 +362,8 @@ class GameScene(Scene):
             self.draw_text(container.size(), rect.centerx, rect.bottom - 18, center=True)
 
     def draw_gems(self, hp, x, y):
-        gem_on = load_image("gem_on")
-        gem_off = load_image("gem_off")
+        gem_on = self.load_ico_image("gem_on")
+        gem_off = self.load_ico_image("gem_off")
         self.screen.blit(gem_on if hp >= 2 else gem_off, (x + 306, y + 86))
         self.screen.blit(gem_on if hp >= 1 else gem_off, (x + 353, y + 86))
 
@@ -412,7 +397,7 @@ class GameScene(Scene):
 
         for i, card in enumerate(cards):
             card_x = x + offset * i
-            card_rect = self.draw_card(card, card_x - 4, y, "small")
+            card_rect = self.draw_card(card, card_x - 4, y, "small", highlight=card is self.selected_card)
             card_rects_output.append((card, card_rect))
 
     def draw_commanders(self, card_rect_output):
@@ -425,7 +410,7 @@ class GameScene(Scene):
 
     def draw_commander(self, commander, pos):
         x, y = pos
-        self.draw_card(commander, *pos, "small")
+        self.draw_card(commander, *pos, "small", highlight=commander is self.selected_card)
         if not commander.active:
             overlay = pygame.Surface(c.COMM_SIZE, pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 200)) #20%
@@ -500,16 +485,11 @@ class GameScene(Scene):
 
         self.draw_card(self.selected_card, *c.SELECTED_CARD_POS, "large")
 
-    def draw_card(self, card, x, y, size):
-        image = load_card_image(card, size)
-        rect = image.get_rect(topleft=(x, y))
-        self.screen.blit(image, rect)
+    def draw_card(self, card, x, y, size, highlight=False):
+        rect = super().draw_card(card, x, y, size, highlight)
 
         if size == "large":
             return rect
-
-        if self.selected_card == card:
-            pygame.draw.rect(self.screen, c.COLOR_YELLOW, rect, 4)
 
         if not card.is_commander() and not card.is_special() and not card.is_hero():
             if card.power > card.base_power:
@@ -595,3 +575,13 @@ class GameScene(Scene):
 
     def set_card_carousel(self, cards):
         self.carousel_scene.set_cards(cards)
+
+    @overrides
+    def get_card_paths(self, card, size):
+        if size == "small" or card.faction != "Neutralne":
+            faction = card.faction
+        else:
+            faction = card.owner.faction
+
+        filename = card.filename
+        return faction, filename

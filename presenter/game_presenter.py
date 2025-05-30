@@ -32,7 +32,7 @@ class GamePresenter:
             self.n.connect()
             response, data = self.n.send(("register", [deck, commander]))
         except ConnectionError:
-            self.return_to_menu("Serwer nie odpowiada")
+            self.return_to_menu(["Serwer nie odpowiada"])
             return False
 
         if response != "ok":
@@ -75,7 +75,7 @@ class GamePresenter:
 
         # Opponent disconnected
         if response == "error":
-            self.return_to_menu("Przeciwnik rozłączył się")
+            self.return_to_menu(["Przeciwnik rozłączył się"])
             return
 
         self.opponent = Player(data[0], data[1])
@@ -111,7 +111,7 @@ class GamePresenter:
 
         #Opponent disconnected
         if response == "error":
-            self.return_to_menu("Przeciwnik rozłączył się.")
+            self.return_to_menu(["Przeciwnik rozłączył się."])
             return
 
         if not self.redraw_cards(1 - self.my_id, data):
@@ -131,10 +131,9 @@ class GamePresenter:
 
         #Opponent disconnected
         if response == "error":
-            self.return_to_menu("Przeciwnik rozłączył się.")
+            self.return_to_menu(["Przeciwnik rozłączył się."])
             return
 
-        print("RECEIVED:", data)
         valid = False
         match data[0]:
             case "card":
@@ -157,7 +156,7 @@ class GamePresenter:
 
         #Opponent disconnected
         if response == "error" or not data[0]:
-            self.return_to_menu("Przeciwnik rozłączył się.")
+            self.return_to_menu(["Przeciwnik rozłączył się."])
             return
 
         self.game_state = 'setup-game'
@@ -253,14 +252,14 @@ class GamePresenter:
                 commander_id = deck_data["commander_id"]
                 cards = deck_data["cards"]
 
-                valid, payload = db.create_verified_deck(cards, commander_id)
-                if not valid:
-                    raise ValueError(f"Illegal deck, problem with card or commander: {payload}")
+                try:
+                    deck, commander = db.create_verified_deck(cards, commander_id)
 
-                deck, commander = payload
-                if self.connect(deck, commander):
-                    self.game_state = "waiting-for-game"
-                    self.view.change_scene(self.view.waiting)
+                    if self.connect(deck, commander):
+                        self.game_state = "waiting-for-game"
+                        self.view.change_scene(self.view.waiting)
+                except ValueError as e:
+                    self.return_to_menu(["Niepoprawna talia:", str(e)], seconds=3)
 
             case "menu":
                 self.game_state = "menu"
@@ -297,7 +296,7 @@ class GamePresenter:
             response, data = self.n.send(("play", ["pass"]))
             # Opponent disconnected
             if response == "error":
-                self.return_to_menu("Przeciwnik rozłączył się.")
+                self.return_to_menu(["Przeciwnik rozłączył się."])
                 return
 
             self.turn_switch()
@@ -317,7 +316,7 @@ class GamePresenter:
         response, data = self.n.send(("play", ["card", card_id, row, targets]))
         # Opponent disconnected
         if response == "error":
-            self.return_to_menu("Przeciwnik rozłączył się.")
+            self.return_to_menu(["Przeciwnik rozłączył się."])
             return
 
         self.view.current_scene.deselect()
@@ -330,7 +329,7 @@ class GamePresenter:
         response, data = self.n.send(("rematch", [rematch]))
         # Opponent disconnected
         if response == "error":
-            self.return_to_menu("Przeciwnik rozłączył się." if rematch else None)
+            self.return_to_menu(["Przeciwnik rozłączył się."] if rematch else None)
             return
 
         if rematch:
@@ -406,7 +405,7 @@ class GamePresenter:
 
             # Opponent disconnected
             if response == "error":
-                self.return_to_menu("Przeciwnik rozłączył się.")
+                self.return_to_menu(["Przeciwnik rozłączył się."])
                 return
 
             self.carousel_dict.clear()
@@ -460,7 +459,7 @@ class GamePresenter:
         # return
         self.view.run_later(lambda: self.view.notification(name, seconds=seconds))
 
-    def return_to_menu(self, reason):
+    def return_to_menu(self, reasons, seconds=1.5):
         self.game_state = "menu"
         self.disconnect()
 
@@ -471,5 +470,5 @@ class GamePresenter:
         self.view.change_scene(self.view.menu)
         scene.reset_all()
 
-        if reason is not None:
-            self.notification(reason)
+        if reasons is not None:
+            self.notification(reasons, seconds=seconds)

@@ -89,10 +89,6 @@ class Board:
         row_index, _ = self.row_index(row_type, player_id)
         return self.rows[row_index]
 
-    def rows_tostring(self, player_id):
-        rows = self.get_ordered_rows(player_id)
-        return "\n".join(str(row) for row in rows) + "\n"
-
     def scorch_row(self, row_type, player_id):
         row_index, row_player_id = self.row_index(row_type, player_id)
         row = self.rows[row_index]
@@ -104,7 +100,7 @@ class Board:
         cards = row.find_strongest(ignore_heroes=True)
         for card in cards:
             row.remove_card(card)
-            scorched.append( (card, row_player_id) )
+            scorched.append((card, row_player_id))
 
         return scorched
 

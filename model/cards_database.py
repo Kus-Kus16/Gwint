@@ -23,12 +23,14 @@ with open("./data/find.json", "r", encoding="utf-8") as file:
     find_dict = json.load(file)
 
 def faction_to_nickname(fullname):
-    match fullname:
-        case "Królestwa Północy": return "polnoc"
-        case "Cesarstwo Nilfgaardu": return "nilfgaard"
-        case "Potwory": return "potwory"
-        case "Scoia'tael": return "scoiatael"
-        case "Skellige": return "skellige"
+    mapping = {
+        "Królestwa Północy": "polnoc",
+        "Cesarstwo Nilfgaardu": "nilfgaard",
+        "Potwory": "potwory",
+        "Scoia'tael": "scoiatael",
+        "Skellige": "skellige",
+    }
+    return mapping.get(fullname)
 
 # Dictionary
 def find_card(predicate):
@@ -42,9 +44,6 @@ def find_card_by_id(card_id):
 def find_card_by_name(card_name):
     return find_card(lambda card: card["name"] == card_name)
 
-def get_max_card_duplicates(card_id):
-    return find_card_by_id(card_id)["count"]
-
 def find_commander_by_id(commander_id):
     for faction in faction_dict:
         for commander in faction["commanders"]:
@@ -55,40 +54,61 @@ def create_verified_deck(data, commander_id):
     commander_data, faction = find_commander_by_id(commander_id)
 
     if commander_data is None:
-        return False, None
+        raise ValueError(f"Commander: {commander_id} does not exist")
 
     commander_data["faction"] = faction
     commander = Commander(commander_data)
 
     processed = {}
-    # id -> cnt, maxcnt, data
+    units = 0
+    special = 0
 
     for item in data:
         card_id, count = item["id"], item["count"]
 
         if card_id not in processed:
             card_data = find_card_by_id(card_id)
-            faction_valid = True
-            #faction_valid = card_data["faction"] == "Neutralne" or card_data["faction"] == faction
 
-            if card_data is None or not faction_valid:
-                return False, card_id
+            if card_data is None:
+                raise ValueError(f"Card: {card_id} does not exist")
 
-            processed[card_id] = [0, card_data["count"], card_data]
+            faction_valid = card_data["faction"] in ("Neutralne", faction)
 
-        card = processed[card_id]
-        card[0] += count
-        if card[0] > card[1]:
-            return False, card_id
+            if not faction_valid:
+                raise ValueError(f"Card: {card_id}:{card_data['name']} does not belong to {faction}")
 
-        processed[card_id] = card
+            processed[card_id] = {
+                "count": 0,
+                "max_count": card_data["count"],
+                "data": card_data,
+                "object": Card(card_data)
+            }
+
+        card_entry = processed[card_id]
+        card = card_entry["object"]
+
+        card_entry["count"] += count
+        if card.is_special():
+            special += count
+        if card.is_unit() or card.is_hero():
+            units += count
+
+        if card_entry["count"] > card_entry["max_count"]:
+            raise ValueError(f"Max count of {card_entry['max_count']} exceeded"
+                             f"for card: {card_id}:{card.name}")
+
+        if special > 10:
+            raise ValueError("Max count (10) of special cards exceeded")
+
+    if units < 22:
+        raise ValueError(f"Insufficient unit cards, expected >=22, got {units}")
 
     deck = []
-    for card in processed.values():
-        for _ in range(card[0]):
-            deck.append(Card(card[2]))
+    for card_entry in processed.values():
+        for _ in range(card_entry["count"]):
+            deck.append(Card(card_entry["data"]))
 
-    return True, (Deck(deck), commander)
+    return Deck(deck), commander
 
 # Muster
 def get_muster(card_id):

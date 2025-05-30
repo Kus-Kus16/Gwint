@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 
+import pygame
+
 from view.components.notification import Notification
 from view import constants as c, image_loader as loader
-
 
 class Scene(ABC):
     def __init__(self, screen, background_path=c.BACKGROUND_PATH, volume_slider=None):
@@ -81,3 +82,46 @@ class Scene(ABC):
         self.temporary_drawable = []
         self.spacing_frames = 0
         self.locked = False
+
+    @classmethod
+    def load_small_card_image(cls, faction, filename):
+        path = f"resources/small/{faction}/{filename}.png"
+        return loader.load_image(path, c.SMALL_CARD_SIZE)
+
+    @classmethod
+    def load_medium_card_image(cls, faction, filename):
+        path = f"resources/large/{faction}/{filename}.png"
+        return loader.load_image(path, c.MEDIUM_CARD_SIZE)
+
+    @classmethod
+    def load_large_card_image(cls, faction, filename):
+        path = f"resources/large/{faction}/{filename}.png"
+        return loader.load_image(path, c.LARGE_CARD_SIZE)
+
+    def load_card_image(self, card, size):
+        loaders = {
+            "small": self.load_small_card_image,
+            "medium": self.load_medium_card_image,
+            "large": self.load_large_card_image,
+        }
+
+        return loaders[size](*self.get_card_paths(card, size))
+
+    def get_card_paths(self, card, size):
+        return None, None
+
+    @classmethod
+    def load_ico_image(cls, filename, size=None):
+        path = f"resources/ico/{filename}.png"
+        return loader.load_image(path, size)
+
+    def draw_card(self, card, x, y, size, highlight=False):
+        image = self.load_card_image(card, size)
+        rect = image.get_rect(topleft=(x, y))
+        self.screen.blit(image, rect)
+
+        if highlight:
+            radius = 5 if size == "small" else 10
+            pygame.draw.rect(self.screen, c.COLOR_YELLOW, rect, width=4, border_radius=radius)
+
+        return rect

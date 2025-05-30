@@ -71,7 +71,7 @@ class CarouselScene(Scene):
                 offset_x = i * (card_width + 140)
                 top_left_x = center_x + offset_x - card_width // 2
                 top_left_y = center_y - card_height // 2
-                self.draw_card(card, top_left_x, top_left_y, "large")
+                self.draw_card(card, top_left_x, top_left_y, "large", highlight=i == 0)
 
         mouse_pos = pygame.mouse.get_pos()
         for btn in self.buttons:

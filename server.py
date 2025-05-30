@@ -16,12 +16,18 @@ def send(conn, data):
     conn.send(pickle.dumps(data))
 
 def receive(conn):
-    return pickle.loads(conn.recv(4096))
+    data = conn.recv(4096)
 
-# Funkcja zarządzająca klientami
+    if not data:
+        return None, None # Disconnected
+
+    return pickle.loads(data)
+
+# Client managing thread
 def threaded_client(conn, game_id, player_id):
     try:
         request, data = receive(conn)
+
         if request != "register":
             send(conn, ("error", ["illegal request"]))
             return
