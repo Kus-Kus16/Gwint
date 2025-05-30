@@ -19,7 +19,6 @@ class Player:
 
     def draw_card(self):
         card = self.deck.get_next_card()
-
         if card is None:
             return
 
@@ -83,6 +82,3 @@ class Player:
     def get_commander(self, card_id):
         card = self.commander
         return card if card.id == card_id else None
-
-    def __str__(self):
-        return str(self.hand) + "\n" + f'\nH: {self.hand.size()} D: {self.deck.size()}, G: {self.grave.size()} PTS: {self.points}'

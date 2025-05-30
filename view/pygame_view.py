@@ -72,14 +72,9 @@ class PygameView:
     def unlock(self):
         self.current_scene.unlock()
 
-    def change_scene(self, scene, **kwargs):
+    def change_scene(self, scene):
         self.current_scene.clear_temporary()
         self.current_scene.unlock()
-
-        # Choosing deck
-        if scene == self.deck and "mode" in kwargs:
-            self.deck.set_mode(kwargs["mode"])
-
         self.current_scene = scene
 
     def draw(self):

@@ -6,11 +6,15 @@ from view.components.notification import Notification
 from view import constants as c, image_loader as loader
 
 class Scene(ABC):
-    def __init__(self, screen, background_path=c.BACKGROUND_PATH, volume_slider=None):
+    def __init__(self, screen, background_path=None, volume_slider=None):
         self.screen = screen
         self.framerate = c.FRAMERATE
-        self.screen_width, self.screen_height = screen.get_size()
-        self.background = loader.load_image(background_path, (self.screen_width, self.screen_height))
+        self.pos = (0, 0)
+        self.size = screen.get_size()
+        self.screen_width, self.screen_height = self.size
+        self.rect = pygame.Rect(self.pos, self.size)
+        self.background = loader.load_image(background_path if background_path is not None else c.BACKGROUND_PATH,
+                                            (self.screen_width, self.screen_height))
         self.volume_slider = volume_slider
         self.temporary_drawable = []
         self.spacing_frames = 0
@@ -55,6 +59,11 @@ class Scene(ABC):
                     self.lock()
                 else:
                     self.unlock()
+
+    def draw_overlay(self, transparency):
+        overlay = pygame.Surface(self.size, pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 255 * transparency))
+        self.screen.blit(overlay, self.rect.topleft)
 
     def notification(self, name, frames, locking):
         pos = (0, self.screen_height // 2 - 60)

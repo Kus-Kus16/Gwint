@@ -2,7 +2,6 @@ from model.card_holder import CardHolder
 
 
 class Grave(CardHolder):
-
     def return_to_deck(self, deck):
         remove = []
         for card in self.cards:

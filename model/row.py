@@ -22,7 +22,7 @@ class Row(CardHolder):
         self.effects = {
             "weather": False,
             "morale": set(),
-            "bond": {},
+            "bond": dict(),
             "horn": set()
         }
 
@@ -98,7 +98,7 @@ class Row(CardHolder):
         self.recalculate()
         return True
 
-    def find_strongest(self, ignore_heroes = False):
+    def find_strongest(self, ignore_heroes=False):
         maxi = -10e10
         for card in self.cards:
             if card.is_special() or (ignore_heroes and card.is_hero()):
@@ -157,9 +157,8 @@ class Row(CardHolder):
         remove = []
         for card in self.effects["horn"]:
             if card.is_special():
-                self.effects["horn"].remove(card)
                 card.send_to_owner_grave()
-                break
+                remove.append(card)
             if card.is_commander():
                 remove.append(card)
 

@@ -6,18 +6,11 @@ from view.scenes.scene import Scene
 from view.components.button import Button
 
 
-def load_image(name):
-    path = f"resources/ico/end_{name}.png"
-    return loader.load_image(path)
-
 class EndScreen(Scene):
     def __init__(self, screen, result, round_history):
-        super().__init__(screen, "resources/board.jpg")
-        self.pos = (0, 0)
-        self.size = screen.get_size()
-        self.rect = pygame.Rect(self.pos, self.size)
+        super().__init__(screen)
         self.round_history = round_history
-        self.image = load_image(result)
+        self.image = self.load_ico_image(f"end_{result}")
         self.spacing_frames = c.FRAMERATE // 2
 
         button_x = self.screen_width // 2
@@ -37,9 +30,9 @@ class EndScreen(Scene):
             if self.spacing_frames == 0:
                 self.unlock()
 
-        overlay = pygame.Surface(self.size, pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 192))
-        self.screen.blit(overlay, self.rect.topleft)
+            return
+
+        self.draw_overlay(0.75)
 
         img_rect = self.image.get_rect(center=(self.screen_width // 2, 280))
         self.screen.blit(self.image, img_rect)

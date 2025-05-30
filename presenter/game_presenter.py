@@ -32,12 +32,12 @@ class GamePresenter:
         try:
             self.n.connect()
             response, data = self.n.send(("register", [deck, commander]))
-        except ConnectionError:
-            self.return_to_menu(["Serwer nie odpowiada"])
+        except ConnectionError as e:
+            self.return_to_menu(["Serwer nie odpowiada:", str(e)])
             return False
 
         if response != "ok":
-            raise ConnectionError("Server responded with '%s'" % response)
+            raise ConnectionError(f"Server responded with: {response}")
 
         self.my_id, self.seed = data
         self.me = Player(deck, commander)
@@ -70,13 +70,7 @@ class GamePresenter:
     def handle_waitingforgame(self):
         response, data = self.n.send(("waiting", []))
 
-        # Still waiting
-        if response == "ok":
-            return
-
-        # Opponent disconnected
-        if response == "error":
-            self.return_to_menu(["Przeciwnik rozłączył się"])
+        if not self.continue_with_response(response):
             return
 
         self.opponent = Player(data[0], data[1])
@@ -92,7 +86,7 @@ class GamePresenter:
         self.view.lock()
 
     def handle_setupgame(self):
-        self.game.start_game()  # Commanders!
+        self.game.start_game()
         # Scoia'tael choosing here
         notif = "start" if self.game.first_player_id == self.my_id else "op_start"
         self.notification(notif)
@@ -106,13 +100,7 @@ class GamePresenter:
     def handle_opponentredraw(self):
         response, data = self.n.send(("waiting", []))
 
-        #Still waiting
-        if response == "ok":
-            return
-
-        #Opponent disconnected
-        if response == "error":
-            self.return_to_menu(["Przeciwnik rozłączył się."])
+        if not self.continue_with_response(response):
             return
 
         try:
@@ -128,19 +116,13 @@ class GamePresenter:
     def handle_opponentturn(self):
         response, data = self.n.send(("waiting", []))
 
-        #Still waiting
-        if response == "ok":
-            return
-
-        #Opponent disconnected
-        if response == "error":
-            self.return_to_menu(["Przeciwnik rozłączył się."])
+        if not self.continue_with_response(response):
             return
 
         try:
             if data[0] == "card":
                 self.play_card(1 - self.my_id, data[1], data[2], data[3])
-            else: #pass
+            else: # pass
                 self.notification("pass_op")
                 self.pass_round(1 - self.my_id)
         except ValueError as e:
@@ -151,13 +133,7 @@ class GamePresenter:
     def handle_waitingforendgame(self):
         response, data = self.n.send(("waiting", []))
 
-        #Still waiting
-        if response == "ok":
-            return
-
-        #Opponent disconnected
-        if response == "error" or not data[0]:
-            self.return_to_menu(["Przeciwnik rozłączył się."])
+        if not self.continue_with_response(response):
             return
 
         self.game_state = 'setup-game'
@@ -241,25 +217,11 @@ class GamePresenter:
     def handle_mode_change(self, action):
         match action["mode"]:
             case "start_game":
-                self.game_state = "load_deck"
+                self.game_state = "deck"
                 self.disconnect()
-                self.view.change_scene(self.view.deck, mode="start")
+                self.view.change_scene(self.view.deck)
             case "load_deck":
-                with open("./user/user_decks.json", "r", encoding="utf-8") as file:
-                    decks = json.load(file)
-
-                deck_data = decks[action["deck_id"]]
-                commander_id = deck_data["commander_id"]
-                cards = deck_data["cards"]
-
-                try:
-                    deck, commander = db.create_verified_deck(cards, commander_id)
-                    if self.connect(deck, commander):
-                        self.game_state = "waiting-for-game"
-                        self.view.change_scene(self.view.waiting)
-                except ValueError as e:
-                    self.return_to_menu(["Niepoprawna talia:", str(e)], seconds=3)
-
+                self.handle_load_deck(action)
             case "menu":
                 self.game_state = "menu"
                 self.disconnect()
@@ -271,7 +233,7 @@ class GamePresenter:
             case "deck":
                 self.game_state = "deck"
                 self.disconnect()
-                self.view.change_scene(self.view.deck, mode="menu")
+                self.view.change_scene(self.view.deck)
             case "exit":
                 self.game_state = "exit"
                 self.disconnect()
@@ -279,27 +241,30 @@ class GamePresenter:
 
         self.view.unlock()
 
+    def handle_load_deck(self, action):
+        with open("./user/user_decks.json", "r", encoding="utf-8") as file:
+            decks = json.load(file)
+
+        deck_data = decks[action["deck_id"]]
+        commander_id = deck_data["commander_id"]
+        cards = deck_data["cards"]
+
+        try:
+            deck, commander = db.create_verified_deck(cards, commander_id)
+            if self.connect(deck, commander):
+                self.game_state = "waiting-for-game"
+                self.view.change_scene(self.view.waiting)
+        except ValueError as e:
+            self.return_to_menu(["Niepoprawna talia:", str(e)], seconds=3)
+
     def handle_play(self, action):
         if action["card_id"] is None:
-            self.view.current_scene.deselect()
-            self.notification("pass")
-
-            try:
-                self.pass_round(self.my_id)
-            except ValueError as e:
-                logging.info(f"Pass round exception: {str(e)}")
-                self.relock()
-                return
-
-            response, data = self.n.send(("play", ["pass"]))
-            # Opponent disconnected
-            if response == "error":
-                self.return_to_menu(["Przeciwnik rozłączył się."])
-                return
-
-            self.turn_switch()
+            self.handle_play_pass()
             return
 
+        self.handle_play_card(action)
+
+    def handle_play_card(self, action):
         card_id = action["card_id"]
         row = action["row"]
         targets = action.get("targets", [])
@@ -313,12 +278,27 @@ class GamePresenter:
             return
 
         response, data = self.n.send(("play", ["card", card_id, row, targets]))
-        # Opponent disconnected
-        if response == "error":
-            self.return_to_menu(["Przeciwnik rozłączył się."])
+        if not self.continue_with_response(response, is_ok_blocking=False):
             return
 
         self.view.current_scene.deselect()
+        self.turn_switch()
+
+    def handle_play_pass(self):
+        self.view.current_scene.deselect()
+        self.notification("pass")
+
+        try:
+            self.pass_round(self.my_id)
+        except ValueError as e:
+            logging.info(f"Pass round exception: {str(e)}")
+            self.relock()
+            return
+
+        response, data = self.n.send(("play", ["pass"]))
+        if not self.continue_with_response(response, is_ok_blocking=False):
+            return
+
         self.turn_switch()
 
     def handle_gameover(self, action):
@@ -326,9 +306,7 @@ class GamePresenter:
         self.game.end_game()
 
         response, data = self.n.send(("rematch", [rematch]))
-        # Opponent disconnected
-        if response == "error":
-            self.return_to_menu(["Przeciwnik rozłączył się."] if rematch else None)
+        if not self.continue_with_response(response, is_ok_blocking=False, should_notify=rematch):
             return
 
         if rematch:
@@ -341,16 +319,20 @@ class GamePresenter:
 
     def handle_show_zoom(self, action):
         row = action["row"]
-        if row in ["GRAVE", "GRAVE_OPP"]:
-            player_id = self.my_id if row == "GRAVE" else 1 - self.my_id
-            cards = self.game.get_player(player_id).get_grave_cards(playable_only=False)
-        elif row in ["COMMANDER", "COMMANDER_OPP"]:
-            player_id = self.my_id if row == "COMMANDER" else 1 - self.my_id
-            cards = [self.game.get_player(player_id).commander]
-        elif row == "WEATHER":
-            cards = self.game.board.weather.cards
-        else:
-            cards = self.game.board.get_row_by_name(row, self.my_id).cards
+        match row:
+            case "GRAVE" | "GRAVE_OPP":
+                player_id = self.my_id if row == "GRAVE" else 1 - self.my_id
+                cards = self.game.get_player(player_id).get_grave_cards(playable_only=False)
+
+            case "COMMANDER" | "COMMANDER_OPP":
+                player_id = self.my_id if row == "COMMANDER" else 1 - self.my_id
+                cards = [self.game.get_player(player_id).commander]
+
+            case "WEATHER":
+                cards = self.game.board.weather.cards
+
+            case _:
+                cards = self.game.board.get_row_by_name(row, self.my_id).cards
 
         if len(cards) > 0:
             self.show_carousel(cards, choose_count=0, cancelable=True)
@@ -400,10 +382,7 @@ class GamePresenter:
 
         if action["end"]:
             response, data = self.n.send(("play", self.carousel_dict["targets"]))
-
-            # Opponent disconnected
-            if response == "error":
-                self.return_to_menu(["Przeciwnik rozłączył się."])
+            if not self.continue_with_response(response, is_ok_blocking=False):
                 return
 
             self.carousel_dict.clear()
@@ -473,3 +452,17 @@ class GamePresenter:
 
         if reasons is not None:
             self.notification(reasons, seconds=seconds)
+
+    # Returns True if calling function should continue
+    def continue_with_response(self, server_response, is_ok_blocking=True, should_notify=True):
+        #Still waiting
+        if is_ok_blocking and server_response == "ok":
+            return False
+
+        #Opponent disconnected
+        if server_response == "error":
+            reasons = ["Przeciwnik rozłączył się."] if should_notify else None
+            self.return_to_menu(reasons)
+            return False
+
+        return True

@@ -2,6 +2,7 @@ import pygame
 
 from view import constants as c
 
+# TODO deprecate
 class VolumeSlider:
     def __init__(self, pos, size=(200, 20)):
         self.pos = pos
@@ -11,7 +12,6 @@ class VolumeSlider:
         self.handle_x = pos[0] + size[0]//2
         self.dragging = False
         self.volume = 0.5
-        self.action = { "type": "ui_action" }
 
         self.bg_color = c.COLOR_BUTTON
         self.hover_color = c.COLOR_BUTTON_HOVER

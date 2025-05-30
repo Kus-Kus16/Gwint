@@ -8,7 +8,7 @@ def load_image(name):
 
 class Notification:
     def __init__(self, pos, size, name, frames, locking, font=None):
-        self.font = font if font is not None else c.CINZEL_30
+        self.font = font if font is not None else c.DEFAULT_FONT
         self.rect = pygame.Rect(pos, size)
         self.texts = None
         self.image = None

@@ -118,6 +118,8 @@ CINZEL_20_BOLD = __font("Cinzel-SemiBold", 20)
 CINZEL_25_BOLD = __font("Cinzel-SemiBold", 25)
 CINZEL_30_BOLD = __font("Cinzel-SemiBold", 30)
 CINZEL_50_BOLD = __font("Cinzel-SemiBold", 50)
+DEFAULT_FONT = CINZEL_30
+DEFAULT_FONT_BOLD = CINZEL_30_BOLD
 
 LOGO_PATH = "resources/gwent/backgrounds/logo-solo.png"
 BLUE_BUTTON_PATH = "resources/gwent/buttons/button-blue-big.png"

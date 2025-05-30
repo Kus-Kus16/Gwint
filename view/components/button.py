@@ -4,12 +4,12 @@ from view import constants as c, image_loader as loader
 
 
 class Button:
-	def __init__(self, text, pos, size, action=None, font=c.CINZEL_30_BOLD, image_paths=c.DEFAULT_BUTTON_PATHS):
-		self.font = font
+	def __init__(self, text, pos, size, action=None, font=None, image_paths=None):
+		self.font = font if font is not None else c.DEFAULT_FONT_BOLD
 		self.text = text
 		self.pos = pos
 		self.size = size
-		self.image_paths = image_paths
+		self.image_paths = image_paths if image_paths is not None else c.DEFAULT_BUTTON_PATHS
 		self.images = loader.load_image(self.image_paths[0], self.size), loader.load_image(self.image_paths[1], self.size)
 		self.action = action
 		self.rect = pygame.Rect(pos, size)

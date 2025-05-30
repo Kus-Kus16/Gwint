@@ -8,11 +8,8 @@ from view.components.button import Button
 
 class CarouselScene(Scene):
     def __init__(self, screen, draw_card, cards, choose_count, cancelable, label=True, font=None):
-        super().__init__(screen, "resources/board.jpg")
-        self.font = font if font is not None else c.CINZEL_30
-        self.pos = (0, 0)
-        self.size = screen.get_size()
-        self.rect = pygame.Rect(self.pos, self.size)
+        super().__init__(screen)
+        self.font = font if font is not None else c.DEFAULT_FONT
         self.cards = list(cards)
         self.draw_card = draw_card
         self.selected_index = 0
@@ -41,9 +38,7 @@ class CarouselScene(Scene):
 
     @overrides
     def draw(self):
-        overlay = pygame.Surface(self.size, pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 64))
-        self.screen.blit(overlay, self.rect.topleft)
+        self.draw_overlay(0.25)
 
         center_x = self.screen_width // 2
         center_y = self.screen_height // 2
@@ -98,32 +93,35 @@ class CarouselScene(Scene):
                 if card_x <= mouse_x <= card_x + card_width and card_y <= mouse_y <= card_y + card_height:
                     self.selected_index = max(0, min(len(self.cards) - 1, self.selected_index + i))
                     return
-            for btn in self.buttons:
-                if btn.check_click(event.pos):
-                    if btn.action["type"] == "cancel":
-                        return {
-                            "type": "carousel",
-                            "card_id": None,
-                            "end": True
-                        }
 
+            return self.handle_button_events(event)
 
-                    card = self.cards[self.selected_index]
-                    self.cards.remove(card)
-                    self.choose_count -= 1
-                    self.lock()
-
-                    end = False
-                    if self.choose_count == 0 or len(self.cards) == 0:
-                        end = True
-                    if self.choose_count < 0 and not card.is_choosing():
-                        end = True
-
+    def handle_button_events(self, event):
+        for btn in self.buttons:
+            if btn.check_click(event.pos):
+                if btn.action["type"] == "cancel":
                     return {
                         "type": "carousel",
-                        "card_id": card.id if hasattr(card, "id") else card["id"],
-                        "end": end
+                        "card_id": None,
+                        "end": True
                     }
+
+                card = self.cards[self.selected_index]
+                self.cards.remove(card)
+                self.choose_count -= 1
+                self.lock()
+
+                end = False
+                if self.choose_count == 0 or len(self.cards) == 0:
+                    end = True
+                if self.choose_count < 0 and not card.is_choosing():
+                    end = True
+
+                return {
+                    "type": "carousel",
+                    "card_id": card.id if hasattr(card, "id") else card["id"],
+                    "end": end
+                }
 
     def set_cards(self, cards):
         self.cards = cards

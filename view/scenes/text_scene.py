@@ -16,13 +16,10 @@ class TextScene(Scene):
         self.back_button = Button("Powrót do Menu",((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
           c.BUTTON_SIZE_WIDE, { "type": "mode_change", "mode": "menu" }, image_paths=c.THEME_BUTTON_PATHS)
 
-        self.darken = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
-        self.darken.fill((0, 0, 0, 150))
-
     @overrides
     def draw(self):
         super().draw()
-        self.screen.blit(self.darken, (0, 0))
+        self.draw_overlay(0.60)
 
         lines = self.texts
         font = c.CINZEL_40

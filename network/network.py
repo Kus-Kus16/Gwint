@@ -1,3 +1,4 @@
+import logging
 import pickle
 import socket
 
@@ -18,9 +19,8 @@ class Network:
             self.client.connect(self.addr)
             self.connected = True
         except (socket.error, ConnectionRefusedError) as e:
-            print(f"Connection failed: {e}")
             self.connected = False
-            raise ConnectionError
+            raise ConnectionError(f"Connection failed: {str(e)}")
 
     def disconnect(self):
         if not self.connected:
@@ -30,7 +30,7 @@ class Network:
             self.client.close()
             self.connected = False
         except socket.error as e:
-            print(f"Disconnection failed: {e}")
+            logging.info(print(f"Disconnecting failed: {str(e)}"))
 
     def send(self, data):
         try:
@@ -38,5 +38,4 @@ class Network:
             return pickle.loads(self.client.recv(4096))
 
         except (socket.error, pickle.PickleError, EOFError) as e:
-            print(f"Communication error: {e}")
-            raise ConnectionError
+            raise ConnectionError(f"Communication error: {str(e)}")

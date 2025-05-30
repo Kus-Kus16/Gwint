@@ -413,7 +413,7 @@ class GameScene(Scene):
         self.draw_card(commander, *pos, "small", highlight=commander is self.selected_card)
         if not commander.active:
             overlay = pygame.Surface(c.COMM_SIZE, pygame.SRCALPHA)
-            overlay.fill((0, 0, 0, 200)) #20%
+            overlay.fill((0, 0, 0, 200))
             self.screen.blit(overlay, pos)
         else:
             self.draw_icon("leader", None, x + 120, y + 50)
@@ -431,7 +431,6 @@ class GameScene(Scene):
 
     def draw_highlights(self):
         selected = self.selected_card
-
         if selected is None:
             return
 

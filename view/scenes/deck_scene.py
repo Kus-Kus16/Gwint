@@ -17,10 +17,10 @@ ROWS = 2
 COLS = 3
 CARDS_PER_PAGE = ROWS * COLS
 
+#TODO refactor
 class DeckScene(Scene):
     def __init__(self, screen):
         super().__init__(screen)
-        self.mode = "menu"
         self.all_cards = db.card_dict
         self.scroll_offset = 0
 
@@ -57,7 +57,7 @@ class DeckScene(Scene):
                                   c.BUTTON_SIZE_NARROW,
                                   {"type": "mode_change", "mode": "menu"})
 
-        self.start_button = Button("Rozpocznij",
+        self.start_button = Button("Graj",
                                   ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30 - button_height - 10),
                                   c.BUTTON_SIZE_NARROW,
                                   {"type": "mode_change", "mode": "load_deck", "deck_id": self.current_deck_index, "commander_id": self.current_commander_id})
@@ -69,8 +69,6 @@ class DeckScene(Scene):
         self.darken = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
         self.darken.fill((0, 0, 0, 218))
 
-    def set_mode(self, mode):
-        self.mode = mode
 
     def update_faction_buttons(self):
         prev_index = (self.current_faction_index - 1) % len(self.factions)
@@ -116,8 +114,7 @@ class DeckScene(Scene):
         self.prev_faction_button.draw(self.screen, pygame.mouse.get_pos())
         self.next_faction_button.draw(self.screen, pygame.mouse.get_pos())
         self.back_button.draw(self.screen, pygame.mouse.get_pos())
-        if self.mode == "start" and self.can_start_game():
-            self.start_button.draw(self.screen, pygame.mouse.get_pos())
+        self.start_button.draw(self.screen, pygame.mouse.get_pos())
 
     def draw_texts(self):
         # Titles
@@ -226,7 +223,7 @@ class DeckScene(Scene):
                     return self.back_button.action
 
                 # Start button
-                if self.mode == "start" and self.can_start_game():
+                if self.can_start_game():
                     if self.start_button.check_click(event.pos):
                         self.lock()
                         with open("./user/user_decks.json", "w", encoding="utf-8") as f:
