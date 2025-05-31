@@ -2,6 +2,8 @@ import pygame
 from overrides import overrides
 
 from model import cards_database as db
+from model.abilities.ability_base import AbilityType
+from model.card_base import CardType
 from view import constants as c
 from view.scenes.carousel_scene import CarouselScene
 from view.scenes.endscreen import EndScreen
@@ -49,7 +51,7 @@ class GameScene(Scene):
         # Check hand clicks
         card = self.check_card_click(event, self.hand_rects)
         if card is not None:
-            if not card.is_commander() or card.active:
+            if not card.is_card_type(CardType.COMMANDER) or card.active:
                 self.selected_card = card
 
             return None
@@ -59,13 +61,13 @@ class GameScene(Scene):
         card = self.selected_card
 
         # Check row clicks
-        if card.is_unit() or card.is_hero():
+        if card.is_card_type(CardType.UNIT) or card.is_card_type(CardType.HERO):
             row_name = self.check_row_click(event, card.rows)
             if row_name is not None:
                 return self.handle_row_clicks(card, row_name)
 
         # Check weather clicks
-        if card.is_weather():
+        if card.is_ability_type(AbilityType.WEATHER):
             if self.check_weather_click(event):
                 self.lock()
                 return {
@@ -75,7 +77,7 @@ class GameScene(Scene):
                 }
 
         # Check boosts clicks
-        if card.is_boost():
+        if card.is_ability_type(AbilityType.BOOST):
             row_name = self.check_boost_click(event, c.SELF_ROW_NAMES)
             if row_name is not None:
                 self.lock()
@@ -86,7 +88,7 @@ class GameScene(Scene):
                 }
 
         # Check decoy
-        if card.is_targeting():
+        if card.is_ability_type(AbilityType.TARGETING):
             target = self.check_card_click(event, self.card_rects)
             if target is None:
                 return None
@@ -102,18 +104,17 @@ class GameScene(Scene):
                 }
 
         # Check any board clicks
-        if card.is_absolute():
+        if card.is_ability_type(AbilityType.ABSOLUTE):
             if self.check_board_click(event):
                 self.lock()
 
                 #Check commander
-                if card.is_choosing():
+                if card.is_ability_type(AbilityType.CHOOSING):
                     return {
                         "type": "show_carousel",
                         "carousel": "choose",
-                        "card_id": card.id,
                         "row": "any",
-                        "ability": card.ability()
+                        "card": card
                     }
 
                 return {
@@ -172,7 +173,7 @@ class GameScene(Scene):
                     "card_id": None
                 }
 
-            if not self.selected_card or self.selected_card.is_commander():
+            if not self.selected_card or self.selected_card.is_card_type(CardType.COMMANDER):
                 return None
 
             #Autoplay
@@ -188,13 +189,12 @@ class GameScene(Scene):
         self.lock()
 
         #Check medic
-        if card.is_choosing():
+        if card.is_ability_type(AbilityType.CHOOSING):
             return {
                 "type": "show_carousel",
                 "carousel": "choose",
-                "card_id": card.id,
                 "row": row_name,
-                "ability": "medic"
+                "card": card
             }
 
         return {
@@ -430,52 +430,40 @@ class GameScene(Scene):
             x_offset += 90
 
     def draw_highlights(self):
+        def make_surface(size):
+            surface = pygame.Surface(size, pygame.SRCALPHA)
+            surface.fill((*c.COLOR_HIGHLIGHT, c.ALPHA_HIGHLIGHT))
+            return surface
+
         selected = self.selected_card
         if selected is None:
             return
 
-        highlight_color = c.COLOR_HIGHLIGHT
-        alpha = c.ALPHA_HIGHLIGHT
+        if selected.is_card_type(CardType.UNIT) or selected.is_card_type(CardType.HERO):
+            surface = make_surface(c.UNIT_ROW_SIZE)
 
-        if selected.is_unit() or selected.is_hero():
-            rows = selected.rows
-            rect_size = c.UNIT_ROW_SIZE
-
-            surface = pygame.Surface(rect_size, pygame.SRCALPHA)
-            surface.fill((*highlight_color, alpha))
-
-            for row_name in rows:
+            for row_name in selected.rows:
                 unit_rect = getattr(c, row_name.upper())["UNIT_RECT"]
                 self.screen.blit(surface, (unit_rect.x, unit_rect.y))
-
             return
 
-        if selected.is_weather():
+        if selected.is_ability_type(AbilityType.WEATHER):
             rect = c.WEATHER_RECT
-            surface = pygame.Surface(rect.size, pygame.SRCALPHA)
-            surface.fill((*highlight_color, alpha))
+            surface = make_surface(rect.size)
             self.screen.blit(surface, (rect.x, rect.y))
-
             return
 
-        if selected.is_boost():
-            rect_size = c.BOOST_ROW_SIZE
-            surface = pygame.Surface(rect_size, pygame.SRCALPHA)
-            surface.fill((*highlight_color, alpha))
-
-            rows = c.SELF_ROW_NAMES
-            for row_name in rows:
+        if selected.is_ability_type(AbilityType.BOOST):
+            surface = make_surface(c.BOOST_ROW_SIZE)
+            for row_name in c.SELF_ROW_NAMES:
                 boost_rect = getattr(c, row_name)["BOOST_RECT"]
                 self.screen.blit(surface, (boost_rect.x, boost_rect.y))
-
             return
 
-        if selected.is_absolute():
+        if selected.is_ability_type(AbilityType.ABSOLUTE):
             board_rect = c.BOARD_RECT
-            surface = pygame.Surface(board_rect.size, pygame.SRCALPHA)
-            surface.fill((*highlight_color, alpha))
+            surface = make_surface(board_rect.size)
             self.screen.blit(surface, (board_rect.x, board_rect.y))
-
             return
 
     def draw_selected(self):
@@ -490,7 +478,7 @@ class GameScene(Scene):
         if size == "large":
             return rect
 
-        if not card.is_commander() and not card.is_special() and not card.is_hero():
+        if card.is_card_type(CardType.UNIT):
             if card.power > card.base_power:
                 color = c.COLOR_GREEN
             elif card.power < card.base_power:

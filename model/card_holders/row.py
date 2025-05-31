@@ -1,7 +1,9 @@
 from overrides import overrides
 
 from model import cards_database as db
-from model.card_holder import CardHolder
+from model.abilities.ability_base import AbilityType
+from model.card_base import CardType
+from model.card_holders.card_holder import CardHolder
 from enum import Enum
 import bisect
 
@@ -29,13 +31,19 @@ class Row(CardHolder):
     @overrides
     def add_card(self, card):
         bisect.insort(self.cards, card)
-        self.handle_abilities_insert(card)
+
+        for ability in card.abilities:
+            ability.on_row_insert(self)
+
         self.recalculate()
 
     @overrides
     def remove_card(self, card):
         self.cards.remove(card)
-        self.handle_abilities_remove(card)
+
+        for ability in card.abilities:
+            ability.on_row_remove(self)
+
         card.reset_power()
         self.recalculate()
 
@@ -43,7 +51,7 @@ class Row(CardHolder):
         total = 0
 
         for card in self.cards:
-            if card.is_special():
+            if card.is_card_type(CardType.SPECIAL):
                 continue
 
             self.apply_effects(card)
@@ -53,7 +61,7 @@ class Row(CardHolder):
         return total
 
     def apply_effects(self, card):
-        if card.is_hero():
+        if card.is_card_type(CardType.HERO):
             return
 
         card.power = card.base_power
@@ -63,7 +71,7 @@ class Row(CardHolder):
             card.power = min(card.power, 1)
 
         # Bond
-        if "bond" in card.abilities:
+        if card.is_ability_type(AbilityType.BONDING):
             bond_id = db.get_bond(card.id)
             card.power *= self.effects["bond"][bond_id]
 
@@ -101,14 +109,14 @@ class Row(CardHolder):
     def find_strongest(self, ignore_heroes=False):
         maxi = -10e10
         for card in self.cards:
-            if card.is_special() or (ignore_heroes and card.is_hero()):
+            if card.is_card_type(CardType.SPECIAL) or (ignore_heroes and card.is_card_type(CardType.HERO)):
                 continue
 
             if card.power > maxi:
                 maxi = card.power
 
         if ignore_heroes:
-            fun = lambda card: not card.is_hero() and card.power == maxi
+            fun = lambda card: not card.is_card_type(CardType.HERO) and card.power == maxi
         else:
             fun = lambda card: card.power == maxi
 
@@ -117,49 +125,26 @@ class Row(CardHolder):
     def find_weakest(self, ignore_heroes = False):
         mini = 10e10
         for card in self.cards:
-            if card.is_special() or (ignore_heroes and card.is_hero()):
+            if card.is_card_type(CardType.SPECIAL) or (ignore_heroes and card.is_card_type(CardType.HERO)):
                 continue
 
             if card.power < mini:
                 mini = card.power
 
         if ignore_heroes:
-            fun = lambda card: not card.is_hero() and card.power == mini
+            fun = lambda card: not card.is_card_type(CardType.HERO) and card.power == mini
         else:
             fun = lambda card: card.power == mini
 
         return self.find_cards(fun)
 
-    def handle_abilities_insert(self, card):
-        for ability in card.abilities:
-            match ability:
-                case "morale":
-                    self.effects["morale"].add(card)
-                case "bond":
-                    bond_id = db.get_bond(card.id)
-                    self.effects["bond"].setdefault(bond_id, 0)
-                    self.effects["bond"][bond_id] += 1
-                case "horn":
-                    self.effects["horn"].add(card)
-
-    def handle_abilities_remove(self, card):
-        for ability in card.abilities:
-            match ability:
-                case "morale":
-                    self.effects["morale"].remove(card)
-                case "bond":
-                    bond_id = db.get_bond(card.id)
-                    self.effects["bond"][bond_id] -= 1
-                case "horn":
-                    self.effects["horn"].remove(card)
-
     def clear_boosts(self):
         remove = []
         for card in self.effects["horn"]:
-            if card.is_special():
+            if card.is_card_type(CardType.SPECIAL):
                 card.send_to_owner_grave()
                 remove.append(card)
-            if card.is_commander():
+            if card.is_card_type(CardType.COMMANDER):
                 remove.append(card)
 
         for card in remove:
@@ -169,7 +154,7 @@ class Row(CardHolder):
         remove = []
         add = []
         for card in self.cards:
-            if card.is_recalling():
+            if card.is_ability_type(AbilityType.RECALLING):
                 extra = db.get_recall(card.id)
                 extra.owner = player
                 add.append((extra, player.id))
@@ -184,7 +169,7 @@ class Row(CardHolder):
     def get_effect_cards(self):
         cards = []
         for card in self.effects["horn"]:
-            if card.is_special():
+            if card.is_card_type(CardType.SPECIAL):
                 cards.append(card)
 
         return cards

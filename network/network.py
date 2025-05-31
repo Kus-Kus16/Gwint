@@ -35,7 +35,7 @@ class Network:
     def send(self, data):
         try:
             self.client.send(pickle.dumps(data))
-            return pickle.loads(self.client.recv(4096))
+            return pickle.loads(self.client.recv(8192))
 
         except (socket.error, pickle.PickleError, EOFError) as e:
             raise ConnectionError(f"Communication error: {str(e)}")

@@ -16,7 +16,7 @@ def send(conn, data):
     conn.send(pickle.dumps(data))
 
 def receive(conn):
-    data = conn.recv(4096)
+    data = conn.recv(8192)
 
     if not data:
         return None, None # Disconnected

@@ -1,6 +1,7 @@
 import pygame
 from overrides import overrides
 
+from model.abilities.ability_base import AbilityType
 from view import constants as c
 from view.scenes.scene import Scene
 from view.components.button import Button
@@ -114,7 +115,7 @@ class CarouselScene(Scene):
                 end = False
                 if self.choose_count == 0 or len(self.cards) == 0:
                     end = True
-                if self.choose_count < 0 and not card.is_choosing():
+                if self.choose_count < 0 and not card.is_ability_type(AbilityType.CHOOSING):
                     end = True
 
                 return {

@@ -340,27 +340,23 @@ class GamePresenter:
             self.relock()
 
     def handle_show_carousel(self, action):
-        self.carousel_dict["card_id"] = action["card_id"]
+        self.carousel_dict["card_id"] = action["card"].id
         self.carousel_dict["row"] = action["row"]
         self.carousel_dict["targets"] = []
         self.view.current_scene.deselect()
 
-        cards = []
-        match action["ability"]:
-            case "medic":
-                if not self.game.gamerule("healRandom"):
-                    cards = self.game.get_player(self.my_id).get_grave_cards(playable_only=True)
-                    if cards:
-                        self.show_carousel(cards, choose_count=-1, cancelable=False)
-            case "chooseEnemyGrave":
-                cards = self.game.get_player(1 - self.my_id).get_grave_cards(playable_only=True)
-                if cards:
-                    self.show_carousel(cards, choose_count=1, cancelable=False)
+        additional_actions = []
+        for ability in action["card"].abilities:
+            actions = ability.on_carousel_request(self)
+            additional_actions.extend(actions)
 
-        if len(cards) == 0:
+        for additional in additional_actions:
+            additional()
+
+        if not additional_actions:
             self.notify({
                 "type": "play",
-                "card_id": action["card_id"],
+                "card_id": action["card"].id,
                 "row": action["row"]
             })
 
@@ -412,7 +408,7 @@ class GamePresenter:
             self.view.unlock()
 
     def show_carousel(self, cards, choose_count=0, cancelable=False, label=False):
-        if len(cards) == 0:
+        if not cards:
             return
 
         self.view.run_later(lambda: self.view.current_scene.show_card_carousel(cards, choose_count, cancelable, label))
@@ -430,7 +426,7 @@ class GamePresenter:
         self.relock()
 
     def relock(self):
-        if self.game.current_player_id == 1 - self.my_id:
+        if self.game.current_player_id == 1 - self.my_id or self.game_state == "waiting-for-redraw":
             self.view.lock()
         else:
             self.view.unlock()

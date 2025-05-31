@@ -1,5 +1,6 @@
-from model.row import Row, RowType
-from model.weather import Weather
+from model.abilities.specials.weather_base import WeatherType
+from model.card_holders.row import Row, RowType
+from model.card_holders.weather import Weather
 
 
 class Board:
@@ -29,23 +30,18 @@ class Board:
     def rows_sum(self):
         return sum(self.rows[i].points for i in range(3)), sum(self.rows[i].points for i in range(3, 6))
 
-    def add_weather(self, card, weather_ability):
-        rows_map = {
-            "frost": [0, 3],
-            "fog": [1, 4],
-            "rain": [2, 5],
-            "storm": [1, 4, 2, 5],
-        }
-
+    def add_weather(self, card, weather, player_id):
         self.weather.add_card(card)
+        weather_type = weather.weather_type
 
-        if weather_ability == "clear":
+        if weather_type == WeatherType.CLEAR:
             self.clear_weather()
             return
 
-        self.weather.put(weather_ability)
-        for index in rows_map[weather_ability]:
-            self.rows[index].add_weather()
+        self.weather.put(weather_type)
+        for row_type in weather.get_affected_rows():
+            i, _ = self.row_index(row_type, player_id)
+            self.rows[i].add_weather()
 
     def clear_weather(self):
         self.weather.clear()
@@ -53,8 +49,8 @@ class Board:
         for row in self.rows:
             row.clear_weather()
 
-    def is_weather_active(self, weather_ability):
-        return self.weather.contains(weather_ability)
+    def is_weather_active(self, weather_type):
+        return self.weather.contains(weather_type)
 
     def update_rows(self):
         for row in self.rows:

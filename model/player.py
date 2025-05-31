@@ -1,5 +1,6 @@
-from model.grave import Grave
-from model.hand import Hand
+from model.card_base import CardType
+from model.card_holders.grave import Grave
+from model.card_holders.hand import Hand
 
 
 class Player:
@@ -37,6 +38,7 @@ class Player:
 
     def own_cards(self):
         self.deck.own_cards(self)
+        self.commander.owner = self
 
     def lower_hp(self):
         self.hp -= 1
@@ -66,7 +68,7 @@ class Player:
 
         cards = []
         for card in self.grave.cards:
-            if card.is_special() or card.is_hero():
+            if card.is_card_type(CardType.SPECIAL) or card.is_card_type(CardType.HERO):
                 continue
 
             cards.append(card)

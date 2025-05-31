@@ -1,4 +1,4 @@
-from model.card_holder import CardHolder
+from model.card_holders.card_holder import CardHolder
 
 class Deck(CardHolder):
     def own_cards(self, owner):

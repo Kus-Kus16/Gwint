@@ -8,15 +8,18 @@ class Card(CardBase):
         super().__init__(data)
         self.base_power = data['power']
         self.power = self.base_power
-        self.rows = data['rows']
+        self.rows = data['rows'] #TODO change from strings
         self.type = (
             CardType.SPECIAL if self.power is None
-            else CardType.HERO if "hero" in self.abilities
+            else CardType.HERO if "hero" in data['abilities']
             else CardType.UNIT
         )
 
+        path = f"abilities.{'specials' if self.type is CardType.SPECIAL else 'units'}"
+        self.abilities = self.create_abilities(data['abilities'], path)
+
     def set_power(self, power):
-        if self.is_hero() or self.is_special():
+        if self.is_card_type(CardType.HERO) or self.is_card_type(CardType.SPECIAL):
             return
 
         self.power = power
@@ -26,7 +29,7 @@ class Card(CardBase):
 
     @overrides
     def is_row_playable(self, row_type):
-        if self.is_special():
+        if self.is_card_type(CardType.SPECIAL):
             return True
 
         for row in self.rows:
@@ -39,9 +42,9 @@ class Card(CardBase):
         self.owner.send_to_grave(self)
 
     def __lt__(self, other):
-        if self.is_special() and not other.is_special():
+        if self.is_card_type(CardType.SPECIAL) and not other.is_card_type(CardType.SPECIAL):
             return True
-        if not self.is_special() and other.is_special():
+        if not self.is_card_type(CardType.SPECIAL) and other.is_card_type(CardType.SPECIAL):
             return False
 
         if self.power != other.power:
@@ -50,9 +53,9 @@ class Card(CardBase):
         return self.id < other.id
 
     def __gt__(self, other):
-        if self.is_special() and not other.is_special():
+        if self.is_card_type(CardType.SPECIAL) and not other.is_card_type(CardType.SPECIAL):
             return False
-        if not self.is_special() and other.is_special():
+        if not self.is_card_type(CardType.SPECIAL) and other.is_card_type(CardType.SPECIAL):
             return True
 
         if self.power != other.power:

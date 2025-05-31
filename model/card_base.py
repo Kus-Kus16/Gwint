@@ -1,3 +1,4 @@
+import importlib
 from abc import ABC, abstractmethod
 from enum import Enum
 
@@ -14,56 +15,33 @@ class CardBase(ABC):
         self.faction = data['faction']
         self.owner = None
         self.filename = data['filename']
-        self.abilities = data['abilities']
+        self.abilities = None
         self.type = None
+        self.ability_types = set()
 
-    def is_unit(self):
-        return self.type == CardType.UNIT
+    def add_types(self, types):
+        self.ability_types.update(types)
 
-    def is_hero(self):
-        return self.type == CardType.HERO
+    def create_abilities(self, strings, abilities_path):
+        def to_class_name(snake_name):
+            return ''.join(word.capitalize() for word in snake_name.split('_'))
 
-    def is_special(self):
-        return self.type == CardType.SPECIAL
+        instances = []
+        for snake_name in strings:
+            class_name = to_class_name(snake_name)
+            module_path = f"model.{abilities_path}.{snake_name}"
 
-    def is_commander(self):
-        return self.type == CardType.COMMANDER
+            module = importlib.import_module(module_path)
+            cls = getattr(module, class_name)
+            instances.append(cls(self))
 
-    def is_weather(self):
-        if not self.is_special():
-            return False
+        return instances
 
-        return any(ability in self.abilities for ability in ["frost", "fog", "rain", "storm", "clear"])
+    def is_card_type(self, card_type):
+        return self.type == card_type
 
-    def is_boost(self):
-        if not self.is_special():
-            return False
-
-        return any(ability in self.abilities for ability in ["horn", "mardroeme", "sangreal"])
-
-    def is_targeting(self):
-        if not self.is_special():
-            return False
-
-        return any(ability in self.abilities for ability in ["decoy"])
-
-    def is_choosing(self):
-        return any(ability in self.abilities for ability in ["medic", "chooseEnemyGrave"])
-
-    def is_recalling(self):
-        return any(ability in self.abilities for ability in ["recall"])
-
-    def is_avenging(self):
-        return any(ability in self.abilities for ability in ["avenger"])
-
-    def is_absolute(self):
-        if self.is_commander():
-            return True
-
-        if not self.is_special():
-            return False
-
-        return any(ability in self.abilities for ability in ["scorch"])
+    def is_ability_type(self, ability_type):
+        return ability_type in self.ability_types
 
     @abstractmethod
     def is_row_playable(self, row_type):

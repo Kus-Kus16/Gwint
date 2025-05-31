@@ -1,4 +1,4 @@
-from model.card_holder import CardHolder
+from model.card_holders.card_holder import CardHolder
 
 
 class Weather(CardHolder):
@@ -6,8 +6,8 @@ class Weather(CardHolder):
         super().__init__()
         self.active = set()
 
-    def contains(self, weather_ability):
-        return weather_ability in self.active
+    def contains(self, weather_type):
+        return weather_type in self.active
 
     def clear(self):
         for card in self.cards:
@@ -16,5 +16,5 @@ class Weather(CardHolder):
         self.cards.clear()
         self.active.clear()
 
-    def put(self, weather_ability):
-        self.active.add(weather_ability)
+    def put(self, weather_type):
+        self.active.add(weather_type)

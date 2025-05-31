@@ -135,7 +135,7 @@
         "faction": "Neutralne",
         "power": 8,
         "rows": ["close"],
-        "abilities": ["avenger"],
+        "abilities": ["avenge"],
         "count": 0,
         "filename": "bydlece"
     },
@@ -195,7 +195,7 @@
         "faction": "Neutralne",
         "power": 6,
         "rows": ["close", "ranged"],
-        "abilities": ["agile", "morale"],
+        "abilities": ["agility", "morale"],
         "count": 1,
         "filename": "olgierd"
     },
@@ -215,7 +215,7 @@
         "faction": "Neutralne",
         "power": 7,
         "rows": ["close"],
-        "abilities": ["scorchRow"],
+        "abilities": ["scorch_row"],
         "count": 1,
         "filename": "villen"
     },
@@ -1004,7 +1004,7 @@
         "faction": "Potwory",
         "power": 8,
         "rows": ["close", "ranged"],
-        "abilities": ["hero", "agile", "morale"],
+        "abilities": ["hero", "agility", "morale"],
         "count": 1,
         "filename": "kejran"
     },
@@ -1104,7 +1104,7 @@
         "faction": "Potwory",
         "power": 2,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "harpia"
     },
@@ -1114,7 +1114,7 @@
         "faction": "Potwory",
         "power": 2,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "harpiacelaeno"
     },
@@ -1154,7 +1154,7 @@
         "faction": "Potwory",
         "power": 7,
         "rows": ["ranged"],
-        "abilities": ["scorchRow"],
+        "abilities": ["scorch_row"],
         "count": 1,
         "filename": "krolewicz"
     },
@@ -1437,7 +1437,7 @@
         "faction": "Scoia'tael",
         "power": 6,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "barclay"
     },
@@ -1447,7 +1447,7 @@
         "faction": "Scoia'tael",
         "power": 5,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "brygada1"
     },
@@ -1457,7 +1457,7 @@
         "faction": "Scoia'tael",
         "power": 5,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "brygada2"
     },
@@ -1467,7 +1467,7 @@
         "faction": "Scoia'tael",
         "power": 3,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "ciaran"
     },
@@ -1517,7 +1517,7 @@
         "faction": "Scoia'tael",
         "power": 6,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "filavandrel"
     },
@@ -1687,7 +1687,7 @@
         "faction": "Scoia'tael",
         "power": 8,
         "rows": ["ranged"],
-        "abilities": ["scorchRow"],
+        "abilities": ["scorch_row"],
         "count": 1,
         "filename": "schirru"
     },
@@ -1737,7 +1737,7 @@
         "faction": "Scoia'tael",
         "power": 6,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "yaevinn"
     },
@@ -1747,7 +1747,7 @@
         "faction": "Scoia'tael",
         "power": 6,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "zwiadowca1"
     },
@@ -1757,7 +1757,7 @@
         "faction": "Scoia'tael",
         "power": 6,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "zwiadowca2"
     },
@@ -1767,7 +1767,7 @@
         "faction": "Scoia'tael",
         "power": 6,
         "rows": ["close", "ranged"],
-        "abilities": ["agile"],
+        "abilities": ["agility"],
         "count": 1,
         "filename": "zwiadowca3"
     },
@@ -1800,7 +1800,7 @@
         "faction": "Skellige",
         "power": 11,
         "rows": ["close"],
-        "abilities": ["hero", "avenger"],
+        "abilities": ["hero", "avenge"],
         "count": 0,
 	    "filename": "hemdall"
     },
@@ -1830,7 +1830,7 @@
         "faction": "Skellige",
         "power": 4,
         "rows": ["close"],
-        "abilities": ["berserk"],
+        "abilities": ["berserker"],
         "count": 1,
         "filename": "berserker"
     },
@@ -1960,7 +1960,7 @@
         "faction": "Skellige",
         "power": 2,
         "rows": ["ranged"],
-        "abilities": ["berserk"],
+        "abilities": ["berserker"],
         "count": 3,
         "filename": "mlodyberserker"
     },
@@ -1970,7 +1970,7 @@
         "faction": "Skellige",
         "power": 12,
         "rows": ["close", "ranged"],
-        "abilities": ["agile", "morale"],
+        "abilities": ["agility", "morale"],
         "count": 1,
         "filename": "olaf"
     },

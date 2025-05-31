@@ -1,9 +1,9 @@
 import pygame
 from overrides import overrides
 
-from view import image_loader as loader, constants as c
-from view.scenes.scene import Scene
+from view import constants as c
 from view.components.button import Button
+from view.scenes.scene import Scene
 
 
 class EndScreen(Scene):

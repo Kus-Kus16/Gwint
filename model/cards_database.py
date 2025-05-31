@@ -1,8 +1,9 @@
 import json
 
 from model.card import Card
+from model.card_base import CardType
 from model.commander import Commander
-from model.deck import Deck
+from model.card_holders.deck import Deck
 
 with open("./data/cards.json", "r", encoding="utf-8") as file:
     card_dict = json.load(file)
@@ -19,6 +20,7 @@ with open("./data/bond.json", "r", encoding="utf-8") as file:
 with open("./data/recall.json", "r", encoding="utf-8") as file:
     recall_dict = json.load(file)
 
+# TODO retire
 with open("./data/find.json", "r", encoding="utf-8") as file:
     find_dict = json.load(file)
 
@@ -88,9 +90,9 @@ def create_verified_deck(data, commander_id):
         card = card_entry["object"]
 
         card_entry["count"] += count
-        if card.is_special():
+        if card.is_card_type(CardType.SPECIAL):
             special += count
-        if card.is_unit() or card.is_hero():
+        if card.is_card_type(CardType.UNIT) or card.is_card_type(CardType.HERO):
             units += count
 
         if card_entry["count"] > card_entry["max_count"]:
@@ -98,7 +100,7 @@ def create_verified_deck(data, commander_id):
                              f"for card: {card_id}:{card.name}")
 
         if special > 10:
-            raise ValueError("Max count (10) of special cards exceeded")
+            raise ValueError("Max count (10) of specials cards exceeded")
 
     if units < 22:
         raise ValueError(f"Insufficient unit cards, expected >=22, got {units}")

@@ -7,7 +7,7 @@ class Commander(CardBase):
         self.nickname = data['nickname']
         self.type = CardType.COMMANDER
         self.active = True
-        self.filename = data['filename']
+        self.abilities = self.create_abilities(data['abilities'], "abilities.commanders")
 
     def is_row_playable(self, row_type):
         return True
