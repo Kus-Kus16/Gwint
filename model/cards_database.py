@@ -20,10 +20,6 @@ with open("./data/bond.json", "r", encoding="utf-8") as file:
 with open("./data/recall.json", "r", encoding="utf-8") as file:
     recall_dict = json.load(file)
 
-# TODO retire
-with open("./data/find.json", "r", encoding="utf-8") as file:
-    find_dict = json.load(file)
-
 def faction_to_nickname(fullname):
     mapping = {
         "Królestwa Północy": "polnoc",
@@ -125,7 +121,3 @@ def get_recall(card_id):
     card_id = recall_dict[f"{card_id}"]
     card_data = find_card_by_id(card_id)
     return Card(card_data)
-
-# Find
-def get_find(card_id):
-    return find_dict[f"{card_id}"]
