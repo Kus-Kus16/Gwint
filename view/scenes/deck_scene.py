@@ -4,6 +4,8 @@ import pygame
 from overrides import overrides
 
 from model import cards_database as db
+from model.card import Card
+from model.card_base import CardType
 from view import constants as c
 from view.components.button import Button
 from view.constants import BUTTON_SIZE_WIDE
@@ -66,6 +68,14 @@ class DeckScene(Scene):
         self.next_faction_button = None
         self.update_faction_buttons()
 
+        # Scrollbar
+        self.dragging_scroll_all = False
+        self.dragging_scroll_deck = False
+        self.scroll_start_deck = None
+        self.drag_start_y = None
+        self.scroll_start_all = None
+        self.scrollbar_width = 15
+
         self.darken = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
         self.darken.fill((0, 0, 0, 218))
 
@@ -91,24 +101,67 @@ class DeckScene(Scene):
         else:
             super().draw()
             self.screen.blit(self.darken, (0, 0))
-
             self.draw_texts()
-
             self.show_all_available_cards()
-
             self.show_deck_cards()
-
             self.show_deck_stats()
-
             self.draw_buttons()
+            self.draw_commander()
+            self.draw_scrollbar()
 
-            # Draw the commander
-            commander = self.get_commander_by_id(self.current_commander_id)
-            if commander:
-                commander_image = self.load_card_image(commander, "medium")
-                self.screen.blit(commander_image, (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170))
-                commander_pos = (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170)
-                self.commander_rect = pygame.Rect(commander_pos, c.MEDIUM_CARD_SIZE)
+    def draw_scrollbar(self):
+        # LEFT
+        collection_x = 70 - self.scrollbar_width - 5
+        collection_y = 270
+        collection_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
+        content_length_left = len(self.filtered_cards)
+        scroll_offset_left = self.scroll_offset_all
+
+        if content_length_left > CARDS_PER_PAGE:
+            proportion_visible = CARDS_PER_PAGE / content_length_left
+            scrollbar_height = max(int(collection_height * proportion_visible), 20)
+            max_scroll = content_length_left - CARDS_PER_PAGE
+            scrollbar_pos = int((collection_height - scrollbar_height) * scroll_offset_left / max_scroll)
+
+            pygame.draw.rect(self.screen, c.COLOR_GOLD,
+                             (collection_x, collection_y, self.scrollbar_width, collection_height))
+            pygame.draw.rect(self.screen, c.COLOR_BLACK,
+                             (collection_x, collection_y + scrollbar_pos, self.scrollbar_width, scrollbar_height))
+
+        # RIGHT
+        deck_x = self.screen_width - 70 + 5
+        deck_y = 270
+        deck_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
+        deck_cards = self.get_deck_cards(self.current_deck_index)
+        content_length_right = len(deck_cards)
+        scroll_offset_right = self.scroll_offset_deck
+
+        if content_length_right > CARDS_PER_PAGE:
+            proportion_visible = CARDS_PER_PAGE / content_length_right
+            scrollbar_height = max(int(deck_height * proportion_visible), 20)
+            max_scroll = content_length_right - CARDS_PER_PAGE
+            if max_scroll > 0:
+                scrollbar_pos = int((deck_height - scrollbar_height) * scroll_offset_right / max_scroll)
+            else:
+                scrollbar_pos = 0
+
+            pygame.draw.rect(self.screen, c.COLOR_GOLD,
+                             (deck_x, deck_y, self.scrollbar_width, deck_height))
+            pygame.draw.rect(self.screen, c.COLOR_BLACK,
+                             (deck_x, deck_y + scrollbar_pos, self.scrollbar_width, scrollbar_height))
+        else:
+            pygame.draw.rect(self.screen, c.COLOR_GOLD,
+                             (deck_x, deck_y, self.scrollbar_width, deck_height))
+            pygame.draw.rect(self.screen, c.COLOR_BLACK,
+                             (deck_x, deck_y, self.scrollbar_width, deck_height))
+
+    def draw_commander(self):
+        commander = self.get_commander_by_id(self.current_commander_id)
+        if commander:
+            commander_image = self.load_card_image(commander, "medium")
+            self.screen.blit(commander_image, (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170))
+            commander_pos = (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170)
+            self.commander_rect = pygame.Rect(commander_pos, c.MEDIUM_CARD_SIZE)
 
     def draw_buttons(self):
         self.prev_faction_button.draw(self.screen, pygame.mouse.get_pos())
@@ -164,9 +217,6 @@ class DeckScene(Scene):
 
     def show_deck_cards(self):
         deck_cards = self.get_deck_cards(self.current_deck_index)
-        # expanded_deck_cards = []
-        # for entry in deck_cards:
-        #     expanded_deck_cards.extend([entry["card"]] * entry["count"])
 
         self.right_card_rects = []
         visible_deck_cards = deck_cards[self.scroll_offset_deck:self.scroll_offset_deck + CARDS_PER_PAGE]
@@ -214,7 +264,30 @@ class DeckScene(Scene):
             return
 
         if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = event.pos
             if event.button == 1:
+                # Scrollbar
+                # Left
+                collection_x = 70 - self.scrollbar_width - 5
+                collection_y = 270
+                collection_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
+                if (collection_x <= mouse_x <= collection_x + self.scrollbar_width) and (
+                     collection_y <= mouse_y <= collection_y + collection_height):
+                    self.dragging_scroll_all = True
+                    self.drag_start_y = mouse_y
+                    self.scroll_start_all = self.scroll_offset_all
+                    return
+
+                # Right
+                deck_x = self.screen_width - 70 + 5
+                deck_y = 270
+                deck_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
+                if (deck_x <= mouse_x <= deck_x + self.scrollbar_width) and (deck_y <= mouse_y <= deck_y + deck_height):
+                    self.dragging_scroll_deck = True
+                    self.drag_start_y = mouse_y
+                    self.scroll_start_deck = self.scroll_offset_deck
+                    return
+
                 # Back button
                 if self.back_button.check_click(event.pos):
                     self.lock()
@@ -278,15 +351,46 @@ class DeckScene(Scene):
                         self.scroll_offset_all = min(max_scroll, self.scroll_offset_all + COLS)
                 else:
                     deck_cards = self.get_deck_cards(self.current_deck_index)
-                    expanded_deck_cards = []
-                    for entry in deck_cards:
-                        expanded_deck_cards.extend([entry["card"]] * entry["count"])
-
                     if event.button == 4:  # Scroll up
                         self.scroll_offset_deck = max(0, self.scroll_offset_deck - COLS)
                     elif event.button == 5:  # Scroll down
-                        max_scroll = max(0, len(expanded_deck_cards) - CARDS_PER_PAGE)
+                        max_scroll = max(0, len(deck_cards) - CARDS_PER_PAGE)
                         self.scroll_offset_deck = min(max_scroll, self.scroll_offset_deck + COLS)
+
+        # Scrollbar dragging
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                self.dragging_scroll_all = False
+                self.dragging_scroll_deck = False
+
+        elif event.type == pygame.MOUSEMOTION:
+            if self.dragging_scroll_all:
+                mouse_x, mouse_y = event.pos
+                collection_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
+                max_scroll = max(0, len(self.filtered_cards) - CARDS_PER_PAGE)
+                if max_scroll == 0:
+                    return
+
+                delta_y = mouse_y - self.drag_start_y
+                scroll_range = collection_height - max(20, int(collection_height * CARDS_PER_PAGE / len(
+                    self.filtered_cards)))
+                scroll_delta = int(delta_y * max_scroll / scroll_range)
+                new_offset = self.scroll_start_all + scroll_delta
+                self.scroll_offset_all = max(0, min(max_scroll, new_offset))
+
+            elif self.dragging_scroll_deck:
+                mouse_x, mouse_y = event.pos
+                deck_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
+                deck_cards = self.get_deck_cards(self.current_deck_index)
+                max_scroll = max(0, len(deck_cards) - CARDS_PER_PAGE)
+                if max_scroll == 0:
+                    return
+
+                delta_y = mouse_y - self.drag_start_y
+                scroll_range = deck_height - max(20, int(deck_height * CARDS_PER_PAGE / len(deck_cards)))
+                scroll_delta = int(delta_y * max_scroll / scroll_range)
+                new_offset = self.scroll_start_deck + scroll_delta
+                self.scroll_offset_deck = max(0, min(max_scroll, new_offset))
 
     def get_deck_cards(self, index):
         deck = self.current_decks[index]
@@ -328,16 +432,17 @@ class DeckScene(Scene):
         total_strength = 0
 
         for entry in deck_cards:
-            card = entry["card"]
+            card = Card(entry["card"])
             count = entry["count"]
-            total_count += count
+            if card.is_card_type(CardType.HERO) or card.is_card_type(CardType.UNIT):
+                total_count += count
 
-            if "hero" in card.get('abilities'):
+            if card.is_card_type(CardType.HERO):
                 hero_count += count
-            if card.get('power') is None:
+            if card.power is None:
                 special_count += count
             else:
-                total_strength += card.get('power') * count
+                total_strength += card.power * count
 
         return total_count, hero_count, special_count, total_strength
 

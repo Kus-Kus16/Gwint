@@ -19,7 +19,7 @@ class VolumeSlider:
         self.handle_color = c.COLOR_WHITE
 
     def draw(self, screen):
-        # Cień
+        # Shadow
         shadow_rect = pygame.Rect(
             self.rect.x + 5,
             self.rect.y + 5,
@@ -28,10 +28,10 @@ class VolumeSlider:
         )
         pygame.draw.rect(screen, self.shadow_color, shadow_rect, border_radius=20)
 
-        # Pasek suwaka
+        # Background
         pygame.draw.rect(screen, self.bg_color, self.rect, border_radius=20)
 
-        # Uchwyt
+        # Handle
         handle_center = (int(self.handle_x), self.rect.centery)
         pygame.draw.circle(screen, self.handle_color, handle_center, self.handle_radius)
 
