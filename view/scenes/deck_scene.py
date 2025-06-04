@@ -19,26 +19,17 @@ ROWS = 2
 COLS = 3
 CARDS_PER_PAGE = ROWS * COLS
 
-#TODO refactor
 class DeckScene(Scene):
     def __init__(self, screen):
         super().__init__(screen)
         self.all_cards = db.card_dict
-        self.scroll_offset = 0
 
+        self.scroll_offset = 0
         self.scroll_offset_all = 0
         self.scroll_offset_deck = 0
 
-        self.current_faction_index = 0
-        self.current_deck_index = 0
-
-        # Decks
-        with open("./user/user_decks.json", "r", encoding="utf-8") as file:
-            self.current_decks = json.load(file)
-
-        # Commander
-        with open("./data/factions.json", "r", encoding="utf-8") as f:
-            self.factions_data = json.load(f)
+        # Loading deck
+        self._load_user_deck()
         self.factions = [f["name"] for f in self.factions_data][0:2] # TODO v1 2 decks only
         self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
         self.commander_rect= None
@@ -53,22 +44,10 @@ class DeckScene(Scene):
         self.left_card_rects = []
         self.right_card_rects = []
 
-        button_width, button_height = c.BUTTON_SIZE_NARROW
-        self.back_button = Button("Menu",
-                                  ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30),
-                                  c.BUTTON_SIZE_NARROW,
-                                  {"type": "mode_change", "mode": "menu"})
+        # Buttons
+        self._init_ui_buttons()
 
-        self.start_button = Button("Graj",
-                                  ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30 - button_height - 10),
-                                  c.BUTTON_SIZE_NARROW,
-                                  {"type": "mode_change", "mode": "load_deck", "deck_id": self.current_deck_index, "commander_id": self.current_commander_id})
-
-        self.prev_faction_button = None
-        self.next_faction_button = None
-        self.update_faction_buttons()
-
-        # Scrollbar
+        # Scroll
         self.dragging_scroll_all = False
         self.dragging_scroll_deck = False
         self.scroll_start_deck = None
@@ -76,11 +55,38 @@ class DeckScene(Scene):
         self.scroll_start_all = None
         self.scrollbar_width = 15
 
+        # Dark overlay
         self.darken = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
         self.darken.fill((0, 0, 0, 218))
 
+    def _init_ui_buttons(self):
+        button_width, button_height = c.BUTTON_SIZE_NARROW
+        self.back_button = Button("Menu",
+                                  ((self.screen_width - button_width) // 2, self.screen_height - button_height - 30),
+                                  c.BUTTON_SIZE_NARROW,
+                                  {"type": "mode_change", "mode": "menu"})
+        self.start_button = Button("Graj",
+                                   ((self.screen_width - button_width) // 2,
+                                    self.screen_height - button_height - 30 - button_height - 10),
+                                   c.BUTTON_SIZE_NARROW,
+                                   {"type": "mode_change", "mode": "load_deck", "deck_id": self.current_deck_index,
+                                    "commander_id": self.current_commander_id})
+        self.prev_faction_button = None
+        self.next_faction_button = None
+        self._update_faction_buttons()
 
-    def update_faction_buttons(self):
+    def _load_user_deck(self):
+        # Decks
+        with open("./user/user_decks.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
+            self.current_decks = data["decks"]
+            self.current_deck_index = data.get("last_index", 0)
+            self.current_faction_index = data.get("last_index", 0)
+        # Commander
+        with open("./data/factions.json", "r", encoding="utf-8") as f:
+            self.factions_data = json.load(f)
+
+    def _update_faction_buttons(self):
         prev_index = (self.current_faction_index - 1) % len(self.factions)
         next_index = (self.current_faction_index + 1) % len(self.factions)
 
@@ -96,6 +102,7 @@ class DeckScene(Scene):
 
     @overrides
     def draw(self):
+        print(self.current_faction_index)
         if self.show_carousel:
             self.carousel_scene.draw()
         else:
@@ -291,16 +298,14 @@ class DeckScene(Scene):
                 # Back button
                 if self.back_button.check_click(event.pos):
                     self.lock()
-                    with open("./user/user_decks.json", "w", encoding="utf-8") as f:
-                        json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
+                    self.save_user_deck()
                     return self.back_button.action
 
                 # Start button
                 if self.can_start_game():
                     if self.start_button.check_click(event.pos):
                         self.lock()
-                        with open("./user/user_decks.json", "w", encoding="utf-8") as f:
-                            json.dump(self.current_decks, f, ensure_ascii=False, indent=4)
+                        self.save_user_deck()
                         self.start_button.action["deck_id"] = self.current_deck_index
                         self.start_button.action["commander_id"] = self.current_commander_id
                         return self.start_button.action
@@ -311,7 +316,7 @@ class DeckScene(Scene):
                     self.current_deck_index = self.current_faction_index
                     self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
                     self.update_filtered_cards()
-                    self.update_faction_buttons()
+                    self._update_faction_buttons()
                     self.scroll_offset_deck = 0
 
                 # Next faction button
@@ -320,7 +325,7 @@ class DeckScene(Scene):
                     self.current_deck_index = self.current_faction_index
                     self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
                     self.update_filtered_cards()
-                    self.update_faction_buttons()
+                    self._update_faction_buttons()
                     self.scroll_offset_deck = 0
 
                 # Add card to deck
@@ -391,6 +396,13 @@ class DeckScene(Scene):
                 scroll_delta = int(delta_y * max_scroll / scroll_range)
                 new_offset = self.scroll_start_deck + scroll_delta
                 self.scroll_offset_deck = max(0, min(max_scroll, new_offset))
+
+    def save_user_deck(self):
+        with open("./user/user_decks.json", "w", encoding="utf-8") as f:
+            json.dump({
+                "decks": self.current_decks,
+                "last_index": self.current_deck_index
+            }, f, ensure_ascii=False, indent=4)
 
     def get_deck_cards(self, index):
         deck = self.current_decks[index]
