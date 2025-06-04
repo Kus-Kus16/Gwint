@@ -21,7 +21,7 @@ class MenuScene(Scene):
 			Button("Twoja talia", (button_x, button_y + (button_height + 45)), button_size,
 				   {"type": "mode_change", "mode": "deck"}, image_paths=button_paths),
 			Button("Ustawienia", (button_x, button_y + 2 * (button_height + 45)), button_size,
-				   {"type": "mode_change", "mode": "menu"}, image_paths=button_paths),
+				   {"type": "mode_change", "mode": "settings"}, image_paths=button_paths),
 			Button("Autorzy", (button_x, button_y + 3 * (button_height + 45)), button_size,
 				   { "type": "mode_change", "mode": "credits" }, image_paths=button_paths),
 			Button("Wyjście", (button_x, button_y + 4 * (button_height + 45)), button_size,

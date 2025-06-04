@@ -2,6 +2,7 @@ import queue
 
 import pygame
 
+from view.scenes.settings_scene import SettingsScene
 from view.scenes.text_scene import TextScene
 from view.scenes.deck_scene import DeckScene
 from view.scenes.game_scene import GameScene
@@ -39,6 +40,7 @@ class PygameView:
         self.waiting = TextScene(self.screen, ["Oczekiwanie na przeciwnika"])
         self.game = GameScene(self.screen, self.volume_slider)
         self.deck = DeckScene(self.screen)
+        self.settings = SettingsScene(self.screen)
         self.current_scene = self.menu
 
     def run(self):

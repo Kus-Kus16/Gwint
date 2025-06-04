@@ -235,6 +235,10 @@ class GamePresenter:
                 self.game_state = "deck"
                 self.disconnect()
                 self.view.change_scene(self.view.deck)
+            case "settings":
+                self.game_state = "settings"
+                self.disconnect()
+                self.view.change_scene(self.view.settings)
             case "exit":
                 self.game_state = "exit"
                 self.disconnect()
@@ -244,7 +248,8 @@ class GamePresenter:
 
     def handle_load_deck(self, action):
         with open("./user/user_decks.json", "r", encoding="utf-8") as file:
-            decks = json.load(file)
+            data = json.load(file)
+            decks = data["decks"]
 
         deck_data = decks[action["deck_id"]]
         commander_id = deck_data["commander_id"]

@@ -102,7 +102,6 @@ class DeckScene(Scene):
 
     @overrides
     def draw(self):
-        print(self.current_faction_index)
         if self.show_carousel:
             self.carousel_scene.draw()
         else:
