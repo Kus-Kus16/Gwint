@@ -1,21 +1,12 @@
 from overrides import overrides
 
 from model import cards_database as db
-from model.abilities.ability_base import AbilityType
-from model.card_base import CardType
 from model.card_holders.card_holder import CardHolder
-from enum import Enum
 import bisect
 
+from model.enums.ability_type import AbilityType
+from model.enums.card_type import CardType
 
-class RowType(Enum):
-    CLOSE = 0
-    RANGED = 1
-    SIEGE = 2
-    CLOSE_OPP = 3
-    RANGED_OPP = 4
-    SIEGE_OPP = 5
-    ANY = 6
 
 class Row(CardHolder):
     def __init__(self):
@@ -122,7 +113,7 @@ class Row(CardHolder):
 
         return self.find_cards(fun)
 
-    def find_weakest(self, ignore_heroes = False):
+    def find_weakest(self, ignore_heroes=False):
         mini = 10e10
         for card in self.cards:
             if card.is_card_type(CardType.SPECIAL) or (ignore_heroes and card.is_card_type(CardType.HERO)):
@@ -150,7 +141,7 @@ class Row(CardHolder):
         for card in remove:
             self.effects["horn"].remove(card)
 
-    def clear_row(self, player):
+    def clear(self, player):
         remove = []
         add = []
         for card in self.cards:

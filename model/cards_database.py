@@ -1,9 +1,9 @@
 import json
 
 from model.card import Card
-from model.card_base import CardType
 from model.commander import Commander
 from model.card_holders.deck import Deck
+from model.enums.card_type import CardType
 
 with open("./data/cards.json", "r", encoding="utf-8") as file:
     card_dict = json.load(file)
@@ -20,6 +20,7 @@ with open("./data/bond.json", "r", encoding="utf-8") as file:
 with open("./data/recall.json", "r", encoding="utf-8") as file:
     recall_dict = json.load(file)
 
+# Nicknames
 def faction_to_nickname(fullname):
     mapping = {
         "Królestwa Północy": "polnoc",

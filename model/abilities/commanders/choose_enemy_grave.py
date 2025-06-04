@@ -1,7 +1,7 @@
 from overrides import overrides
 
-from model.abilities.ability_base import AbilityType
 from model.abilities.commanders.commander_base import CommanderAbilityBase
+from model.enums.ability_type import AbilityType
 
 
 class ChooseEnemyGrave(CommanderAbilityBase):

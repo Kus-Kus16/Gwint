@@ -1,6 +1,8 @@
 from overrides import overrides
 
-from model.card_base import CardBase, CardType
+from model.card_base import CardBase
+from model.enums.card_type import CardType
+from model.enums.row_type import RowType
 
 
 class Card(CardBase):
@@ -8,7 +10,7 @@ class Card(CardBase):
         super().__init__(data)
         self.base_power = data['power']
         self.power = self.base_power
-        self.rows = data['rows'] #TODO change from strings
+        self.rows = self.create_rows(data["rows"])
         self.type = (
             CardType.SPECIAL if self.power is None
             else CardType.HERO if "hero" in data['abilities']
@@ -17,6 +19,14 @@ class Card(CardBase):
 
         path = f"abilities.{'specials' if self.type is CardType.SPECIAL else 'units'}"
         self.abilities = self.create_abilities(data['abilities'], path)
+
+    @classmethod
+    def create_rows(cls, strings):
+        rows = []
+        for row_name in strings:
+            rows.append(RowType[row_name.upper()])
+
+        return rows
 
     def set_power(self, power):
         if self.is_card_type(CardType.HERO) or self.is_card_type(CardType.SPECIAL):
@@ -32,8 +42,8 @@ class Card(CardBase):
         if self.is_card_type(CardType.SPECIAL):
             return True
 
-        for row in self.rows:
-            if row.upper() == row_type.name:
+        for row_t in self.rows:
+            if row_t == row_type:
                 return True
 
         return False

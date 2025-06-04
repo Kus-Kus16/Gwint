@@ -1,6 +1,8 @@
 from overrides import overrides
 
-from model.abilities.specials.weather_base import WeatherBase, WeatherType
+from model.abilities.specials.weather_base import WeatherBase
+from model.enums.weather_type import WeatherType
+
 
 class Clear(WeatherBase):
     def __init__(self, card):

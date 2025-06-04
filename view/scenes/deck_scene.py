@@ -5,7 +5,7 @@ from overrides import overrides
 
 from model import cards_database as db
 from model.card import Card
-from model.card_base import CardType
+from model.enums.card_type import CardType
 from view import constants as c
 from view.components.button import Button
 from view.constants import BUTTON_SIZE_WIDE

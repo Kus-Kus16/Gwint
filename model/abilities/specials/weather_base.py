@@ -1,18 +1,9 @@
 from abc import ABC, abstractmethod
-from enum import Enum
-
 from overrides import overrides
 
-from model.abilities.ability_base import AbilityType
 from model.abilities.specials.special_base import SpecialAbilityBase
+from model.enums.ability_type import AbilityType
 
-
-class WeatherType(Enum):
-    CLEAR = 0
-    FROST = 1
-    FOG = 2
-    RAIN = 3
-    STORM = 4
 
 class WeatherBase(SpecialAbilityBase, ABC):
     def __init__(self, card, weather_type):

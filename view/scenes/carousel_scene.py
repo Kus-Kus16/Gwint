@@ -1,7 +1,7 @@
 import pygame
 from overrides import overrides
 
-from model.abilities.ability_base import AbilityType
+from model.enums.ability_type import AbilityType
 from view import constants as c
 from view.scenes.scene import Scene
 from view.components.button import Button

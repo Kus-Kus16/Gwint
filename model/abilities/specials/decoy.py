@@ -1,8 +1,8 @@
 from overrides import overrides
 
-from model.abilities.ability_base import AbilityType
 from model.abilities.specials.special_base import SpecialAbilityBase
-from model.card_base import CardType
+from model.enums.ability_type import AbilityType
+from model.enums.card_type import CardType
 
 
 class Decoy(SpecialAbilityBase):

@@ -1,6 +1,6 @@
-from model.card_base import CardType
 from model.card_holders.grave import Grave
 from model.card_holders.hand import Hand
+from model.enums.card_type import CardType
 
 
 class Player:

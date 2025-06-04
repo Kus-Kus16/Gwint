@@ -1,4 +1,5 @@
-from model.card_base import CardBase, CardType
+from model.card_base import CardBase
+from model.enums.card_type import CardType
 
 
 class Commander(CardBase):
@@ -8,9 +9,6 @@ class Commander(CardBase):
         self.type = CardType.COMMANDER
         self.active = True
         self.abilities = self.create_abilities(data['abilities'], "abilities.commanders")
-
-    def is_row_playable(self, row_type):
-        return True
 
     def disable(self):
         self.active = False

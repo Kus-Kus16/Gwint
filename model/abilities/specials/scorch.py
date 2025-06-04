@@ -1,8 +1,9 @@
 from overrides import overrides
 
-from model.abilities.ability_base import AbilityType
 from model.abilities.specials.special_base import SpecialAbilityBase
 from model.abilities.units import scorch as unit_scorch
+from model.enums.ability_type import AbilityType
+
 
 class Scorch(SpecialAbilityBase):
     @overrides

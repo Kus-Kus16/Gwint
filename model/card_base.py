@@ -1,12 +1,5 @@
 import importlib
-from abc import ABC, abstractmethod
-from enum import Enum
-
-class CardType(Enum):
-    SPECIAL = 0
-    UNIT = 1
-    HERO = 2
-    COMMANDER = 3
+from abc import ABC
 
 class CardBase(ABC):
     def __init__(self, data):
@@ -43,6 +36,5 @@ class CardBase(ABC):
     def is_ability_type(self, ability_type):
         return ability_type in self.ability_types
 
-    @abstractmethod
     def is_row_playable(self, row_type):
-        pass
+        return True

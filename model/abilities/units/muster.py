@@ -19,5 +19,5 @@ class Muster(UnitAbilityBase):
         return actions
 
     @classmethod
-    def muster(cls, game, player, extra_card, row):
-        game.play_extra_card(player.id, extra_card, row)
+    def muster(cls, game, player, extra_card, row_type):
+        game.play_extra_card(player.id, extra_card, row_type)

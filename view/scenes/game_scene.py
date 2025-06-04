@@ -2,8 +2,10 @@ import pygame
 from overrides import overrides
 
 from model import cards_database as db
-from model.abilities.ability_base import AbilityType
-from model.card_base import CardType
+from model.enums.ability_type import AbilityType
+from model.enums.card_type import CardType
+from model.enums.cards_area import CardsArea
+from model.enums.row_type import RowType
 from view import constants as c
 from view.scenes.carousel_scene import CarouselScene
 from view.scenes.endscreen import EndScreen
@@ -62,9 +64,9 @@ class GameScene(Scene):
 
         # Check row clicks
         if card.is_card_type(CardType.UNIT) or card.is_card_type(CardType.HERO):
-            row_name = self.check_row_click(event, card.rows)
-            if row_name is not None:
-                return self.handle_row_clicks(card, row_name)
+            row_type = self.check_row_click(event, card.rows)
+            if row_type is not None:
+                return self.handle_row_clicks(card, row_type)
 
         # Check weather clicks
         if card.is_ability_type(AbilityType.WEATHER):
@@ -73,18 +75,18 @@ class GameScene(Scene):
                 return {
                     "type": "play",
                     "card_id": card.id,
-                    "row": "any"
+                    "row_type": RowType.ANY
                 }
 
         # Check boosts clicks
         if card.is_ability_type(AbilityType.BOOST):
-            row_name = self.check_boost_click(event, c.SELF_ROW_NAMES)
-            if row_name is not None:
+            row_type = self.check_boost_click(event, c.SELF_ROW_TYPES)
+            if row_type is not None:
                 self.lock()
                 return {
                     "type": "play",
                     "card_id": card.id,
-                    "row": row_name
+                    "row_type": row_type
                 }
 
         # Check decoy
@@ -93,13 +95,13 @@ class GameScene(Scene):
             if target is None:
                 return None
 
-            row_name = self.check_row_click(event, c.SELF_ROW_NAMES)
-            if row_name is not None:
+            row_type = self.check_row_click(event, c.SELF_ROW_TYPES)
+            if row_type is not None:
                 self.lock()
                 return {
                     "type": "play",
                     "card_id": card.id,
-                    "row": row_name,
+                    "row_type": row_type,
                     "targets": [target.id],
                 }
 
@@ -113,25 +115,25 @@ class GameScene(Scene):
                     return {
                         "type": "show_carousel",
                         "carousel": "choose",
-                        "row": "any",
+                        "row_type": RowType.ANY,
                         "card": card
                     }
 
                 return {
                     "type": "play",
                     "card_id": card.id,
-                    "row": "any"
+                    "row_type": RowType.ANY
                 }
 
     def handle_right_click(self, event):
         # Check row clicks
-        row_name = self.check_row_click(event, c.ROW_NAMES)
-        if row_name is not None:
+        row_type = self.check_row_click(event, c.ROW_TYPES)
+        if row_type is not None:
             self.lock()
             return {
                 "type": "show_carousel",
                 "carousel": "zoom",
-                "row": row_name
+                "row_type": row_type
             }
 
         # Check weather clicks
@@ -140,27 +142,27 @@ class GameScene(Scene):
             return {
                 "type": "show_carousel",
                 "carousel": "zoom",
-                "row": "WEATHER"
+                "row_type": CardsArea.WEATHER
             }
 
         # Check grave clicks
-        grave_name = self.check_grave_click(event)
-        if grave_name is not None:
+        grave_type = self.check_grave_click(event)
+        if grave_type is not None:
             self.lock()
             return {
                 "type": "show_carousel",
                 "carousel": "zoom",
-                "row": grave_name
+                "row_type": grave_type
             }
 
         # Check commander clicks
-        commander_name = self.check_commander_click(event)
-        if commander_name is not None:
+        comm_type = self.check_commander_click(event)
+        if comm_type is not None:
             self.lock()
             return {
                 "type": "show_carousel",
                 "carousel": "zoom",
-                "row": commander_name
+                "row_type": comm_type
             }
 
     def handle_keydown_events(self, event):
@@ -182,10 +184,10 @@ class GameScene(Scene):
                 return {
                     "type": "play",
                     "card_id": self.selected_card.id,
-                    "row": self.selected_card.rows[0]
+                    "row_type": self.selected_card.rows[0]
                 }
 
-    def handle_row_clicks(self, card, row_name):
+    def handle_row_clicks(self, card, row_type):
         self.lock()
 
         #Check medic
@@ -193,14 +195,14 @@ class GameScene(Scene):
             return {
                 "type": "show_carousel",
                 "carousel": "choose",
-                "row": row_name,
+                "row_type": row_type,
                 "card": card
             }
 
         return {
             "type": "play",
             "card_id": card.id,
-            "row": row_name
+            "row_type": row_type
         }
 
     @classmethod
@@ -210,30 +212,30 @@ class GameScene(Scene):
                 return card
 
     @classmethod
-    def check_row_click(cls, event, row_names):
-        for row_name in row_names:
-            row_rect = getattr(c, row_name.upper())["UNIT_RECT"]
+    def check_row_click(cls, event, row_types):
+        for row_type in row_types:
+            row_rect = getattr(c, row_type.name)["UNIT_RECT"]
             if row_rect.collidepoint(event.pos):
-                return row_name
+                return row_type
 
     @classmethod
-    def check_boost_click(cls, event, row_names):
-        for row_name in row_names:
-            boost_rect = getattr(c, row_name.upper())["BOOST_RECT"]
+    def check_boost_click(cls, event, row_types):
+        for row_type in row_types:
+            boost_rect = getattr(c, row_type.name)["BOOST_RECT"]
             if boost_rect.collidepoint(event.pos):
-                return row_name
+                return row_type
 
     @classmethod
     def check_grave_click(cls, event):
-        for grave_name, grave_rect in c.GRAVES:
+        for grave_type, grave_rect in c.GRAVES:
             if grave_rect.collidepoint(event.pos):
-                return grave_name
+                return grave_type
 
     @classmethod
     def check_commander_click(cls, event):
-        for comm_name, comm_rect in c.COMMANDERS:
+        for comm_type, comm_rect in c.COMMANDERS:
             if comm_rect.collidepoint(event.pos):
-                return comm_name
+                return comm_type
 
     @classmethod
     def check_weather_click(cls, event):
@@ -270,15 +272,15 @@ class GameScene(Scene):
     def draw_rows(self):
         self.card_rects.clear()
         rows = self.game.board.get_ordered_rows(self.player_id)
-        row_names = c.ROW_NAMES
+        row_types = c.ROW_TYPES
 
         for i, row in enumerate(rows):
-            row_name = row_names[i]
-            data = getattr(c, row_name)
+            row_type = row_types[i]
+            data = getattr(c, row_type.name)
             row_rect = data["UNIT_RECT"]
             boost_rect = data["BOOST_RECT"]
             text_x, text_y = data["TEXT_CENTER"]
-            self.draw_row(row, row_rect, row_name)
+            self.draw_row(row, row_rect, row_type)
             self.draw_row_boosts(row, boost_rect)
             self.draw_text(f"{row.points}", text_x, text_y, color=c.COLOR_BLACK, center=True, font=c.CINZEL_30_BOLD)
 
@@ -367,10 +369,10 @@ class GameScene(Scene):
         self.screen.blit(gem_on if hp >= 2 else gem_off, (x + 306, y + 86))
         self.screen.blit(gem_on if hp >= 1 else gem_off, (x + 353, y + 86))
 
-    def draw_row(self, row, row_rect, row_name):
+    def draw_row(self, row, row_rect, row_type):
         self.draw_card_holder(row.cards, row_rect, self.card_rects)
         if row.effects["weather"]:
-            self.draw_icon(f"weather_{row_name.lower()}", None, row_rect.left - c.BOOST_ROW_SIZE[0], row_rect.top)
+            self.draw_icon(f"weather_{row_type.name.lower()}", None, row_rect.left - c.BOOST_ROW_SIZE[0], row_rect.top)
 
     def draw_row_boosts(self, row, boost_rect):
         cards = row.get_effect_cards()
@@ -442,8 +444,8 @@ class GameScene(Scene):
         if selected.is_card_type(CardType.UNIT) or selected.is_card_type(CardType.HERO):
             surface = make_surface(c.UNIT_ROW_SIZE)
 
-            for row_name in selected.rows:
-                unit_rect = getattr(c, row_name.upper())["UNIT_RECT"]
+            for row_type in selected.rows:
+                unit_rect = getattr(c, row_type.name)["UNIT_RECT"]
                 self.screen.blit(surface, (unit_rect.x, unit_rect.y))
             return
 
@@ -455,8 +457,8 @@ class GameScene(Scene):
 
         if selected.is_ability_type(AbilityType.BOOST):
             surface = make_surface(c.BOOST_ROW_SIZE)
-            for row_name in c.SELF_ROW_NAMES:
-                boost_rect = getattr(c, row_name)["BOOST_RECT"]
+            for row_type in c.SELF_ROW_TYPES:
+                boost_rect = getattr(c, row_type.name)["BOOST_RECT"]
                 self.screen.blit(surface, (boost_rect.x, boost_rect.y))
             return
 

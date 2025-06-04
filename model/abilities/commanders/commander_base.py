@@ -1,6 +1,7 @@
 from overrides import overrides
 
-from model.abilities.ability_base import AbilityBase, AbilityType
+from model.abilities.ability_base import AbilityBase
+from model.enums.ability_type import AbilityType
 
 
 class CommanderAbilityBase(AbilityBase):

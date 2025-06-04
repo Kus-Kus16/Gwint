@@ -1,5 +1,5 @@
 from model.abilities.commanders.horn_base import HornBase
-from model.card_holders.row import RowType
+from model.enums.row_type import RowType
 
 
 class HornClose(HornBase):

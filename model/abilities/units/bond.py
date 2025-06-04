@@ -1,8 +1,8 @@
 from overrides import overrides
 
 from model import cards_database as db
-from model.abilities.ability_base import AbilityType
 from model.abilities.units.unit_base import UnitAbilityBase
+from model.enums.ability_type import AbilityType
 
 
 class Bond(UnitAbilityBase):

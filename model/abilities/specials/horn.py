@@ -1,7 +1,7 @@
 from overrides import overrides
 
-from model.abilities.ability_base import AbilityType
 from model.abilities.specials.special_base import SpecialAbilityBase
+from model.enums.ability_type import AbilityType
 
 
 class Horn(SpecialAbilityBase):

@@ -1,6 +1,7 @@
-from model.abilities.specials.weather_base import WeatherType
-from model.card_holders.row import Row, RowType
+from model.card_holders.row import Row
 from model.card_holders.weather import Weather
+from model.enums.row_type import RowType
+from model.enums.weather_type import WeatherType
 
 
 class Board:
@@ -62,11 +63,11 @@ class Board:
 
         for i in range(0, 3):
             self.rows[i].clear_boosts()
-            add += self.rows[i].clear_row(player0)
+            add += self.rows[i].clear(player0)
 
         for i in range(3, 6):
             self.rows[i].clear_boosts()
-            add += self.rows[i].clear_row(player1)
+            add += self.rows[i].clear(player1)
 
         for card, player_id in add:
             self.play_card(card, RowType[card.rows[0].upper()], player_id)
@@ -79,11 +80,6 @@ class Board:
             return rows1[::-1] + rows0
         else:
             return rows0[::-1] + rows1
-
-    def get_row_by_name(self, row_name, player_id):
-        row_type = RowType[row_name.upper()]
-        row_index, _ = self.row_index(row_type, player_id)
-        return self.rows[row_index]
 
     def scorch_row(self, row_type, player_id):
         row_index, row_player_id = self.row_index(row_type, player_id)

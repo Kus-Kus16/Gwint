@@ -1,5 +1,6 @@
-from model.abilities.ability_base import AbilityType
+
 from model.card_holders.card_holder import CardHolder
+from model.enums.ability_type import AbilityType
 
 
 class Grave(CardHolder):

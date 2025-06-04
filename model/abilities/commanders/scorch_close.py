@@ -1,5 +1,5 @@
 from model.abilities.commanders.scorch_base import ScorchBase
-from model.card_holders.row import RowType
+from model.enums.row_type import RowType
 
 
 class ScorchClose(ScorchBase):

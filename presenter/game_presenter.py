@@ -4,6 +4,7 @@ import queue
 import time
 
 from model import cards_database as db
+from model.enums.cards_area import CardsArea
 from model.game import Game
 from model.player import Player
 from network.network import Network
@@ -162,8 +163,8 @@ class GamePresenter:
 
         self.view.current_scene.end_game(result, self.game.get_round_history(self.my_id))
 
-    def play_card(self, player_id, card_id, row, targets):
-        return self.game.play_card(player_id, card_id, row, list(targets))
+    def play_card(self, player_id, card_id, row_type, targets):
+        return self.game.play_card(player_id, card_id, row_type, list(targets))
 
     def pass_round(self, player_id):
         self.game.pass_round(player_id)
@@ -266,18 +267,18 @@ class GamePresenter:
 
     def handle_play_card(self, action):
         card_id = action["card_id"]
-        row = action["row"]
+        row_type = action["row_type"]
         targets = action.get("targets", [])
 
         try:
-            to_show = self.play_card(self.my_id, card_id, row, targets)
+            to_show = self.play_card(self.my_id, card_id, row_type, targets)
             self.show_carousel(to_show, cancelable=True)
         except ValueError as e:
             logging.info(f"Play card exception: {str(e)}")
             self.relock()
             return
 
-        response, data = self.n.send(("play", ["card", card_id, row, targets]))
+        response, data = self.n.send(("play", ["card", card_id, row_type, targets]))
         if not self.continue_with_response(response, is_ok_blocking=False):
             return
 
@@ -318,21 +319,26 @@ class GamePresenter:
             self.return_to_menu(None)
 
     def handle_show_zoom(self, action):
-        row = action["row"]
-        match row:
-            case "GRAVE" | "GRAVE_OPP":
-                player_id = self.my_id if row == "GRAVE" else 1 - self.my_id
+        row_type = action["row_type"]
+
+        if row_type in {CardsArea.GRAVE_OPP, CardsArea.COMMANDER_OPP}:
+            player_id = 1 - self.my_id
+        else:
+            player_id = self.my_id
+
+        match row_type:
+            case CardsArea.GRAVE | CardsArea.GRAVE_OPP:
                 cards = self.game.get_player(player_id).get_grave_cards(playable_only=False)
 
-            case "COMMANDER" | "COMMANDER_OPP":
-                player_id = self.my_id if row == "COMMANDER" else 1 - self.my_id
+            case CardsArea.COMMANDER | CardsArea.COMMANDER_OPP:
                 cards = [self.game.get_player(player_id).commander]
 
-            case "WEATHER":
+            case CardsArea.WEATHER:
                 cards = self.game.board.weather.cards
 
             case _:
-                cards = self.game.board.get_row_by_name(row, self.my_id).cards
+                row, _ = self.game.board.get_row(row_type, self.my_id)
+                cards = row.cards
 
         if len(cards) > 0:
             self.show_carousel(cards, choose_count=0, cancelable=True)
@@ -341,7 +347,7 @@ class GamePresenter:
 
     def handle_show_carousel(self, action):
         self.carousel_dict["card_id"] = action["card"].id
-        self.carousel_dict["row"] = action["row"]
+        self.carousel_dict["row_type"] = action["row_type"]
         self.carousel_dict["targets"] = []
         self.view.current_scene.deselect()
 
@@ -357,7 +363,7 @@ class GamePresenter:
             self.notify({
                 "type": "play",
                 "card_id": action["card"].id,
-                "row": action["row"]
+                "row_type": action["row_type"]
             })
 
     def handle_carousel(self, action):
@@ -399,7 +405,7 @@ class GamePresenter:
             self.notify({
                 "type": "play",
                 "card_id": self.carousel_dict["card_id"],
-                "row": self.carousel_dict["row"],
+                "row_type": self.carousel_dict["row_type"],
                 "targets": self.carousel_dict["targets"]
             })
             self.carousel_dict.clear()
