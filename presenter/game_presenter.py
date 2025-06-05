@@ -7,6 +7,7 @@ from model import cards_database as db
 from model.enums.cards_area import CardsArea
 from model.game import Game
 from model.player import Player
+from network.ip_config import save_ip
 from network.network import Network
 from view import constants as c
 
@@ -243,6 +244,12 @@ class GamePresenter:
                 self.game_state = "exit"
                 self.disconnect()
                 self.view.running = False
+            case "change_ip":
+                new_ip = action.get("new_ip")
+                if new_ip:
+                    self.n.server_ip = new_ip
+                    save_ip(new_ip)
+
 
         self.view.unlock()
 

@@ -2,11 +2,15 @@ import logging
 import pickle
 import socket
 
+
+from network.ip_config import load_ip
+
+
 class Network:
     def __init__(self):
         self.client = None
-        self.server_ip =  "192.168.1.44"
         self.port = 5555
+        self.server_ip = load_ip()
         self.addr = (self.server_ip, self.port)
         self.connected = False
 
@@ -16,7 +20,9 @@ class Network:
 
         try:
             self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.client.settimeout(5)
             self.client.connect(self.addr)
+            self.client.settimeout(None)
             self.connected = True
         except (socket.error, ConnectionRefusedError) as e:
             self.connected = False
@@ -39,3 +45,19 @@ class Network:
 
         except (socket.error, pickle.PickleError, EOFError) as e:
             raise ConnectionError(f"Communication error: {str(e)}")
+
+    @property
+    def server_ip(self):
+        return self._server_ip
+
+    @server_ip.setter
+    def server_ip(self, new_ip):
+        self._server_ip = new_ip
+        self.addr = (self._server_ip, self.port)
+
+    def update_ip(self, new_ip):
+        self.server_ip = new_ip
+        # Opcjonalnie: jeśli jesteś już połączony, to można rozłączyć się i połączyć na nowo
+        if self.connected:
+            self.disconnect()
+            self.connect()

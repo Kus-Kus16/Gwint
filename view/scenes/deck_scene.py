@@ -29,7 +29,20 @@ class DeckScene(Scene):
         self.scroll_offset_deck = 0
 
         # Loading deck
-        self._load_user_deck()
+        self.current_decks = None
+        self.current_deck_index = None
+        self.current_faction_index = None
+
+        # Decks
+        with open("./user/user_decks.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
+            self.current_decks = data["decks"]
+            self.current_deck_index = data.get("last_index", 0)
+            self.current_faction_index = data.get("last_index", 0)
+        # Commander
+        with open("./data/factions.json", "r", encoding="utf-8") as f:
+            self.factions_data = json.load(f)
+
         self.factions = [f["name"] for f in self.factions_data][0:2] # TODO v1 2 decks only
         self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
         self.commander_rect= None
@@ -55,10 +68,6 @@ class DeckScene(Scene):
         self.scroll_start_all = None
         self.scrollbar_width = 15
 
-        # Dark overlay
-        self.darken = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
-        self.darken.fill((0, 0, 0, 218))
-
     def _init_ui_buttons(self):
         button_width, button_height = c.BUTTON_SIZE_NARROW
         self.back_button = Button("Menu",
@@ -73,20 +82,9 @@ class DeckScene(Scene):
                                     "commander_id": self.current_commander_id})
         self.prev_faction_button = None
         self.next_faction_button = None
-        self._update_faction_buttons()
+        self.update_faction_buttons()
 
-    def _load_user_deck(self):
-        # Decks
-        with open("./user/user_decks.json", "r", encoding="utf-8") as file:
-            data = json.load(file)
-            self.current_decks = data["decks"]
-            self.current_deck_index = data.get("last_index", 0)
-            self.current_faction_index = data.get("last_index", 0)
-        # Commander
-        with open("./data/factions.json", "r", encoding="utf-8") as f:
-            self.factions_data = json.load(f)
-
-    def _update_faction_buttons(self):
+    def update_faction_buttons(self):
         prev_index = (self.current_faction_index - 1) % len(self.factions)
         next_index = (self.current_faction_index + 1) % len(self.factions)
 
@@ -106,7 +104,7 @@ class DeckScene(Scene):
             self.carousel_scene.draw()
         else:
             super().draw()
-            self.screen.blit(self.darken, (0, 0))
+            self.draw_overlay(0.85)
             self.draw_texts()
             self.show_all_available_cards()
             self.show_deck_cards()
@@ -115,7 +113,20 @@ class DeckScene(Scene):
             self.draw_commander()
             self.draw_scrollbar()
 
+
+
     def draw_scrollbar(self):
+        def draw_single_scrollbar(x, y, height, content_length, scroll_offset):
+            if content_length > CARDS_PER_PAGE:
+                proportion_visible = CARDS_PER_PAGE / content_length
+                scrollbar_height = max(int(height * proportion_visible), 20)
+                max_scroll = content_length - CARDS_PER_PAGE
+                scrollbar_pos = int((height - scrollbar_height) * scroll_offset / max_scroll)
+
+                pygame.draw.rect(self.screen, c.COLOR_GOLD,
+                                 (x, y, self.scrollbar_width, height))
+                pygame.draw.rect(self.screen, c.COLOR_BLACK,
+                                 (x, y + scrollbar_pos, self.scrollbar_width, scrollbar_height))
         # LEFT
         collection_x = 70 - self.scrollbar_width - 5
         collection_y = 270
@@ -123,43 +134,18 @@ class DeckScene(Scene):
         content_length_left = len(self.filtered_cards)
         scroll_offset_left = self.scroll_offset_all
 
-        if content_length_left > CARDS_PER_PAGE:
-            proportion_visible = CARDS_PER_PAGE / content_length_left
-            scrollbar_height = max(int(collection_height * proportion_visible), 20)
-            max_scroll = content_length_left - CARDS_PER_PAGE
-            scrollbar_pos = int((collection_height - scrollbar_height) * scroll_offset_left / max_scroll)
-
-            pygame.draw.rect(self.screen, c.COLOR_GOLD,
-                             (collection_x, collection_y, self.scrollbar_width, collection_height))
-            pygame.draw.rect(self.screen, c.COLOR_BLACK,
-                             (collection_x, collection_y + scrollbar_pos, self.scrollbar_width, scrollbar_height))
+        draw_single_scrollbar(collection_x, collection_y, collection_height,
+                                   content_length_left, scroll_offset_left)
 
         # RIGHT
         deck_x = self.screen_width - 70 + 5
         deck_y = 270
         deck_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
-        deck_cards = self.get_deck_cards(self.current_deck_index)
-        content_length_right = len(deck_cards)
+        content_length_right = len(self.get_deck_cards(self.current_deck_index))
         scroll_offset_right = self.scroll_offset_deck
 
-        if content_length_right > CARDS_PER_PAGE:
-            proportion_visible = CARDS_PER_PAGE / content_length_right
-            scrollbar_height = max(int(deck_height * proportion_visible), 20)
-            max_scroll = content_length_right - CARDS_PER_PAGE
-            if max_scroll > 0:
-                scrollbar_pos = int((deck_height - scrollbar_height) * scroll_offset_right / max_scroll)
-            else:
-                scrollbar_pos = 0
-
-            pygame.draw.rect(self.screen, c.COLOR_GOLD,
-                             (deck_x, deck_y, self.scrollbar_width, deck_height))
-            pygame.draw.rect(self.screen, c.COLOR_BLACK,
-                             (deck_x, deck_y + scrollbar_pos, self.scrollbar_width, scrollbar_height))
-        else:
-            pygame.draw.rect(self.screen, c.COLOR_GOLD,
-                             (deck_x, deck_y, self.scrollbar_width, deck_height))
-            pygame.draw.rect(self.screen, c.COLOR_BLACK,
-                             (deck_x, deck_y, self.scrollbar_width, deck_height))
+        draw_single_scrollbar(deck_x, deck_y, deck_height,
+                                   content_length_right, scroll_offset_right)
 
     def draw_commander(self):
         commander = self.get_commander_by_id(self.current_commander_id)
@@ -270,96 +256,11 @@ class DeckScene(Scene):
             return
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_x, mouse_y = event.pos
             if event.button == 1:
-                # Scrollbar
-                # Left
-                collection_x = 70 - self.scrollbar_width - 5
-                collection_y = 270
-                collection_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
-                if (collection_x <= mouse_x <= collection_x + self.scrollbar_width) and (
-                     collection_y <= mouse_y <= collection_y + collection_height):
-                    self.dragging_scroll_all = True
-                    self.drag_start_y = mouse_y
-                    self.scroll_start_all = self.scroll_offset_all
-                    return
+                return self.handle_leftclick(event)
 
-                # Right
-                deck_x = self.screen_width - 70 + 5
-                deck_y = 270
-                deck_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
-                if (deck_x <= mouse_x <= deck_x + self.scrollbar_width) and (deck_y <= mouse_y <= deck_y + deck_height):
-                    self.dragging_scroll_deck = True
-                    self.drag_start_y = mouse_y
-                    self.scroll_start_deck = self.scroll_offset_deck
-                    return
-
-                # Back button
-                if self.back_button.check_click(event.pos):
-                    self.lock()
-                    self.save_user_deck()
-                    return self.back_button.action
-
-                # Start button
-                if self.can_start_game():
-                    if self.start_button.check_click(event.pos):
-                        self.lock()
-                        self.save_user_deck()
-                        self.start_button.action["deck_id"] = self.current_deck_index
-                        self.start_button.action["commander_id"] = self.current_commander_id
-                        return self.start_button.action
-
-                # Prev faction button
-                if self.prev_faction_button.check_click(event.pos):
-                    self.current_faction_index = (self.current_faction_index - 1) % len(self.factions)
-                    self.current_deck_index = self.current_faction_index
-                    self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
-                    self.update_filtered_cards()
-                    self._update_faction_buttons()
-                    self.scroll_offset_deck = 0
-
-                # Next faction button
-                if self.next_faction_button.check_click(event.pos):
-                    self.current_faction_index = (self.current_faction_index + 1) % len(self.factions)
-                    self.current_deck_index = self.current_faction_index
-                    self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
-                    self.update_filtered_cards()
-                    self._update_faction_buttons()
-                    self.scroll_offset_deck = 0
-
-                # Add card to deck
-                for rect, card in self.left_card_rects:
-                    if rect.collidepoint(event.pos):
-                        self.add_card_to_deck(card)
-                        break
-
-                # Remove card from deck
-                for rect, card in self.right_card_rects:
-                    if rect.collidepoint(event.pos):
-                        self.remove_card_from_deck(card)
-                        break
-                # Commander selection
-                if self.commander_rect.collidepoint(event.pos):
-                    self.open_carousel()
-
-            # Scroll up/down
             elif event.button in (4, 5):
-                mouse_x, _ = pygame.mouse.get_pos()
-                is_left_side = mouse_x < self.screen_width // 2
-
-                if is_left_side:
-                    if event.button == 4: # Scroll up
-                        self.scroll_offset_all = max(0, self.scroll_offset_all - COLS)
-                    elif event.button == 5: # Scroll down
-                        max_scroll = max(0, len(self.filtered_cards) - CARDS_PER_PAGE)
-                        self.scroll_offset_all = min(max_scroll, self.scroll_offset_all + COLS)
-                else:
-                    deck_cards = self.get_deck_cards(self.current_deck_index)
-                    if event.button == 4:  # Scroll up
-                        self.scroll_offset_deck = max(0, self.scroll_offset_deck - COLS)
-                    elif event.button == 5:  # Scroll down
-                        max_scroll = max(0, len(deck_cards) - CARDS_PER_PAGE)
-                        self.scroll_offset_deck = min(max_scroll, self.scroll_offset_deck + COLS)
+                return self.handle_scroll(event)
 
         # Scrollbar dragging
         elif event.type == pygame.MOUSEBUTTONUP:
@@ -368,34 +269,135 @@ class DeckScene(Scene):
                 self.dragging_scroll_deck = False
 
         elif event.type == pygame.MOUSEMOTION:
-            if self.dragging_scroll_all:
-                mouse_x, mouse_y = event.pos
-                collection_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
-                max_scroll = max(0, len(self.filtered_cards) - CARDS_PER_PAGE)
-                if max_scroll == 0:
-                    return
+            return self.handle_mousemotion(event)
 
-                delta_y = mouse_y - self.drag_start_y
-                scroll_range = collection_height - max(20, int(collection_height * CARDS_PER_PAGE / len(
-                    self.filtered_cards)))
-                scroll_delta = int(delta_y * max_scroll / scroll_range)
-                new_offset = self.scroll_start_all + scroll_delta
-                self.scroll_offset_all = max(0, min(max_scroll, new_offset))
+    def handle_leftclick(self, event):
+        mouse_x, mouse_y = event.pos
 
-            elif self.dragging_scroll_deck:
-                mouse_x, mouse_y = event.pos
-                deck_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
-                deck_cards = self.get_deck_cards(self.current_deck_index)
-                max_scroll = max(0, len(deck_cards) - CARDS_PER_PAGE)
-                if max_scroll == 0:
-                    return
+        # Scrollbar
+        # Left
+        collection_x = 70 - self.scrollbar_width - 5
+        collection_y = 270
+        collection_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
+        if (collection_x <= mouse_x <= collection_x + self.scrollbar_width) and (
+             collection_y <= mouse_y <= collection_y + collection_height):
+            self.dragging_scroll_all = True
+            self.drag_start_y = mouse_y
+            self.scroll_start_all = self.scroll_offset_all
+            return
 
-                delta_y = mouse_y - self.drag_start_y
-                scroll_range = deck_height - max(20, int(deck_height * CARDS_PER_PAGE / len(deck_cards)))
-                scroll_delta = int(delta_y * max_scroll / scroll_range)
-                new_offset = self.scroll_start_deck + scroll_delta
-                self.scroll_offset_deck = max(0, min(max_scroll, new_offset))
+        # Right
+        deck_x = self.screen_width - 70 + 5
+        deck_y = 270
+        deck_height = ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN
+        if (deck_x <= mouse_x <= deck_x + self.scrollbar_width) and (deck_y <= mouse_y <= deck_y + deck_height):
+            self.dragging_scroll_deck = True
+            self.drag_start_y = mouse_y
+            self.scroll_start_deck = self.scroll_offset_deck
+            return
 
+        # Back button
+        if self.back_button.check_click(event.pos):
+            self.lock()
+            self.save_user_deck()
+            return self.back_button.action
+
+        # Start button
+        if self.can_start_game():
+            if self.start_button.check_click(event.pos):
+                self.lock()
+                self.save_user_deck()
+                self.start_button.action["deck_id"] = self.current_deck_index
+                self.start_button.action["commander_id"] = self.current_commander_id
+                return self.start_button.action
+
+        # Prev faction button
+        if self.prev_faction_button.check_click(event.pos):
+            self.change_faction(-1)
+        # Next faction button
+        if self.next_faction_button.check_click(event.pos):
+            self.change_faction(1)
+
+        # Add card to deck
+        for rect, card in self.left_card_rects:
+            if rect.collidepoint(event.pos):
+                self.add_card_to_deck(card)
+                break
+
+        # Remove card from deck
+        for rect, card in self.right_card_rects:
+            if rect.collidepoint(event.pos):
+                self.remove_card_from_deck(card)
+                break
+        # Commander selection
+        if self.commander_rect.collidepoint(event.pos):
+            self.open_carousel()
+
+    def handle_scroll(self, event):
+        def update_scroll_offset(scroll_attr_name, content_length, button):
+            scroll_offset = getattr(self, scroll_attr_name)
+            if button == 4:  # Scroll up
+                scroll_offset = max(0, scroll_offset - COLS)
+            elif button == 5:  # Scroll down
+                max_scroll = max(0, content_length - CARDS_PER_PAGE)
+                scroll_offset = min(max_scroll, scroll_offset + COLS)
+            setattr(self, scroll_attr_name, scroll_offset)
+
+        mouse_x, _ = pygame.mouse.get_pos()
+        is_left_side = mouse_x < self.screen_width // 2
+
+        if is_left_side:
+            update_scroll_offset("scroll_offset_all", len(self.filtered_cards), event.button)
+        else:
+            deck_cards = self.get_deck_cards(self.current_deck_index)
+            update_scroll_offset("scroll_offset_deck", len(deck_cards), event.button)
+
+    def handle_mousemotion(self, event):
+        def update_drag_scroll(dragging, drag_start_y, scroll_start, content_length, height, set_offset):
+            if not dragging:
+                return
+
+            max_scroll = max(0, content_length - CARDS_PER_PAGE)
+            if max_scroll == 0:
+                return
+
+            delta_y = event.pos[1] - drag_start_y
+            visible_ratio = CARDS_PER_PAGE / content_length
+            scrollbar_height = max(20, int(height * visible_ratio))
+            scroll_range = height - scrollbar_height
+            scroll_delta = int(delta_y * max_scroll / scroll_range)
+            new_offset = scroll_start + scroll_delta
+            set_offset(max(0, min(max_scroll, new_offset)))
+
+        # Left scrollbar
+        update_drag_scroll(
+            self.dragging_scroll_all,
+            self.drag_start_y,
+            self.scroll_start_all,
+            len(self.filtered_cards),
+            ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN,
+            lambda v: setattr(self, "scroll_offset_all", v)
+        )
+
+        # Right scrollbar
+        update_drag_scroll(
+            self.dragging_scroll_deck,
+            self.drag_start_y,
+            self.scroll_start_deck,
+            len(self.get_deck_cards(self.current_deck_index)),
+            ROWS * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN) - CARD_MARGIN,
+            lambda v: setattr(self, "scroll_offset_deck", v)
+        )
+
+    def change_faction(self, direction):
+        self.current_faction_index = (self.current_faction_index + direction) % len(self.factions)
+        self.current_deck_index = self.current_faction_index
+        self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
+        self.update_filtered_cards()
+        self.update_faction_buttons()
+        self.scroll_offset_deck = 0
+
+    # noinspection PyTypeChecker
     def save_user_deck(self):
         with open("./user/user_decks.json", "w", encoding="utf-8") as f:
             json.dump({

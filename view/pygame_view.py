@@ -2,6 +2,7 @@ import queue
 
 import pygame
 
+from network.network import Network as n
 from view.scenes.settings_scene import SettingsScene
 from view.scenes.text_scene import TextScene
 from view.scenes.deck_scene import DeckScene
