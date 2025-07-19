@@ -8,9 +8,11 @@ from view.components.button import Button
 
 
 class CarouselScene(Scene):
-    def __init__(self, screen, draw_card, cards, choose_count, cancelable, label=True, font=None):
+    def __init__(self, screen, draw_card, cards, choose_count, cancelable, get_card_attr=None, label=True, font=None, opacity=0.25):
         super().__init__(screen)
         self.font = font if font is not None else c.DEFAULT_FONT
+        self.get_card_attr = get_card_attr if get_card_attr is not None else self.__class__.get_card_attr
+        self.opacity = opacity
         self.cards = list(cards)
         self.draw_card = draw_card
         self.selected_index = 0
@@ -19,6 +21,8 @@ class CarouselScene(Scene):
         self.cancellable = cancelable
         self.label = label
         self.buttons = []
+
+        self.visible_cards = 5
 
         button_width, button_height = c.BUTTON_SIZE
         button_margin = 150
@@ -39,10 +43,7 @@ class CarouselScene(Scene):
 
     @overrides
     def draw(self):
-        self.draw_overlay(0.25)
-
-        center_x = self.screen_width // 2
-        center_y = self.screen_height // 2
+        self.draw_overlay(self.opacity)
 
         if self.label:
             height = c.BUTTON_SIZE[1]
@@ -55,19 +56,28 @@ class CarouselScene(Scene):
             text_rect.center = (self.screen_width // 2, 100 + height // 2)
             self.screen.blit(text, text_rect)
 
-        visible_cards = 3
-        half_visible = visible_cards // 2
-        card_width, card_height = c.LARGE_CARD_SIZE
+        half_visible = self.visible_cards // 2
+        card_width, card_height = c.MEDIUM_CARD_SIZE
+
+        start_x = 154
+        y = 357
+        offset = 0
 
         for i in range(-half_visible, half_visible + 1):
             card_index = self.selected_index + i
 
+            if i == 0:
+                offset += c.LARGE_CARD_SIZE[0] + 120
+                continue
+
             if 0 <= card_index < len(self.cards):
                 card = self.cards[card_index]
-                offset_x = i * (card_width + 140)
-                top_left_x = center_x + offset_x - card_width // 2
-                top_left_y = center_y - card_height // 2
-                self.draw_card(card, top_left_x, top_left_y, "large", highlight=i == 0)
+                self.draw_card(card, start_x + offset, y, "medium", highlight=i == 0)
+
+            offset += card_width + 120
+
+        card = self.cards[self.selected_index]
+        self.draw_card(card, 814, 285, "large", highlight=True)
 
         mouse_pos = pygame.mouse.get_pos()
         for btn in self.buttons:
@@ -83,17 +93,24 @@ class CarouselScene(Scene):
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x, mouse_y = event.pos
-            center_x = self.screen_width // 2
-            center_y = self.screen_height // 2
-            card_width, card_height = c.LARGE_CARD_SIZE
-            offset = card_width + 140
+            half_visible = self.visible_cards // 2
+            card_width, card_height = c.MEDIUM_CARD_SIZE
 
-            for i in range(-1, 2):
-                card_x = center_x + i * offset - card_width // 2
-                card_y = center_y - card_height // 2
+            start_x = 154
+            card_y = 357
+            offset = 0
+
+            for i in range(-half_visible, half_visible + 1):
+                if i == 0:
+                    offset += c.LARGE_CARD_SIZE[0] + 120
+                    continue
+
+                card_x = start_x + offset
                 if card_x <= mouse_x <= card_x + card_width and card_y <= mouse_y <= card_y + card_height:
                     self.selected_index = max(0, min(len(self.cards) - 1, self.selected_index + i))
                     return
+
+                offset += card_width + 120
 
             return self.handle_button_events(event)
 
@@ -120,7 +137,7 @@ class CarouselScene(Scene):
 
                 return {
                     "type": "carousel",
-                    "card_id": card.id if hasattr(card, "id") else card["id"],
+                    "card_id": self.get_card_attr(card, "id"),
                     "end": end
                 }
 

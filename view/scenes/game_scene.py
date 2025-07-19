@@ -323,6 +323,9 @@ class GameScene(Scene):
         if self.game.is_winning_round(player_id):
             self.draw_icon("high_score", None, x + 403, y + 40)
 
+        if self.game.get_player(player_id).passed:
+            self.draw_text("Pas", x + 453, y + 132, color=c.COLOR_WHITE, center=True, font=c.CINZEL_25_BOLD)
+
         self.draw_gems(player.hp, x, y)
         self.draw_icon("cards", None, x + 201, y + 88)
         self.draw_text(player.hand.size(), x + 257, y + 108, color=c.COLOR_GOLD, center=True)
@@ -390,16 +393,16 @@ class GameScene(Scene):
         width = rect.width
         x, y = rect.left, rect.top
         count = len(cards)
-        offset = 90
+        card_width = c.SMALL_CARD_SIZE[0]
+        offset = card_width
 
-        total_width = offset * count
-
-        if total_width > width:
-            offset = offset * width / total_width
+        total_width = offset * (count - 1) #except last card (fully visible)
+        if total_width > width - card_width:
+            offset = offset * (width - card_width) / total_width
 
         for i, card in enumerate(cards):
             card_x = x + offset * i
-            card_rect = self.draw_card(card, card_x - 4, y, "small", highlight=card is self.selected_card)
+            card_rect = self.draw_card(card, card_x, y, "small", highlight=card is self.selected_card)
             card_rects_output.append((card, card_rect))
 
     def draw_commanders(self, card_rect_output):
@@ -412,7 +415,8 @@ class GameScene(Scene):
 
     def draw_commander(self, commander, pos):
         x, y = pos
-        self.draw_card(commander, *pos, "small", highlight=commander is self.selected_card)
+        x_offset, y_offset = c.COMM_OFFSET
+        self.draw_card(commander, x + x_offset, y + y_offset, "small", highlight=commander is self.selected_card)
         if not commander.active:
             overlay = pygame.Surface(c.COMM_SIZE, pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 200))
@@ -423,13 +427,10 @@ class GameScene(Scene):
     def draw_weather(self):
         weather = self.game.board.weather
         rect = c.WEATHER_RECT
-        x, y = rect.left, rect.top
-        x_offset = 0
-        y_offset = 11
+        offset = c.WEATHER_OFFSET
+        moved_rect = rect.move(offset)
 
-        for card in weather.cards:
-            self.draw_card(card, x + x_offset, y + y_offset, "small")
-            x_offset += 90
+        self.draw_card_holder(weather.cards, moved_rect, [])
 
     def draw_highlights(self):
         def make_surface(size):
@@ -477,19 +478,29 @@ class GameScene(Scene):
     def draw_card(self, card, x, y, size, highlight=False):
         rect = super().draw_card(card, x, y, size, highlight)
 
-        if size == "large":
+        if not card.is_card_type(CardType.UNIT) and not card.is_card_type(CardType.HERO):
             return rect
 
-        if card.is_card_type(CardType.UNIT):
-            if card.power > card.base_power:
-                color = c.COLOR_GREEN
-            elif card.power < card.base_power:
-                color = c.COLOR_RED
-            else:
-                color = c.COLOR_BLACK
+        if card.is_card_type(CardType.HERO):
+            color = c.COLOR_WHITE
+        elif card.power > card.base_power:
+            color = c.COLOR_GREEN
+        elif card.power < card.base_power:
+            color = c.COLOR_RED
+        else:
+            color = c.COLOR_BLACK
 
-            font = c.MASON_30 if card.power < 10 else c.MASON_20
-            self.draw_text(card.power, rect.x + 20, rect.y + 19, color=color, font=font, center=True)
+        sizes = {
+            "small": (c.MASON_20, c.MASON_30, (20, 20), (20, 20)),
+            "medium": (c.MASON_30, c.MASON_40, (31, 34), (32, 34)),
+            "large": (c.MASON_40, c.MASON_50, (43, 47), (45, 48))
+        }
+
+        font_small, font_large, offset_unit, offset_hero = sizes[size]
+        font = font_large if card.power < 10 else font_small
+        offset = offset_hero if card.is_card_type(CardType.HERO) else offset_unit
+
+        self.draw_text(card.power, rect.x + offset[0], rect.y + offset[1], color=color, font=font, center=True)
 
         return rect
 

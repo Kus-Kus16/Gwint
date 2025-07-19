@@ -84,7 +84,7 @@
         "name": "Tajemniczy Elf",
         "faction": "Neutralne",
         "power": 0,
-        "rows": ["close_OPP"],
+        "rows": ["close_opp"],
         "abilities": ["spy", "hero"],
         "count": 1,
         "filename": "avallach"
@@ -337,7 +337,7 @@
         "name": "Sigismund Dijkstra",
         "faction": "Królestwa Północy",
         "power": 4,
-        "rows": ["close_OPP"],
+        "rows": ["close_opp"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "dijkstra"
@@ -527,7 +527,7 @@
         "name": "Książę Stennis",
         "faction": "Królestwa Północy",
         "power": 5,
-        "rows": ["close_OPP"],
+        "rows": ["close_opp"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "stennis"
@@ -537,7 +537,7 @@
         "name": "Talar",
         "faction": "Królestwa Północy",
         "power": 1,
-        "rows": ["siege_OPP"],
+        "rows": ["siege_opp"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "talar"
@@ -879,7 +879,7 @@
         "name": "Shilard Fitz-Oesterlen",
         "faction": "Cesarstwo Nilfgaardu",
         "power": 7,
-        "rows": ["close_OPP"],
+        "rows": ["close_opp"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "shilard"
@@ -889,7 +889,7 @@
         "name": "Stefan Skellen",
         "faction": "Cesarstwo Nilfgaardu",
         "power": 9,
-        "rows": ["close_OPP"],
+        "rows": ["close_opp"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "stefan"
@@ -919,7 +919,7 @@
         "name": "Vattier de Rideaux",
         "faction": "Cesarstwo Nilfgaardu",
         "power": 4,
-        "rows": ["close_OPP"],
+        "rows": ["close_opp"],
         "abilities": ["spy"],
         "count": 1,
         "filename": "vattier"
@@ -942,7 +942,7 @@
         "rows": ["siege"],
         "abilities": [],
         "count": 1,
-        "filename": "wielkiognisty"
+        "filename": "wielkiskorpion"
     },
     {
         "id": 119,
@@ -974,9 +974,7 @@
         "count": 1,
         "filename": "wsparcieobleznicze"
     },
-    
-    
-    
+
     
     {
         "id": 135,
@@ -1390,7 +1388,6 @@
     },
 
 
-
     {
         "id": 185,
         "name": "Eithné",
@@ -1771,8 +1768,7 @@
         "count": 1,
         "filename": "zwiadowca3"
     },
-    
-    
+
     
     {
         "id": 235,
@@ -2103,5 +2099,789 @@
         "abilities": ["bond"],
         "count": 3,
         "filename": "wojownik"
+    },
+
+
+    {
+        "id": 280,
+        "name": "Sangreal",
+        "faction": "Księstwo Toussaint",
+        "power": null,
+        "rows": [],
+        "abilities": ["sangreal"],
+        "count": 3,
+        "filename": "sangreal"
+    },
+    {
+        "id": 281,
+        "name": "Prorok Lebioda",
+        "faction": "Księstwo Toussaint",
+        "power": 8,
+        "rows": ["ranged"],
+        "abilities": ["hero", "morale"],
+        "count": 1,
+        "filename": "lebioda"
+    },
+    {
+        "id": 282,
+        "name": "Milton de Peyrac-Peyran",
+        "faction": "Księstwo Toussaint",
+        "power": 10,
+        "rows": ["close"],
+        "abilities": ["hero"],
+        "count": 1,
+        "filename": "milton"
+    },
+    {
+        "id": 283,
+        "name": "Palmerin de Launfal",
+        "faction": "Księstwo Toussaint",
+        "power": 10,
+        "rows": ["close"],
+        "abilities": ["hero"],
+        "count": 1,
+        "filename": "palmerin"
+    },
+    {
+        "id": 284,
+        "name": "Pani Jeziora",
+        "faction": "Księstwo Toussaint",
+        "power": 10,
+        "rows": ["siege"],
+        "abilities": ["hero"],
+        "count": 1,
+        "filename": "pani"
+    },
+    {
+        "id": 285,
+        "name": "Agentka Księżnej",
+        "faction": "Księstwo Toussaint",
+        "power": 4,
+        "rows": ["close_opp"],
+        "abilities": ["spy"],
+        "count": 1,
+        "filename": "agentka"
+    },
+    {
+        "id": 286,
+        "name": "Arystokraci",
+        "faction": "Księstwo Toussaint",
+        "power": 3,
+        "rows": ["ranged"],
+        "abilities": [],
+        "count": 1,
+        "filename": "arystokraci"
+    },
+    {
+        "id": 287,
+        "name": "Barghest",
+        "faction": "Księstwo Toussaint",
+        "power": 3,
+        "rows": ["ranged"],
+        "abilities": ["muster"],
+        "count": 3,
+        "filename": "barghest"
+    },
+    {
+        "id": 288,
+        "name": "Benoilt",
+        "faction": "Księstwo Toussaint",
+        "power": 3,
+        "rows": ["ranged"],
+        "abilities": ["sangreal"],
+        "count": 1,
+        "filename": "benoilt"
+    },
+    {
+        "id": 289,
+        "name": "Błędny Rycerz",
+        "faction": "Księstwo Toussaint",
+        "power": 4,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "bledny1"
+    },
+    {
+        "id": 290,
+        "name": "Błędny Rycerz",
+        "faction": "Księstwo Toussaint",
+        "power": 4,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "bledny2"
+    },
+    {
+        "id": 291,
+        "name": "Błędny Rycerz",
+        "faction": "Księstwo Toussaint",
+        "power": 4,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "bledny3"
+    },
+    {
+        "id": 292,
+        "name": "Chmurny Gigant",
+        "faction": "Księstwo Toussaint",
+        "power": 6,
+        "rows": ["siege"],
+        "abilities": [],
+        "count": 1,
+        "filename": "chmurny"
+    },
+    {
+        "id": 293,
+        "name": "Chorągiew",
+        "faction": "Księstwo Toussaint",
+        "power": 2,
+        "rows": ["close", "ranged"],
+        "abilities": ["agility", "morale"],
+        "count": 1,
+        "filename": "choragiew"
+    },
+    {
+        "id": 294,
+        "name": "Cintryjczyk",
+        "faction": "Księstwo Toussaint",
+        "power": 5,
+        "rows": ["siege"],
+        "abilities": [],
+        "count": 1,
+        "filename": "cintryjczyk"
+    },
+    {
+        "id": 295,
+        "name": "Damien De la Tour",
+        "faction": "Księstwo Toussaint",
+        "power": 8,
+        "rows": ["close"],
+        "abilities": ["morale", "endurance"],
+        "count": 1,
+        "filename": "damien"
+    },
+    {
+        "id": 296,
+        "name": "Dettlaff van der Eretein",
+        "faction": "Księstwo Toussaint",
+        "power": 4,
+        "rows": ["close"],
+        "abilities": ["thirst"],
+        "count": 1,
+        "filename": "dettlaff"
+    },
+    {
+        "id": 297,
+        "name": "Dettlaff: Wampir Wyższy",
+        "faction": "Księstwo Toussaint",
+        "power": 10,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 0,
+        "filename": "dettlaffwampir"
+    },
+    {
+        "id": 298,
+        "name": "Giermek",
+        "faction": "Księstwo Toussaint",
+        "power": 3,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "giermek"
+    },
+    {
+        "id": 299,
+        "name": "Goliat",
+        "faction": "Księstwo Toussaint",
+        "power": 6,
+        "rows": ["siege"],
+        "abilities": [],
+        "count": 1,
+        "filename": "goliat"
+    },
+    {
+        "id": 300,
+        "name": "Gregoire z Gorgony",
+        "faction": "Księstwo Toussaint",
+        "power": 6,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "gregoire"
+    },
+    {
+        "id": 301,
+        "name": "Guillaume de Launfal",
+        "faction": "Księstwo Toussaint",
+        "power": 5,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "guillaume"
+    },
+    {
+        "id": 302,
+        "name": "Król Rybak",
+        "faction": "Księstwo Toussaint",
+        "power": 1,
+        "rows": ["siege"],
+        "abilities": [],
+        "count": 1,
+        "filename": "krol"
+    },
+    {
+        "id": 303,
+        "name": "Marlena de Trastamara",
+        "faction": "Księstwo Toussaint",
+        "power": 1,
+        "rows": ["ranged"],
+        "abilities": ["thirst"],
+        "count": 1,
+        "filename": "marlena"
+    },
+    {
+        "id": 304,
+        "name": "Marlena: Wicht",
+        "faction": "Księstwo Toussaint",
+        "power": 4,
+        "rows": ["ranged"],
+        "abilities": ["muster"],
+        "count": 0,
+        "filename": "marlenawicht"
+    },
+    {
+        "id": 305,
+        "name": "Medyk Polowy",
+        "faction": "Księstwo Toussaint",
+        "power": 2,
+        "rows": ["ranged"],
+        "abilities": ["medic"],
+        "count": 1,
+        "filename": "medyk"
+    },
+    {
+        "id": 306,
+        "name": "Orianna",
+        "faction": "Księstwo Toussaint",
+        "power": 3,
+        "rows": ["ranged"],
+        "abilities": ["thirst"],
+        "count": 1,
+        "filename": "orianna"
+    },
+    {
+        "id": 307,
+        "name": "Orianna: Wampir Wyższy",
+        "faction": "Księstwo Toussaint",
+        "power": 8,
+        "rows": ["ranged"],
+        "abilities": [],
+        "count": 0,
+        "filename": "oriannawampir"
+    },
+    {
+        "id": 308,
+        "name": "Protofleder",
+        "faction": "Księstwo Toussaint",
+        "power": 4,
+        "rows": ["ranged"],
+        "abilities": ["muster"],
+        "count": 2,
+        "filename": "protofleder"
+    },
+    {
+        "id": 309,
+        "name": "Pucybut",
+        "faction": "Księstwo Toussaint",
+        "power": 3,
+        "rows": ["close_opp"],
+        "abilities": ["spy", "morale"],
+        "count": 1,
+        "filename": "pucybut"
+    },
+    {
+        "id": 310,
+        "name": "Emiel Regis Rohellec Terzieff",
+        "faction": "Księstwo Toussaint",
+        "power": 4,
+        "rows": ["close"],
+        "abilities": ["thirst"],
+        "count": 1,
+        "filename": "regis"
+    },
+    {
+        "id": 311,
+        "name": "Regis: Wampir Wyższy",
+        "faction": "Księstwo Toussaint",
+        "power": 10,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 0,
+        "filename": "regiswampir"
+    },
+    {
+        "id": 312,
+        "name": "Roderik z Dun Tynne",
+        "faction": "Księstwo Toussaint",
+        "power": 4,
+        "rows": ["ranged"],
+        "abilities": [],
+        "count": 1,
+        "filename": "roderik"
+    },
+    {
+        "id": 313,
+        "name": "Straż Książęca",
+        "faction": "Księstwo Toussaint",
+        "power": 1,
+        "rows": ["close"],
+        "abilities": ["bond", "endurance"],
+        "count": 3,
+        "filename": "straz"
+    },
+    {
+        "id": 314,
+        "name": "Ukryty",
+        "faction": "Księstwo Toussaint",
+        "power": 7,
+        "rows": ["siege"],
+        "abilities": ["muster"],
+        "count": 1,
+        "filename": "ukryty"
+    },
+    {
+        "id": 315,
+        "name": "Vivienne de Tabris",
+        "faction": "Księstwo Toussaint",
+        "power": 2,
+        "rows": ["close"],
+        "abilities": ["thirst"],
+        "count": 1,
+        "filename": "vivienne"
+    },
+    {
+        "id": 316,
+        "name": "Vivienne: Wilga",
+        "faction": "Księstwo Toussaint",
+        "power": 5,
+        "rows": ["close"],
+        "abilities": ["morale"],
+        "count": 0,
+        "filename": "viviennewilga"
+    },
+
+
+    {
+        "id": 330,
+        "name": "Święty Grzegorz",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 10,
+        "rows": ["close"],
+        "abilities": ["hero"],
+        "count": 1,
+        "filename": "grzegorz"
+    },
+    {
+        "id": 331,
+        "name": "Prorok Lebioda",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 8,
+        "rows": ["ranged"],
+        "abilities": ["hero", "morale"],
+        "count": 1,
+        "filename": "lebioda"
+    },
+    {
+        "id": 332,
+        "name": "Święty Płomień",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 1,
+        "rows": ["close", "ranged"],
+        "abilities": ["hero", "agility", "morale", "morale"],
+        "count": 3,
+        "filename": "plomien"
+    },
+    {
+        "id": 333,
+        "name": "Upadła Rayla",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 10,
+        "rows": ["close"],
+        "abilities": ["hero"],
+        "count": 1,
+        "filename": "rayla"
+    },
+    {
+        "id": 334,
+        "name": "Brat Większy",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 8,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "brat"
+    },
+    {
+        "id": 335,
+        "name": "Caleb Menge",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 6,
+        "rows": ["siege"],
+        "abilities": [],
+        "count": 1,
+        "filename": "caleb"
+    },
+    {
+        "id": 336,
+        "name": "Cudowne Dziecko",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 1,
+        "rows": ["siege"],
+        "abilities": ["endurance"],
+        "count": 1,
+        "filename": "cudowne"
+    },
+    {
+        "id": 337,
+        "name": "Duchowny",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 2,
+        "rows": ["siege"],
+        "abilities": [],
+        "count": 1,
+        "filename": "duchowny"
+    },
+    {
+        "id": 338,
+        "name": "Fanatycy",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 2,
+        "rows": ["close"],
+        "abilities": ["muster"],
+        "count": 4,
+        "filename": "fanatycy"
+    },
+    {
+        "id": 339,
+        "name": "Goniec Salamandry",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 3,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "goniec"
+    },
+    {
+        "id": 340,
+        "name": "Ignatius Hale",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 4,
+        "rows": ["siege"],
+        "abilities": [],
+        "count": 1,
+        "filename": "ignatius"
+    },
+    {
+        "id": 341,
+        "name": "Inkwizytor",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 3,
+        "rows": ["ranged"],
+        "abilities": ["muster"],
+        "count": 3,
+        "filename": "inkwizytor"
+    },
+    {
+        "id": 342,
+        "name": "Jakub de Aldersberg",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 6,
+        "rows": ["siege"],
+        "abilities": ["low_morale", "morale"],
+        "count": 1,
+        "filename": "jakub"
+    },
+    {
+        "id": 343,
+        "name": "Kapłan",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 3,
+        "rows": ["close", "ranged"],
+        "abilities": ["agility", "morale"],
+        "count": 1,
+        "filename": "kaplan"
+    },
+    {
+        "id": 344,
+        "name": "Kwatermistrz",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 6,
+        "rows": ["close", "ranged"],
+        "abilities": ["agility"],
+        "count": 1,
+        "filename": "kwatermistrz"
+    },
+    {
+        "id": 345,
+        "name": "Łowca Czarownic",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 5,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "lowca"
+    },
+    {
+        "id": 346,
+        "name": "Mag Salamandry",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 6,
+        "rows": ["ranged"],
+        "abilities": [],
+        "count": 1,
+        "filename": "mag1"
+    },
+    {
+        "id": 347,
+        "name": "Mag Salamandry",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 6,
+        "rows": ["ranged"],
+        "abilities": [],
+        "count": 1,
+        "filename": "mag2"
+    },
+    {
+        "id": 348,
+        "name": "Magister",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 5,
+        "rows": ["ranged"],
+        "abilities": [],
+        "count": 1,
+        "filename": "magister"
+    },
+    {
+        "id": 349,
+        "name": "Mutant",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 4,
+        "rows": ["siege"],
+        "abilities": ["muster"],
+        "count": 2,
+        "filename": "mutant"
+    },
+    {
+        "id": 350,
+        "name": "Mutant Zabójca",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 5,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "mutantzabojca"
+    },
+    {
+        "id": 351,
+        "name": "Nataniel Pastodi",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 6,
+        "rows": ["close", "ranged"],
+        "abilities": ["agility"],
+        "count": 1,
+        "filename": "nataniel"
+    },
+    {
+        "id": 352,
+        "name": "Płomienny Kaznodzieja",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 2,
+        "rows": ["close_opp"],
+        "abilities": ["spy", "morale"],
+        "count": 1,
+        "filename": "plomienny"
+    },
+    {
+        "id": 353,
+        "name": "Posłaniec",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 4,
+        "rows": ["close", "ranged"],
+        "abilities": ["agility"],
+        "count": 1,
+        "filename": "poslaniec"
+    },
+    {
+        "id": 354,
+        "name": "Procesja Pokuty",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 1,
+        "rows": ["close"],
+        "abilities": ["muster", "endurance"],
+        "count": 3,
+        "filename": "procesja"
+    },
+    {
+        "id": 355,
+        "name": "Roderick de Wett",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 5,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "roderick"
+    },
+    {
+        "id": 356,
+        "name": "Roland Bleindeim",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 4,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "roland"
+    },
+    {
+        "id": 357,
+        "name": "Upadły Rycerz",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 4,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "rycerz"
+    },
+    {
+        "id": 358,
+        "name": "Samotny Czempion",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 11,
+        "rows": ["close"],
+        "abilities": ["low_morale"],
+        "count": 1,
+        "filename": "samotny"
+    },
+    {
+        "id": 359,
+        "name": "Savolla",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 5,
+        "rows": ["siege"],
+        "abilities": [],
+        "count": 1,
+        "filename": "savolla"
+    },
+    {
+        "id": 360,
+        "name": "Skryba",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 4,
+        "rows": ["ranged"],
+        "abilities": ["morale"],
+        "count": 1,
+        "filename": "skryba"
+    },
+    {
+        "id": 361,
+        "name": "Sługa Ognia",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 2,
+        "rows": ["ranged"],
+        "abilities": [],
+        "count": 1,
+        "filename": "sluga"
+    },
+    {
+        "id": 362,
+        "name": "Strażnik Świątynny",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 5,
+        "rows": ["close"],
+        "abilities": ["muster"],
+        "count": 2,
+        "filename": "straznik"
+    },
+    {
+        "id": 363,
+        "name": "Stróż Wiecznego Ognia",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 4,
+        "rows": ["close"],
+        "abilities": ["morale"],
+        "count": 1,
+        "filename": "stroz"
+    },
+    {
+        "id": 364,
+        "name": "Szeregowy Płonącej Róży",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 3,
+        "rows": ["close"],
+        "abilities": ["bond"],
+        "count": 3,
+        "filename": "szeregowy"
+    },
+    {
+        "id": 365,
+        "name": "Tamara Stenger",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 4,
+        "rows": ["siege"],
+        "abilities": [],
+        "count": 1,
+        "filename": "tamara"
+    },
+    {
+        "id": 366,
+        "name": "Twórca Mutantów",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 2,
+        "rows": ["siege"],
+        "abilities": ["muster"],
+        "count": 1,
+        "filename": "tworca"
+    },
+    {
+        "id": 367,
+        "name": "Zawiedziony Ulrich",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 2,
+        "rows": ["close"],
+        "abilities": ["low_morale"],
+        "count": 1,
+        "filename": "ulrich"
+    },
+    {
+        "id": 368,
+        "name": "Wściekły Pies",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 4,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "wsciekly"
+    },
+    {
+        "id": 369,
+        "name": "Zabójca Salamandry",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 7,
+        "rows": ["ranged"],
+        "abilities": ["scorch"],
+        "count": 1,
+        "filename": "zabojca"
+    },
+    {
+        "id": 370,
+        "name": "Zmutowane Psy",
+        "faction": "Kult Wiecznego Ognia",
+        "power": 2,
+        "rows": ["close"],
+        "abilities": ["bond"],
+        "count": 2,
+        "filename": "zmutowane"
     }
 ]

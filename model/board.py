@@ -70,7 +70,7 @@ class Board:
             add += self.rows[i].clear(player1)
 
         for card, player_id in add:
-            self.play_card(card, RowType[card.rows[0].upper()], player_id)
+            self.play_card(card, card.rows[0], player_id)
 
     def get_ordered_rows(self, player_id):
         rows0 = self.rows[0:3]

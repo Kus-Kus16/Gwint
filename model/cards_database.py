@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 
 from model.card import Card
 from model.commander import Commander
@@ -6,10 +7,15 @@ from model.card_holders.deck import Deck
 from model.enums.card_type import CardType
 
 with open("./data/cards.json", "r", encoding="utf-8") as file:
-    card_dict = json.load(file)
+    card_list = json.load(file)
+    card_dict = {card["id"]: card for card in card_list}
+
+    faction_dict = defaultdict(list)
+    for card in card_list:
+        faction_dict[card["faction"]].append(card)
 
 with open("./data/factions.json", "r", encoding="utf-8") as file:
-    faction_dict = json.load(file)
+    faction_list = json.load(file)
 
 with open("./data/muster.json", "r", encoding="utf-8") as file:
     muster_dict = json.load(file)
@@ -28,26 +34,27 @@ def faction_to_nickname(fullname):
         "Potwory": "potwory",
         "Scoia'tael": "scoiatael",
         "Skellige": "skellige",
+        "Księstwo Toussaint": "toussaint",
+        "Kult Wiecznego Ognia": "ogien"
     }
     return mapping.get(fullname)
 
 # Dictionary
-def find_card(predicate):
-    for card in card_dict:
-        if predicate(card):
-            return card
-
 def find_card_by_id(card_id):
-    return find_card(lambda card: card["id"] == card_id)
-
-def find_card_by_name(card_name):
-    return find_card(lambda card: card["name"] == card_name)
+    return card_dict.get(card_id)
 
 def find_commander_by_id(commander_id):
-    for faction in faction_dict:
+    for faction in faction_list:
         for commander in faction["commanders"]:
             if commander["id"] == commander_id:
                 return commander, faction["name"]
+
+def get_faction_cards(fullname, neutral=False):
+    cards = list(faction_dict.get(fullname, []))
+    if neutral:
+        cards.extend(faction_dict.get("Neutralne", []))
+
+    return cards
 
 def create_verified_deck(data, commander_id):
     commander_data, faction = find_commander_by_id(commander_id)

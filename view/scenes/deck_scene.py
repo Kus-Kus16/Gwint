@@ -22,16 +22,10 @@ CARDS_PER_PAGE = ROWS * COLS
 class DeckScene(Scene):
     def __init__(self, screen):
         super().__init__(screen)
-        self.all_cards = db.card_dict
 
         self.scroll_offset = 0
         self.scroll_offset_all = 0
         self.scroll_offset_deck = 0
-
-        # Loading deck
-        self.current_decks = None
-        self.current_deck_index = None
-        self.current_faction_index = None
 
         # Decks
         with open("./user/user_decks.json", "r", encoding="utf-8") as file:
@@ -39,13 +33,14 @@ class DeckScene(Scene):
             self.current_decks = data["decks"]
             self.current_deck_index = data.get("last_index", 0)
             self.current_faction_index = data.get("last_index", 0)
+
         # Commander
         with open("./data/factions.json", "r", encoding="utf-8") as f:
             self.factions_data = json.load(f)
 
         self.factions = [f["name"] for f in self.factions_data][0:2] # TODO v1 2 decks only
         self.current_commander_id = self.current_decks[self.current_deck_index].get("commander_id", None)
-        self.commander_rect= None
+        self.commander_rect = None
 
         self.carousel_scene = None
         self.show_carousel = False
@@ -58,6 +53,11 @@ class DeckScene(Scene):
         self.right_card_rects = []
 
         # Buttons
+        self.back_button = None
+        self.start_button = None
+        self.prev_faction_button = None
+        self.next_faction_button = None
+
         self._init_ui_buttons()
 
         # Scroll
@@ -80,8 +80,6 @@ class DeckScene(Scene):
                                    c.BUTTON_SIZE_NARROW,
                                    {"type": "mode_change", "mode": "load_deck", "deck_id": self.current_deck_index,
                                     "commander_id": self.current_commander_id})
-        self.prev_faction_button = None
-        self.next_faction_button = None
         self.update_faction_buttons()
 
     def update_faction_buttons(self):
@@ -100,20 +98,18 @@ class DeckScene(Scene):
 
     @overrides
     def draw(self):
+        super().draw()
+        self.draw_overlay(0.85)
+        self.draw_texts()
+        self.show_all_available_cards()
+        self.show_deck_cards()
+        self.show_deck_stats()
+        self.draw_buttons()
+        self.draw_commander()
+        self.draw_scrollbar()
+
         if self.show_carousel:
             self.carousel_scene.draw()
-        else:
-            super().draw()
-            self.draw_overlay(0.85)
-            self.draw_texts()
-            self.show_all_available_cards()
-            self.show_deck_cards()
-            self.show_deck_stats()
-            self.draw_buttons()
-            self.draw_commander()
-            self.draw_scrollbar()
-
-
 
     def draw_scrollbar(self):
         def draw_single_scrollbar(x, y, height, content_length, scroll_offset):
@@ -148,12 +144,11 @@ class DeckScene(Scene):
                                    content_length_right, scroll_offset_right)
 
     def draw_commander(self):
-        commander = self.get_commander_by_id(self.current_commander_id)
+        commander, _ = db.find_commander_by_id(self.current_commander_id)
         if commander:
-            commander_image = self.load_card_image(commander, "medium")
-            self.screen.blit(commander_image, (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170))
-            commander_pos = (self.screen_width // 2 - c.MEDIUM_CARD_SIZE[0] // 2, 170)
-            self.commander_rect = pygame.Rect(commander_pos, c.MEDIUM_CARD_SIZE)
+            x = (self.screen_width - c.MEDIUM_CARD_SIZE[0]) // 2
+            y = 170
+            self.commander_rect = self.draw_card(commander, x, y, "medium")
 
     def draw_buttons(self):
         self.prev_faction_button.draw(self.screen, pygame.mouse.get_pos())
@@ -164,25 +159,22 @@ class DeckScene(Scene):
     def draw_texts(self):
         # Titles
         font = c.CINZEL_30_BOLD
-        text_surface = font.render(f"Kolekcja kart", True, c.COLOR_GOLD)
-        self.screen.blit(text_surface, (50, 180))
-        text_surface = font.render(f"Karty w talii", True, c.COLOR_GOLD)
-        self.screen.blit(text_surface, (self.screen_width - text_surface.get_width() - 50, 180))
+        color = c.COLOR_GOLD
+        self.draw_text("Kolekcja Kart", 50, 180, color=color, font=font)
+        self.draw_text("Karty w Talii", 1820, 180, color=color, font=font) #TODO change to center
+
+        # Commander
+        self.draw_text("Dowódca", self.screen_width // 2, 130, color=color, font=font, center=True)
+
         # Faction name
         font = c.CINZEL_50_BOLD
-        faction_name = self.factions[self.current_faction_index]
-        text_surface = font.render(f"Frakcja: {faction_name}", True, c.COLOR_GOLD)
-        self.screen.blit(text_surface, (self.screen_width // 2 - text_surface.get_width() // 2, 50))
-        # Commander
-        commander = self.get_commander_by_id(self.current_commander_id)
-        if commander:
-            font = c.CINZEL_30_BOLD
-            text_surface = font.render("Dowódca", True, c.COLOR_GOLD)
-            self.screen.blit(text_surface, (self.screen_width // 2 - text_surface.get_width() // 2, 130))
+        faction_name = self.get_faction_name()
+        self.draw_text(f"Frakcja: {faction_name}", self.screen_width // 2, 50, color=color, font=font, center=True)
 
     def show_deck_stats(self):
         total_count, hero_count, special_count, total_strength = self.calculate_deck_stats()
-        stats_font = c.CINZEL_30_BOLD
+        font = c.CINZEL_30_BOLD
+
         lines = [
             "Karty (min. 22)",
             f"{total_count}",
@@ -193,20 +185,21 @@ class DeckScene(Scene):
             "Siła",
             f"{total_strength}"
         ]
-        line_height = stats_font.get_height()
+
         start_y = 550
+        y_offset = 30
         for i, line in enumerate(lines):
-            color = c.COLOR_GOLD
             if i == 1:  # Total count
                 color = c.COLOR_GREEN if total_count >= 22 else c.COLOR_RED
             elif i == 5:  # Special count
                 color = c.COLOR_GREEN if special_count <= 10 else c.COLOR_RED
+            else:
+                color = c.COLOR_GOLD
 
-            stats_surface = stats_font.render(line, True, color)
-            stats_x = self.screen_width // 2 - stats_surface.get_width() // 2
-            stats_y = start_y + i * (line_height + 3)
-            self.screen.blit(stats_surface, (stats_x, stats_y))
+            y = start_y + i * y_offset
+            self.draw_text(line, self.screen_width // 2, y, color=color, font=font, center=True)
 
+    #Todo change
     def show_deck_cards(self):
         deck_cards = self.get_deck_cards(self.current_deck_index)
 
@@ -234,6 +227,7 @@ class DeckScene(Scene):
                 self.screen.blit(overlay, (overlay_x, overlay_y))
                 self.draw_text(count, overlay_x + 30, overlay_y + 18, center=True)
 
+    #Todo change
     def show_all_available_cards(self):
         self.left_card_rects = []
         visible_cards = self.filtered_cards[self.scroll_offset_all:self.scroll_offset_all + CARDS_PER_PAGE]
@@ -253,6 +247,7 @@ class DeckScene(Scene):
             if result is not None:
                 self.set_commander(result)
                 self.close_carousel()
+
             return
 
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -303,13 +298,12 @@ class DeckScene(Scene):
             return self.back_button.action
 
         # Start button
-        if self.can_start_game():
-            if self.start_button.check_click(event.pos):
-                self.lock()
-                self.save_user_deck()
-                self.start_button.action["deck_id"] = self.current_deck_index
-                self.start_button.action["commander_id"] = self.current_commander_id
-                return self.start_button.action
+        if self.start_button.check_click(event.pos) and self.can_start_game():
+            self.lock()
+            self.save_user_deck()
+            self.start_button.action["deck_id"] = self.current_deck_index
+            self.start_button.action["commander_id"] = self.current_commander_id
+            return self.start_button.action
 
         # Prev faction button
         if self.prev_faction_button.check_click(event.pos):
@@ -410,18 +404,11 @@ class DeckScene(Scene):
         cards_list = deck.get("cards", [])
         return [
             {
-                "card": next(card for card in self.all_cards if card["id"] == entry["id"]),
+                "card": db.find_card_by_id(entry["id"]),
                 "count": entry["count"]
             }
             for entry in cards_list
         ]
-
-    def get_commander_by_id(self, commander_id):
-        for faction in self.factions_data:
-            for commander in faction["commanders"]:
-                if commander["id"] == commander_id:
-                    return commander
-        return None
 
     def set_commander(self, data):
         commander_id = data['card_id']
@@ -433,8 +420,8 @@ class DeckScene(Scene):
         self.current_decks[self.current_deck_index]["commander_id"] = commander_id
 
     def update_filtered_cards(self):
-        faction = self.factions[self.current_faction_index]
-        self.filtered_cards = [card for card in self.all_cards if card["faction"] == faction or card["faction"] == "Neutralne"]
+        faction = self.get_faction_name()
+        self.filtered_cards = db.get_faction_cards(faction, neutral=True)
         self.scroll_offset_all = 0
 
     def calculate_deck_stats(self):
@@ -497,11 +484,21 @@ class DeckScene(Scene):
 
     def open_carousel(self):
         cards_to_show = self.factions_data[self.current_faction_index]["commanders"]
-        self.carousel_scene = CarouselScene(self.screen, self.draw_card, cards_to_show, choose_count=1, cancelable=True, label=False)
+        self.carousel_scene = CarouselScene(self.screen, self.draw_card, cards_to_show,
+                                            choose_count=1, cancelable=True, label=False, opacity=0.75,
+                                            get_card_attr=self.get_card_attr)
         self.show_carousel = True
 
     @overrides
     def get_card_paths(self, card, size):
-        faction = self.factions[self.current_faction_index]
+        faction = self.get_faction_name()
         filename = card["filename"]
         return faction, filename
+
+    @staticmethod
+    @overrides
+    def get_card_attr(card, attrname):
+        return card[attrname]
+
+    def get_faction_name(self):
+        return self.factions[self.current_faction_index]

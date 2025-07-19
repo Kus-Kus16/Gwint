@@ -186,21 +186,103 @@
                 "name": "Eist Tuirseach",
                 "nickname": "Łowca z An Skellig",
                 "abilities": ["scorch_enemy_low"],
-                "filename": ""
+                "filename": "eist"
             },
             {
                 "id": 233,
                 "name": "Harald an Craite",
                 "nickname": "Chromy",
                 "abilities": ["redraw_more"],
-                "filename": ""
+                "filename": "harald"
             },
             {
                 "id": 234,
                 "name": "Erlend an Craite",
                 "nickname": "Kamienna Pięść",
                 "abilities": ["find_storm"],
-                "filename": ""
+                "filename": "erlend"
+            }
+        ]
+    },
+    {
+        "name": "Księstwo Toussaint",
+        "description": "Gdy przegrasz rundę, weż dodatkową kartę.",
+        "commanders": [
+            {
+                "id": 275,
+                "name": "Anna Henrietta",
+                "nickname": "Jaśnie Oświecona",
+                "abilities": ["restack_deck"],
+                "filename": "anna1"
+            },
+            {
+                "id": 276,
+                "name": "Anna Henrietta",
+                "nickname": "Jej Miłość",
+                "abilities": ["trade_card"],
+                "filename": "anna2"
+            },
+            {
+                "id": 277,
+                "name": "Anna Henrietta",
+                "nickname": "Xiężna Pani",
+                "abilities": ["find_decoy"],
+                "filename": "anna3"
+            },
+            {
+                "id": 278,
+                "name": "Sylvia Anna",
+                "nickname": "Upadła Księżniczka",
+                "abilities": ["draw_enemy"],
+                "filename": "syanna1"
+            },
+            {
+                "id": 279,
+                "name": "Sylvia Anna",
+                "nickname": "Przeklęta Córka",
+                "abilities": ["weak_scorch"],
+                "filename": "syanna2"
+            }
+        ]
+    },
+    {
+        "name": "Kult Wiecznego Ognia",
+        "description": "Na początku rozgrywki wymień do 4 zamiast do 2 kart.",
+        "commanders": [
+            {
+                "id": 325,
+                "name": "Cyrus Engelkind Hemmelfart",
+                "nickname": "Hierarcha Novigradu",
+                "abilities": ["discard_draw"],
+                "filename": "cyrus"
+            },
+            {
+                "id": 326,
+                "name": "Lucius Langweld",
+                "nickname": "Światło Wiecznego Ognia",
+                "abilities": ["find_flame"],
+                "filename": "lucius"
+            },
+            {
+                "id": 327,
+                "name": "Magnus Valtier",
+                "nickname": "Święty",
+                "abilities": ["choose_draw"],
+                "filename": "magnus"
+            },
+            {
+                "id": 328,
+                "name": "Ravon Flarekith",
+                "nickname": "Wielki Kapłan",
+                "abilities": ["give_choose_grave"],
+                "filename": "ravon"
+            },
+            {
+                "id": 329,
+                "name": "Vaden Ashendore",
+                "nickname": "Wysłannik Ognia",
+                "abilities": ["double_decoy"],
+                "filename": "vaden"
             }
         ]
     }

@@ -60,9 +60,9 @@ class Scene(ABC):
                 else:
                     self.unlock()
 
-    def draw_overlay(self, transparency):
+    def draw_overlay(self, opacity):
         overlay = pygame.Surface(self.size, pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 255 * transparency))
+        overlay.fill((0, 0, 0, 255 * opacity))
         self.screen.blit(overlay, self.rect.topleft)
 
     def notification(self, name, frames, locking):
@@ -134,3 +134,7 @@ class Scene(ABC):
             pygame.draw.rect(self.screen, c.COLOR_YELLOW, rect, width=4, border_radius=radius)
 
         return rect
+
+    @staticmethod
+    def get_card_attr(card, attrname):
+        return getattr(card, attrname)
