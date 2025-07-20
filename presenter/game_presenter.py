@@ -15,7 +15,7 @@ from view import constants as c
 class GamePresenter:
     def __init__(self, view):
         self.view = view
-        self.n = Network()
+        self.net = Network()
         self.my_id = None
         self.seed = None
         self.me = None
@@ -25,15 +25,12 @@ class GamePresenter:
         self.actions = queue.Queue()
         self.carousel_dict = {}
 
-        self.deck = None
-        self.commander = None
-
         self.one_passed = False
 
     def connect(self, deck, commander):
         try:
-            self.n.connect()
-            response, data = self.n.send(("register", [deck, commander]))
+            self.net.connect()
+            response, data = self.net.send(("register", [deck, commander]))
         except ConnectionError as e:
             self.return_to_menu(["Serwer nie odpowiada:", str(e)])
             return False
@@ -42,13 +39,12 @@ class GamePresenter:
             raise ConnectionError(f"Server responded with: {response}")
 
         self.my_id, self.seed = data
-        self.me = Player(deck, commander)
 
         return True
 
     def disconnect(self):
-        if self.n.connected:
-            self.n.disconnect()
+        if self.net.connected:
+            self.net.disconnect()
 
     def run(self):
         sleep_time = 1 / c.FRAMERATE
@@ -70,12 +66,18 @@ class GamePresenter:
                     return
 
     def handle_waitingforgame(self):
-        response, data = self.n.send(("waiting", []))
+        response, data = self.net.send(("waiting", []))
 
         if not self.continue_with_response(response):
             return
 
-        self.opponent = Player(data[0], data[1])
+        cards, commander_id = data[0], data[1]
+        try:
+            deck, commander = db.create_verified_deck(cards, commander_id)
+            self.opponent = Player(deck, commander)
+        except ValueError as e:
+            self.return_to_menu(["Niepoprawna talia przeciwnika"], seconds=3)
+
         self.game = Game(self.seed)
 
         players = [self.me, self.opponent] if self.my_id == 0 else [self.opponent, self.me]
@@ -100,7 +102,7 @@ class GamePresenter:
         self.show_carousel(cards, choose_count=player.redraws, cancelable=True, label=True)
 
     def handle_opponentredraw(self):
-        response, data = self.n.send(("waiting", []))
+        response, data = self.net.send(("waiting", []))
 
         if not self.continue_with_response(response):
             return
@@ -116,7 +118,7 @@ class GamePresenter:
         self.turn_switch()
 
     def handle_opponentturn(self):
-        response, data = self.n.send(("waiting", []))
+        response, data = self.net.send(("waiting", []))
 
         if not self.continue_with_response(response):
             return
@@ -133,7 +135,7 @@ class GamePresenter:
         self.turn_switch()
 
     def handle_waitingforendgame(self):
-        response, data = self.n.send(("waiting", []))
+        response, data = self.net.send(("waiting", []))
 
         if not self.continue_with_response(response):
             return
@@ -196,7 +198,7 @@ class GamePresenter:
     def redraw_cards(self, player_id, targets):
         self.game.redraw_cards(player_id, targets)
 
-    # Called by view after user input
+    # Called by view after userdata input
     def notify(self, action):
         self.actions.put(action)
 
@@ -218,12 +220,8 @@ class GamePresenter:
 
     def handle_mode_change(self, action):
         match action["mode"]:
-            case "start_game":
-                self.game_state = "deck"
-                self.disconnect()
-                self.view.change_scene(self.view.deck)
-            case "load_deck":
-                self.handle_load_deck(action)
+            case "new_game":
+                self.handle_newgame(action)
             case "menu":
                 self.game_state = "menu"
                 self.disconnect()
@@ -247,24 +245,28 @@ class GamePresenter:
             case "change_ip":
                 new_ip = action.get("new_ip")
                 if new_ip:
-                    self.n.server_ip = new_ip
+                    self.net.server_ip = new_ip
                     save_ip(new_ip)
-
 
         self.view.unlock()
 
-    def handle_load_deck(self, action):
-        with open("./user/user_decks.json", "r", encoding="utf-8") as file:
-            data = json.load(file)
-            decks = data["decks"]
+    def handle_newgame(self, action):
+        if not action["load"]:
+            self.notify({"type": "mode_change", "mode": "deck"})
+            return
 
-        deck_data = decks[action["deck_id"]]
+        with open("./userdata/user_decks.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
+            i = data["last_index"]
+            deck_data = data["decks"][i]
+
         commander_id = deck_data["commander_id"]
         cards = deck_data["cards"]
 
         try:
             deck, commander = db.create_verified_deck(cards, commander_id)
-            if self.connect(deck, commander):
+            if self.connect(cards, commander_id):
+                self.me = Player(deck, commander)
                 self.game_state = "waiting-for-game"
                 self.view.change_scene(self.view.waiting)
         except ValueError as e:
@@ -290,7 +292,7 @@ class GamePresenter:
             self.relock()
             return
 
-        response, data = self.n.send(("play", ["card", card_id, row_type, targets]))
+        response, data = self.net.send(("play", ["card", card_id, row_type, targets]))
         if not self.continue_with_response(response, is_ok_blocking=False):
             return
 
@@ -308,7 +310,7 @@ class GamePresenter:
             self.relock()
             return
 
-        response, data = self.n.send(("play", ["pass"]))
+        response, data = self.net.send(("play", ["pass"]))
         if not self.continue_with_response(response, is_ok_blocking=False):
             return
 
@@ -318,7 +320,7 @@ class GamePresenter:
         rematch = action["rematch"]
         self.game.end_game()
 
-        response, data = self.n.send(("rematch", [rematch]))
+        response, data = self.net.send(("rematch", [rematch]))
         if not self.continue_with_response(response, is_ok_blocking=False, should_notify=rematch):
             return
 
@@ -395,7 +397,7 @@ class GamePresenter:
             self.view.current_scene.set_card_carousel(list(new_cards))
 
         if action["end"]:
-            response, data = self.n.send(("play", self.carousel_dict["targets"]))
+            response, data = self.net.send(("play", self.carousel_dict["targets"]))
             if not self.continue_with_response(response, is_ok_blocking=False):
                 return
 
@@ -455,6 +457,7 @@ class GamePresenter:
 
     def return_to_menu(self, reasons, seconds=1.5):
         self.game_state = "menu"
+        self.me = None
         self.disconnect()
 
         if self.game:

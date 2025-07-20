@@ -8,10 +8,9 @@ from view.components.button import Button
 
 
 class CarouselScene(Scene):
-    def __init__(self, screen, draw_card, cards, choose_count, cancelable, get_card_attr=None, label=True, font=None, opacity=0.25):
+    def __init__(self, screen, draw_card, cards, choose_count, cancelable, label=True, font=None, opacity=0.25):
         super().__init__(screen)
         self.font = font if font is not None else c.DEFAULT_FONT
-        self.get_card_attr = get_card_attr if get_card_attr is not None else self.__class__.get_card_attr
         self.opacity = opacity
         self.cards = list(cards)
         self.draw_card = draw_card
@@ -137,7 +136,7 @@ class CarouselScene(Scene):
 
                 return {
                     "type": "carousel",
-                    "card_id": self.get_card_attr(card, "id"),
+                    "card_id": card.id,
                     "end": end
                 }
 

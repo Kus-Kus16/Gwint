@@ -630,7 +630,7 @@
         "faction": "Cesarstwo Nilfgaardu",
         "power": 10,
         "rows": ["siege"],
-        "abilities": [],
+        "abilities": ["hero"],
         "count": 1,
         "filename": "morvran"
     },
@@ -2668,9 +2668,9 @@
         "id": 349,
         "name": "Mutant",
         "faction": "Kult Wiecznego Ognia",
-        "power": 4,
+        "power": 5,
         "rows": ["siege"],
-        "abilities": ["muster"],
+        "abilities": ["muster", "low_morale"],
         "count": 2,
         "filename": "mutant"
     },
@@ -2680,7 +2680,7 @@
         "faction": "Kult Wiecznego Ognia",
         "power": 5,
         "rows": ["close"],
-        "abilities": [],
+        "abilities": ["low_morale"],
         "count": 1,
         "filename": "mutantzabojca"
     },
@@ -2878,9 +2878,9 @@
         "id": 370,
         "name": "Zmutowane Psy",
         "faction": "Kult Wiecznego Ognia",
-        "power": 2,
+        "power": 3,
         "rows": ["close"],
-        "abilities": ["bond"],
+        "abilities": ["bond", "low_morale"],
         "count": 2,
         "filename": "zmutowane"
     }

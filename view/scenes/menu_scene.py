@@ -17,7 +17,7 @@ class MenuScene(Scene):
 		button_paths = c.THEME_BUTTON_PATHS
 		self.menu_buttons = [
 			Button("Nowa gra", (button_x, button_y), button_size,
-				   { "type": "mode_change", "mode": "start_game" }, image_paths=button_paths),
+				   { "type": "mode_change", "mode": "new_game", "load": False}, image_paths=button_paths),
 			Button("Twoja talia", (button_x, button_y + (button_height + 45)), button_size,
 				   {"type": "mode_change", "mode": "deck"}, image_paths=button_paths),
 			Button("Ustawienia", (button_x, button_y + 2 * (button_height + 45)), button_size,

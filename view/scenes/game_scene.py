@@ -359,12 +359,9 @@ class GameScene(Scene):
             x, y = x - 1, y - 1
 
         if label:
-            overlay = pygame.Surface((60, 36), pygame.SRCALPHA)
-            overlay.fill((0, 0, 0, 190))
             overlay_x = rect.centerx - 30
             overlay_y = rect.bottom - 36
-            self.screen.blit(overlay, (overlay_x, overlay_y))
-            self.draw_text(container.size(), rect.centerx, rect.bottom - 18, center=True)
+            self.draw_label(container.size(), overlay_x, overlay_y)
 
     def draw_gems(self, hp, x, y):
         gem_on = self.load_ico_image("gem_on")
@@ -474,35 +471,6 @@ class GameScene(Scene):
             return
 
         self.draw_card(self.selected_card, *c.SELECTED_CARD_POS, "large")
-
-    def draw_card(self, card, x, y, size, highlight=False):
-        rect = super().draw_card(card, x, y, size, highlight)
-
-        if not card.is_card_type(CardType.UNIT) and not card.is_card_type(CardType.HERO):
-            return rect
-
-        if card.is_card_type(CardType.HERO):
-            color = c.COLOR_WHITE
-        elif card.power > card.base_power:
-            color = c.COLOR_GREEN
-        elif card.power < card.base_power:
-            color = c.COLOR_RED
-        else:
-            color = c.COLOR_BLACK
-
-        sizes = {
-            "small": (c.MASON_20, c.MASON_30, (20, 20), (20, 20)),
-            "medium": (c.MASON_30, c.MASON_40, (31, 34), (32, 34)),
-            "large": (c.MASON_40, c.MASON_50, (43, 47), (45, 48))
-        }
-
-        font_small, font_large, offset_unit, offset_hero = sizes[size]
-        font = font_large if card.power < 10 else font_small
-        offset = offset_hero if card.is_card_type(CardType.HERO) else offset_unit
-
-        self.draw_text(card.power, rect.x + offset[0], rect.y + offset[1], color=color, font=font, center=True)
-
-        return rect
 
     def set_game(self, game, player_id):
         self.game = game

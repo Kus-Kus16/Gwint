@@ -7,6 +7,7 @@ from model import cards_database as db
 from model.card import Card
 from model.enums.card_type import CardType
 from view import constants as c
+from view.carddict_wrapper import CardDictWrapper
 from view.components.button import Button
 from view.constants import BUTTON_SIZE_WIDE
 from view.scenes.carousel_scene import CarouselScene
@@ -23,12 +24,11 @@ class DeckScene(Scene):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.scroll_offset = 0
         self.scroll_offset_all = 0
         self.scroll_offset_deck = 0
 
         # Decks
-        with open("./user/user_decks.json", "r", encoding="utf-8") as file:
+        with open("./userdata/user_decks.json", "r", encoding="utf-8") as file:
             data = json.load(file)
             self.current_decks = data["decks"]
             self.current_deck_index = data.get("last_index", 0)
@@ -62,6 +62,7 @@ class DeckScene(Scene):
 
         # Scroll
         self.dragging_scroll_all = False
+        self.dragging_scroll_all = False
         self.dragging_scroll_deck = False
         self.scroll_start_deck = None
         self.drag_start_y = None
@@ -78,8 +79,7 @@ class DeckScene(Scene):
                                    ((self.screen_width - button_width) // 2,
                                     self.screen_height - button_height - 30 - button_height - 10),
                                    c.BUTTON_SIZE_NARROW,
-                                   {"type": "mode_change", "mode": "load_deck", "deck_id": self.current_deck_index,
-                                    "commander_id": self.current_commander_id})
+                                   {"type": "mode_change", "mode": "new_game", "load": True})
         self.update_faction_buttons()
 
     def update_faction_buttons(self):
@@ -145,6 +145,7 @@ class DeckScene(Scene):
 
     def draw_commander(self):
         commander, _ = db.find_commander_by_id(self.current_commander_id)
+        commander = self.wrap(commander)
         if commander:
             x = (self.screen_width - c.MEDIUM_CARD_SIZE[0]) // 2
             y = 170
@@ -206,39 +207,42 @@ class DeckScene(Scene):
         self.right_card_rects = []
         visible_deck_cards = deck_cards[self.scroll_offset_deck:self.scroll_offset_deck + CARDS_PER_PAGE]
 
+        total_width = COLS * c.MEDIUM_CARD_SIZE[0] + (COLS - 1) * CARD_MARGIN
+        x_start = self.screen_width - total_width - 70
+
         for idx, entry in enumerate(visible_deck_cards):
-            card = entry["card"]
-            image = self.load_card_image(card, "medium")
+            raw_card = entry["card"]
+            card = self.wrap(raw_card)
+            count = entry["count"]
+
             row = idx // COLS
             col = idx % COLS
-            total_width = COLS * c.MEDIUM_CARD_SIZE[0] + (COLS - 1) * CARD_MARGIN
-            x_start = self.screen_width - total_width - 70
+
             x = x_start + col * (c.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)
             y = 270 + row * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN)
-            self.screen.blit(image, (x, y))
-            self.right_card_rects.append((pygame.Rect(x, y, *c.MEDIUM_CARD_SIZE), card))
 
-            count = entry["count"]
+            rect = self.draw_card(card, x, y, "medium")
+            self.right_card_rects.append((rect, raw_card))
+
             if count > 1:
-                overlay = pygame.Surface((60, 36), pygame.SRCALPHA)
-                overlay.fill((0, 0, 0, 190))
                 overlay_x = x + c.MEDIUM_CARD_SIZE[0] - 60 - 10
                 overlay_y = y + 10
-                self.screen.blit(overlay, (overlay_x, overlay_y))
-                self.draw_text(count, overlay_x + 30, overlay_y + 18, center=True)
+                self.draw_label(count, overlay_x, overlay_y)
 
     #Todo change
     def show_all_available_cards(self):
         self.left_card_rects = []
         visible_cards = self.filtered_cards[self.scroll_offset_all:self.scroll_offset_all + CARDS_PER_PAGE]
-        for idx, card in enumerate(visible_cards):
-            image = self.load_card_image(card, "medium")
+        for idx, raw_card in enumerate(visible_cards):
+            card = self.wrap(raw_card)
+
             row = idx // COLS
             col = idx % COLS
             x = 70 + col * (c.MEDIUM_CARD_SIZE[0] + CARD_MARGIN)
             y = 270 + row * (c.MEDIUM_CARD_SIZE[1] + CARD_MARGIN)
-            self.screen.blit(image, (x, y))
-            self.left_card_rects.append((pygame.Rect(x, y, *c.MEDIUM_CARD_SIZE), card))
+
+            rect = self.draw_card(card, x, y, "medium")
+            self.left_card_rects.append((rect, raw_card))
 
     @overrides
     def handle_events(self, event):
@@ -301,8 +305,6 @@ class DeckScene(Scene):
         if self.start_button.check_click(event.pos) and self.can_start_game():
             self.lock()
             self.save_user_deck()
-            self.start_button.action["deck_id"] = self.current_deck_index
-            self.start_button.action["commander_id"] = self.current_commander_id
             return self.start_button.action
 
         # Prev faction button
@@ -393,7 +395,7 @@ class DeckScene(Scene):
 
     # noinspection PyTypeChecker
     def save_user_deck(self):
-        with open("./user/user_decks.json", "w", encoding="utf-8") as f:
+        with open("./userdata/user_decks.json", "w", encoding="utf-8") as f:
             json.dump({
                 "decks": self.current_decks,
                 "last_index": self.current_deck_index
@@ -483,22 +485,25 @@ class DeckScene(Scene):
         self.carousel_scene = None
 
     def open_carousel(self):
-        cards_to_show = self.factions_data[self.current_faction_index]["commanders"]
-        self.carousel_scene = CarouselScene(self.screen, self.draw_card, cards_to_show,
-                                            choose_count=1, cancelable=True, label=False, opacity=0.75,
-                                            get_card_attr=self.get_card_attr)
+        cards = self.factions_data[self.current_faction_index]["commanders"]
+        self.carousel_scene = CarouselScene(self.screen, self.draw_card, self.wrap_cards(cards),
+                                            choose_count=1, cancelable=True, label=False, opacity=0.75)
         self.show_carousel = True
 
     @overrides
     def get_card_paths(self, card, size):
+        # Card must be wrapped
         faction = self.get_faction_name()
-        filename = card["filename"]
+        filename = card.filename
         return faction, filename
-
-    @staticmethod
-    @overrides
-    def get_card_attr(card, attrname):
-        return card[attrname]
 
     def get_faction_name(self):
         return self.factions[self.current_faction_index]
+
+    @classmethod
+    def wrap(cls, card):
+        return CardDictWrapper(card)
+
+    @classmethod
+    def wrap_cards(cls, cards):
+        return [CardDictWrapper(card) for card in cards]

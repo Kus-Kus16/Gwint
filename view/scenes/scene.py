@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 import pygame
 
+from model.enums.card_type import CardType
 from view.components.notification import Notification
 from view import constants as c, image_loader as loader
 
@@ -133,8 +134,35 @@ class Scene(ABC):
             radius = 5 if size == "small" else 10
             pygame.draw.rect(self.screen, c.COLOR_YELLOW, rect, width=4, border_radius=radius)
 
+        if not card.is_card_type(CardType.UNIT) and not card.is_card_type(CardType.HERO):
+            return rect
+
+        if card.is_card_type(CardType.HERO):
+            color = c.COLOR_WHITE
+        elif card.power > card.base_power:
+            color = c.COLOR_GREEN
+        elif card.power < card.base_power:
+            color = c.COLOR_RED
+        else:
+            color = c.COLOR_BLACK
+
+        sizes = {
+            "small": (c.MASON_20, c.MASON_30, (20, 20), (20, 20)),
+            "medium": (c.MASON_30, c.MASON_40, (31, 34), (32, 34)),
+            "large": (c.MASON_40, c.MASON_50, (43, 47), (45, 48))
+        }
+
+        font_small, font_large, offset_unit, offset_hero = sizes[size]
+        font = font_large if card.power < 10 else font_small
+        offset = offset_hero if card.is_card_type(CardType.HERO) else offset_unit
+
+        self.draw_text(card.power, rect.x + offset[0], rect.y + offset[1], color=color, font=font, center=True)
+
         return rect
 
-    @staticmethod
-    def get_card_attr(card, attrname):
-        return getattr(card, attrname)
+    def draw_label(self, text, x, y):
+        overlay = pygame.Surface((60, 36), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 190))
+
+        self.screen.blit(overlay, (x, y))
+        self.draw_text(text, x + 30, y + 18, center=True)

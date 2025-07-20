@@ -1,6 +1,6 @@
 import os
 
-IP_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'user', 'ip.txt')
+IP_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'userdata', 'ip.txt')
 IP_FILE_PATH = os.path.abspath(IP_FILE_PATH)
 
 def load_ip():

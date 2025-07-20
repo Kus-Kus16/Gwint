@@ -192,7 +192,7 @@
                 "id": 233,
                 "name": "Harald an Craite",
                 "nickname": "Chromy",
-                "abilities": ["redraw_more"],
+                "abilities": ["find_scorch"],
                 "filename": "harald"
             },
             {
@@ -281,7 +281,7 @@
                 "id": 329,
                 "name": "Vaden Ashendore",
                 "nickname": "Wysłannik Ognia",
-                "abilities": ["double_decoy"],
+                "abilities": ["swap_morale"],
                 "filename": "vaden"
             }
         ]
