@@ -1,7 +1,7 @@
 import pygame
 from overrides import overrides
 
-from src.view import image_loader as loader, constants as c
+from src.view import constants as c, loader as loader
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 

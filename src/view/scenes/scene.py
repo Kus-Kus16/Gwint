@@ -4,7 +4,7 @@ import pygame
 
 from src.model.enums.card_type import CardType
 from src.view.components.notification import Notification
-from src.view import image_loader as loader, constants as c
+from src.view import constants as c, loader as loader
 
 
 class Scene(ABC):

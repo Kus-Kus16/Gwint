@@ -1,6 +1,6 @@
 from overrides import overrides
 
-from src.model import cards_database as db
+from src.model.cards import cards_database as db
 from src.model.abilities.units.unit_base import UnitAbilityBase
 from src.model.enums.ability_type import AbilityType
 

@@ -1,7 +1,5 @@
-from src.model.card_holders.card_holder import CardHolder
+from src.model.card_holders.sorted_card_holder import SortedCardHolder
 
-import bisect
 
-class Hand(CardHolder):
-    def add_card(self, card):
-        bisect.insort(self.cards, card)
+class Hand(SortedCardHolder):
+    pass

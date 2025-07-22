@@ -3,7 +3,7 @@ import logging
 import queue
 import time
 
-from src.model import cards_database as db
+from src.model.cards import cards_database as db
 from src.model.enums.cards_area import CardsArea
 from src.model.game import Game
 from src.model.player import Player

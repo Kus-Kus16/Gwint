@@ -1,11 +1,14 @@
 import importlib
 from abc import ABC
 
+from src.model.enums.faction_type import FactionType
+
+
 class CardBase(ABC):
     def __init__(self, data):
         self.id = data['id']
         self.name = data['name']
-        self.faction = data['faction']
+        self.faction = FactionType.fullname_to_faction(data['faction'])
         self.owner = None
         self.filename = data['filename']
         self.abilities = None

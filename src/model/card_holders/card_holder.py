@@ -58,6 +58,3 @@ class CardHolder(ABC):
     def transfer_all_cards(self, container):
         for card in list(self.cards):
             self.transfer_card(card, container)
-
-    def __str__(self):
-        return "\n".join(str(card) for card in self.cards)

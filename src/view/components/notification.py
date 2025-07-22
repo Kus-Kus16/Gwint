@@ -1,6 +1,6 @@
 import pygame
 
-from src.view import image_loader as loader, constants as c
+from src.view import constants as c, loader as loader
 
 
 def load_image(name):

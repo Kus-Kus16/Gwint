@@ -1,7 +1,6 @@
 import pygame
 from overrides import overrides
 
-from src.model import cards_database as db
 from src.model.enums.ability_type import AbilityType
 from src.model.enums.card_type import CardType
 from src.model.enums.cards_area import CardsArea
@@ -317,7 +316,7 @@ class GameScene(Scene):
 
         self.draw_icon("player_border", (116, 122), x + 60, y + 11)
         self.draw_icon("profile", (89, 90), x + 74, y + 30)
-        self.draw_icon(f"tarcza_{db.faction_to_nickname(player.faction)}", (45, 50), x + 52, y + 12)
+        self.draw_icon(f"tarcza_{player.faction.name.lower()}", (45, 50), x + 52, y + 12)
         self.draw_icon(f"total_{"opp" if opponent else "me"}", None, x + 427, y + 45)
 
         if self.game.is_winning_round(player_id):
@@ -336,7 +335,7 @@ class GameScene(Scene):
         points_pos = c.POINTS_OPP_POS if opponent else c.POINTS_POS
         self.draw_text(f"{player.points}", *points_pos, color=c.COLOR_BLACK, center=True, font=c.CINZEL_30_BOLD)
 
-        filename = f"rewers_{db.faction_to_nickname(player.faction)}"
+        filename = f"rewers_{player.faction.name.lower()}"
         self.draw_stack(player.deck, c.DECK_OPP_RECT if opponent else c.DECK_RECT,
                         image=self.load_ico_image(filename, c.DECK_CARD_SIZE), label=True)
         self.draw_stack(player.grave, c.GRAVE_OPP_RECT if opponent else c.GRAVE_RECT)
@@ -529,8 +528,8 @@ class GameScene(Scene):
     def show_card_carousel(self, cards, choose_count, cancelable, label):
         self.carousel_scene = CarouselScene(
             self.screen,
-            self.draw_card,
             cards,
+            self.get_card_paths,
             choose_count,
             cancelable,
             label,

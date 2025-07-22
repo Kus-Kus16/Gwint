@@ -1,21 +1,31 @@
 import json
 from collections import defaultdict
 
-from src.model.card import Card
-from src.model.commander import Commander
+from src.model.cards.card import Card
+from src.model.cards.commander import Commander
 from src.model.card_holders.deck import Deck
 from src.model.enums.card_type import CardType
+from src.model.enums.faction_type import FactionType
 
 with open("./resources/data/cards.json", "r", encoding="utf-8") as file:
     card_list = json.load(file)
     card_dict = {card["id"]: card for card in card_list}
 
-    faction_dict = defaultdict(list)
+    faction_cards_dict = defaultdict(list)
     for card in card_list:
-        faction_dict[card["faction"]].append(card)
+        if card["count"] == 0:
+            continue
+
+        faction = FactionType.fullname_to_faction(card["faction"])
+        faction_cards_dict[faction].append(card)
 
 with open("./resources/data/factions.json", "r", encoding="utf-8") as file:
     faction_list = json.load(file)
+
+    faction_commanders_dict = defaultdict(list)
+    for faction_data in faction_list:
+        faction = FactionType.fullname_to_faction(faction_data["name"])
+        faction_commanders_dict[faction] = faction_data["commanders"]
 
 with open("./resources/data/muster.json", "r", encoding="utf-8") as file:
     muster_dict = json.load(file)
@@ -26,19 +36,6 @@ with open("./resources/data/bond.json", "r", encoding="utf-8") as file:
 with open("./resources/data/recall.json", "r", encoding="utf-8") as file:
     recall_dict = json.load(file)
 
-# Nicknames
-def faction_to_nickname(fullname):
-    mapping = {
-        "Królestwa Północy": "polnoc",
-        "Cesarstwo Nilfgaardu": "nilfgaard",
-        "Potwory": "potwory",
-        "Scoia'tael": "scoiatael",
-        "Skellige": "skellige",
-        "Księstwo Toussaint": "toussaint",
-        "Kult Wiecznego Ognia": "ogien"
-    }
-    return mapping.get(fullname)
-
 # Dictionary
 def find_card_by_id(card_id):
     return card_dict.get(card_id)
@@ -47,22 +44,32 @@ def find_commander_by_id(commander_id):
     for faction in faction_list:
         for commander in faction["commanders"]:
             if commander["id"] == commander_id:
-                return commander, faction["name"]
+                commander["faction"] = faction["name"]
+                return commander
 
-def get_faction_cards(fullname, neutral=False):
-    cards = list(faction_dict.get(fullname, []))
-    if neutral:
-        cards.extend(faction_dict.get("Neutralne", []))
+def get_faction_cards(faction_type, include_neutral=False):
+    cards = list(faction_cards_dict.get(faction_type, []))
+    if include_neutral:
+        cards.extend(faction_cards_dict.get(FactionType.NEUTRALNE, []))
 
     return cards
 
+def get_faction_commanders(faction_type):
+    faction_name = FactionType.faction_to_fullname(faction_type)
+    commanders = faction_commanders_dict[faction_type]
+
+    for data in commanders:
+        data["faction"] = faction_name
+
+    return commanders
+
 def create_verified_deck(data, commander_id):
-    commander_data, faction = find_commander_by_id(commander_id)
+    commander_data = find_commander_by_id(commander_id)
 
     if commander_data is None:
         raise ValueError(f"Commander: {commander_id} does not exist")
 
-    commander_data["faction"] = faction
+    faction = commander_data["faction"]
     commander = Commander(commander_data)
 
     processed = {}

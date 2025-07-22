@@ -7,7 +7,7 @@ from src.view.scenes.text_scene import TextScene
 from src.view.scenes.deck_scene import DeckScene
 from src.view.scenes.game_scene import GameScene
 from src.view.scenes.menu_scene import MenuScene
-from src.view import image_loader as loader, constants as c
+from src.view import loader as loader, constants as c
 from src.view.components.volume_slider import VolumeSlider
 
 

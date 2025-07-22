@@ -8,13 +8,13 @@ from src.view.components.button import Button
 
 
 class CarouselScene(Scene):
-    def __init__(self, screen, draw_card, cards, choose_count, cancelable, label=True, font=None, opacity=0.25):
+    def __init__(self, screen, cards, get_card_paths, choose_count, cancelable, initial_index=0, label=True, font=None, opacity=0.25):
         super().__init__(screen)
+        self.get_card_paths = get_card_paths
         self.font = font if font is not None else c.DEFAULT_FONT
         self.opacity = opacity
         self.cards = list(cards)
-        self.draw_card = draw_card
-        self.selected_index = 0
+        self.selected_index = initial_index
         self.choose_count = choose_count
         self.choosable = choose_count != 0
         self.cancellable = cancelable

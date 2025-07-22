@@ -1,14 +1,13 @@
 from overrides import overrides
 
-from src.model import cards_database as db
-from src.model.card_holders.card_holder import CardHolder
-import bisect
+from src.model.card_holders.sorted_card_holder import SortedCardHolder
+from src.model.cards import cards_database as db
 
 from src.model.enums.ability_type import AbilityType
 from src.model.enums.card_type import CardType
 
 
-class Row(CardHolder):
+class Row(SortedCardHolder):
     def __init__(self):
         super().__init__()
         self.points = 0
@@ -21,7 +20,7 @@ class Row(CardHolder):
 
     @overrides
     def add_card(self, card):
-        bisect.insort(self.cards, card)
+        super().add_card(card)
 
         for ability in card.abilities:
             ability.on_row_insert(self)
@@ -164,6 +163,3 @@ class Row(CardHolder):
                 cards.append(card)
 
         return cards
-
-    def __str__(self):
-        return str(self.points) + " :: " + ", ".join(str(card) for card in self.cards)
