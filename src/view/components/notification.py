@@ -1,6 +1,7 @@
 import pygame
 
-from src.view import constants as c, loader as loader
+from src.view import loader as loader
+from src.view.constants import ui_constants as u
 
 
 def load_image(name):
@@ -9,7 +10,7 @@ def load_image(name):
 
 class Notification:
     def __init__(self, pos, size, name, frames, locking, font=None):
-        self.font = font if font is not None else c.DEFAULT_FONT
+        self.font = font if font is not None else u.DEFAULT_FONT
         self.rect = pygame.Rect(pos, size)
         self.texts = None
         self.image = None
@@ -32,7 +33,7 @@ class Notification:
         start_y = self.rect.centery - total_height // 2
 
         for i, line in enumerate(self.texts):
-            text_surface = self.font.render(line, True, c.COLOR_GOLD)
+            text_surface = self.font.render(line, True, u.COLOR_GOLD)
             y = start_y + i * (line_height + y_offset)
             screen.blit(text_surface, (x, y))
 

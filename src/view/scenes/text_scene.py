@@ -1,7 +1,7 @@
 import pygame
 from overrides import overrides
 
-from src.view import constants as c
+from src.view.constants import ui_constants as u
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 
@@ -12,9 +12,9 @@ class TextScene(Scene):
 
         self.texts = texts
 
-        button_width, button_height = c.BUTTON_SIZE_WIDE
+        button_width, button_height = u.BUTTON_SIZE_WIDE
         self.back_button = Button("Powrót do Menu",((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
-          c.BUTTON_SIZE_WIDE, { "type": "mode_change", "mode": "menu" }, image_paths=c.THEME_BUTTON_PATHS)
+          u.BUTTON_SIZE_WIDE, { "type": "mode_change", "mode": "menu" }, image_paths=u.THEME_BUTTON_PATHS)
 
     @overrides
     def draw(self):
@@ -22,7 +22,7 @@ class TextScene(Scene):
         self.draw_overlay(0.60)
 
         lines = self.texts
-        font = c.CINZEL_40
+        font = u.CINZEL_40
         line_height = font.get_height()
         spacing = 10
 
@@ -31,7 +31,7 @@ class TextScene(Scene):
 
         y_pos = start_y
         for line in lines:
-            text_surface = font.render(line, True, c.COLOR_WHITE)
+            text_surface = font.render(line, True, u.COLOR_WHITE)
             text_rect = text_surface.get_rect(center=(self.screen_width // 2, y_pos + line_height // 2))
             self.screen.blit(text_surface, text_rect)
             y_pos += line_height + spacing

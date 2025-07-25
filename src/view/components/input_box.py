@@ -1,12 +1,12 @@
 import pygame
-from src.view import constants as c
+from src.view.constants import ui_constants as u
 
 
 class InputBox:
     def __init__(self, x, y, w, h, text='', font=None,
-                 color_inactive=c.COLOR_GRAY,
-                 color_active=c.COLOR_GOLD,
-                 text_color=c.COLOR_LIGHTGRAY):
+                 color_inactive=u.COLOR_GRAY,
+                 color_active=u.COLOR_GOLD,
+                 text_color=u.COLOR_LIGHTGRAY):
         self.rect = pygame.Rect(x, y, w, h)
         self.color_inactive = color_inactive
         self.color_active = color_active

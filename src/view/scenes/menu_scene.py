@@ -1,7 +1,8 @@
 import pygame
 from overrides import overrides
 
-from src.view import constants as c, loader as loader
+from src.view import loader as loader
+from src.view.constants import ui_constants as u
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 
@@ -10,11 +11,11 @@ class MenuScene(Scene):
 	def __init__(self, screen, volume_slider):
 		super().__init__(screen, volume_slider=volume_slider)
 
-		button_width, button_height = c.BUTTON_SIZE_WIDE
+		button_width, button_height = u.BUTTON_SIZE_WIDE
 		button_x = 184
 		button_y = 387
-		button_size = c.BUTTON_SIZE_WIDE
-		button_paths = c.THEME_BUTTON_PATHS
+		button_size = u.BUTTON_SIZE_WIDE
+		button_paths = u.THEME_BUTTON_PATHS
 		self.menu_buttons = [
 			Button("Nowa gra", (button_x, button_y), button_size,
 				   { "type": "mode_change", "mode": "new_game", "load": False}, image_paths=button_paths),
@@ -36,7 +37,7 @@ class MenuScene(Scene):
 		overlay.fill((0, 0, 0, 216))
 		self.screen.blit(overlay, (134, 0))
 
-		logo = loader.load_image(c.LOGO_PATH)
+		logo = loader.load_image(u.LOGO_PATH)
 		self.screen.blit(logo, (192, 73))
 
 		mouse_pos = pygame.mouse.get_pos()

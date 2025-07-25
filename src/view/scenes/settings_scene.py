@@ -4,17 +4,17 @@ from src.network.ip_config import load_ip
 from src.view.components.button import Button
 from src.view.components.input_box import InputBox
 from src.view.scenes.scene import Scene
-from src.view import constants as c
+from src.view.constants import ui_constants as u
 
 
 class SettingsScene(Scene):
     def __init__(self, screen):
         super().__init__(screen)
-        btn_w, btn_h = c.BUTTON_SIZE_WIDE
+        btn_w, btn_h = u.BUTTON_SIZE_WIDE
 
         # Przyciski
-        button_size = c.BUTTON_SIZE_WIDE
-        button_paths = c.THEME_BUTTON_PATHS
+        button_size = u.BUTTON_SIZE_WIDE
+        button_paths = u.THEME_BUTTON_PATHS
         self.back_button = Button(
             "Powrót do Menu",
             ((self.screen_width - btn_w) // 2, self.screen_height - btn_h - 50),
@@ -36,7 +36,7 @@ class SettingsScene(Scene):
         self.input_box = InputBox(self.screen_width // 2 - 150, 230, 300, 50, text=current_ip)
 
         # Etykieta
-        self.label_font = c.DEFAULT_FONT_BOLD
+        self.label_font = u.DEFAULT_FONT_BOLD
         self.label_text = "Adres IP serwera:"
 
 
@@ -46,7 +46,7 @@ class SettingsScene(Scene):
         self.draw_overlay(0.85)
 
         # Rysuj etykietę
-        label_surf = self.label_font.render(self.label_text, True, c.COLOR_WHITE)
+        label_surf = self.label_font.render(self.label_text, True, u.COLOR_WHITE)
         label_rect = label_surf.get_rect(center=(self.screen_width // 2, 200))
         self.screen.blit(label_surf, label_rect)
 

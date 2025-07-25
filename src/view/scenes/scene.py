@@ -4,18 +4,19 @@ import pygame
 
 from src.model.enums.card_type import CardType
 from src.view.components.notification import Notification
-from src.view import constants as c, loader as loader
+from src.view import loader as loader
+from src.view.constants import ui_constants as u
 
 
 class Scene(ABC):
     def __init__(self, screen, background_path=None, volume_slider=None):
         self.screen = screen
-        self.framerate = c.FRAMERATE
+        self.framerate = u.FRAMERATE
         self.pos = (0, 0)
         self.size = screen.get_size()
         self.screen_width, self.screen_height = self.size
         self.rect = pygame.Rect(self.pos, self.size)
-        self.background = loader.load_image(background_path if background_path is not None else c.BACKGROUND_PATH,
+        self.background = loader.load_image(background_path if background_path is not None else u.BACKGROUND_PATH,
                                             (self.screen_width, self.screen_height))
         self.volume_slider = volume_slider
         self.temporary_drawable = []
@@ -80,7 +81,7 @@ class Scene(ABC):
     def clear_temporary(self):
         self.temporary_drawable.clear()
 
-    def draw_text(self, text, x, y, color=c.COLOR_WHITE, font=c.CINZEL_30, center=False):
+    def draw_text(self, text, x, y, color=u.COLOR_WHITE, font=u.CINZEL_30, center=False):
         text_surface = font.render(str(text), True, color)
         text_rect = text_surface.get_rect()
         if center:
@@ -97,17 +98,17 @@ class Scene(ABC):
     @classmethod
     def load_small_card_image(cls, faction, filename):
         path = f"resources/small/{faction}/{filename}.png"
-        return loader.load_image(path, c.SMALL_CARD_SIZE)
+        return loader.load_image(path, u.SMALL_CARD_SIZE)
 
     @classmethod
     def load_medium_card_image(cls, faction, filename):
         path = f"resources/large/{faction}/{filename}.png"
-        return loader.load_image(path, c.MEDIUM_CARD_SIZE)
+        return loader.load_image(path, u.MEDIUM_CARD_SIZE)
 
     @classmethod
     def load_large_card_image(cls, faction, filename):
         path = f"resources/large/{faction}/{filename}.png"
-        return loader.load_image(path, c.LARGE_CARD_SIZE)
+        return loader.load_image(path, u.LARGE_CARD_SIZE)
 
     def load_card_image(self, card, size):
         loaders = {
@@ -133,24 +134,24 @@ class Scene(ABC):
 
         if highlight:
             radius = 5 if size == "small" else 10
-            pygame.draw.rect(self.screen, c.COLOR_YELLOW, rect, width=4, border_radius=radius)
+            pygame.draw.rect(self.screen, u.COLOR_YELLOW, rect, width=4, border_radius=radius)
 
         if not card.is_card_type(CardType.UNIT) and not card.is_card_type(CardType.HERO):
             return rect
 
         if card.is_card_type(CardType.HERO):
-            color = c.COLOR_WHITE
+            color = u.COLOR_WHITE
         elif card.power > card.base_power:
-            color = c.COLOR_GREEN
+            color = u.COLOR_GREEN
         elif card.power < card.base_power:
-            color = c.COLOR_RED
+            color = u.COLOR_RED
         else:
-            color = c.COLOR_BLACK
+            color = u.COLOR_BLACK
 
         sizes = {
-            "small": (c.MASON_20, c.MASON_30, (20, 20), (20, 20)),
-            "medium": (c.MASON_30, c.MASON_40, (31, 34), (32, 34)),
-            "large": (c.MASON_40, c.MASON_50, (43, 47), (45, 48))
+            "small": (u.MASON_20, u.MASON_30, (20, 20), (20, 20)),
+            "medium": (u.MASON_30, u.MASON_40, (31, 34), (32, 34)),
+            "large": (u.MASON_40, u.MASON_50, (43, 47), (45, 48))
         }
 
         font_small, font_large, offset_unit, offset_hero = sizes[size]
@@ -167,3 +168,14 @@ class Scene(ABC):
 
         self.screen.blit(overlay, (x, y))
         self.draw_text(text, x + 30, y + 18, center=True)
+
+    def draw_icon(self, filename, size, x, y, center=False):
+        image = self.load_ico_image(filename, size)
+        rect = image.get_rect()
+
+        if center:
+            rect.center = (x, y)
+        else:
+            rect.topleft = (x, y)
+
+        self.screen.blit(image, rect)

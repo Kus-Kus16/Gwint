@@ -7,7 +7,8 @@ from src.view.scenes.text_scene import TextScene
 from src.view.scenes.deck_scene import DeckScene
 from src.view.scenes.game_scene import GameScene
 from src.view.scenes.menu_scene import MenuScene
-from src.view import loader as loader, constants as c
+from src.view import loader as loader
+from src.view.constants import ui_constants as u
 from src.view.components.volume_slider import VolumeSlider
 
 
@@ -18,7 +19,7 @@ class PygameView:
 
         pygame.display.set_caption("Gwint LAN")
         self.clock = pygame.time.Clock()
-        self.framerate = c.FRAMERATE
+        self.framerate = u.FRAMERATE
         self.cursor = loader.load_image("resources/ico/cursor.png")
         self.volume_slider = VolumeSlider((self.screen_width - 240, self.screen_height - 60))
 
@@ -36,7 +37,7 @@ class PygameView:
 
         #Screens initiation
         self.menu = MenuScene(self.screen, self.volume_slider)
-        self.credits = TextScene(self.screen, c.AUTHORS)
+        self.credits = TextScene(self.screen, u.AUTHORS)
         self.waiting = TextScene(self.screen, ["Oczekiwanie na przeciwnika"])
         self.game = GameScene(self.screen, self.volume_slider)
         self.deck = DeckScene(self.screen)

@@ -4,8 +4,9 @@ from overrides import overrides
 from src.model.enums.ability_type import AbilityType
 from src.model.enums.card_type import CardType
 from src.model.enums.cards_area import CardsArea
+from src.model.enums.faction_type import FactionType
 from src.model.enums.row_type import RowType
-from src.view import constants as c
+from src.view.constants import game_constants as c, ui_constants as u
 from src.view.scenes.carousel_scene import CarouselScene
 from src.view.scenes.endscreen import EndScreen
 from src.view.scenes.scene import Scene
@@ -281,7 +282,7 @@ class GameScene(Scene):
             text_x, text_y = data["TEXT_CENTER"]
             self.draw_row(row, row_rect, row_type)
             self.draw_row_boosts(row, boost_rect)
-            self.draw_text(f"{row.points}", text_x, text_y, color=c.COLOR_BLACK, center=True, font=c.CINZEL_30_BOLD)
+            self.draw_text(f"{row.points}", text_x, text_y, color=u.COLOR_BLACK, center=True, font=u.CINZEL_30_BOLD)
 
     def draw_players(self):
         self.draw_player(self.player_id, c.INFO_RECT)
@@ -297,7 +298,7 @@ class GameScene(Scene):
 
             centerx, centery = overlay_rect.center
             self.draw_text("Wciśnij spację aby spasować", centerx, centery, center=True,
-                           color=c.COLOR_LIGHTGRAY, font=c.CINZEL_20_BOLD)
+                           color=u.COLOR_LIGHTGRAY, font=u.CINZEL_20_BOLD)
 
     def draw_player(self, player_id, info_rect, opponent=False):
         player = self.game.get_player(player_id)
@@ -305,9 +306,9 @@ class GameScene(Scene):
         size = info_rect.size
 
         if self.game.current_player_id == player_id:
-            pygame.draw.line(self.screen, c.COLOR_YELLOW, (info_rect.left, info_rect.top),
+            pygame.draw.line(self.screen, u.COLOR_YELLOW, (info_rect.left, info_rect.top),
             (info_rect.right, info_rect.top), 3)
-            pygame.draw.line(self.screen, c.COLOR_YELLOW, (info_rect.left, info_rect.bottom - 1),
+            pygame.draw.line(self.screen, u.COLOR_YELLOW, (info_rect.left, info_rect.bottom - 1),
             (info_rect.right, info_rect.bottom - 1), 3)
 
         overlay = pygame.Surface(size, pygame.SRCALPHA)
@@ -323,30 +324,25 @@ class GameScene(Scene):
             self.draw_icon("high_score", None, x + 403, y + 40)
 
         if self.game.get_player(player_id).passed:
-            self.draw_text("Pas", x + 453, y + 132, color=c.COLOR_WHITE, center=True, font=c.CINZEL_25_BOLD)
+            self.draw_text("Pas", x + 453, y + 132, color=u.COLOR_WHITE, center=True, font=u.CINZEL_25_BOLD)
 
         self.draw_gems(player.hp, x, y)
         self.draw_icon("cards", None, x + 201, y + 88)
-        self.draw_text(player.hand.size(), x + 257, y + 108, color=c.COLOR_GOLD, center=True)
+        self.draw_text(player.hand.size(), x + 257, y + 108, color=u.COLOR_GOLD, center=True)
 
-        self.draw_text("Przeciwnik" if opponent else "Ty", x + 201, y + 12, color=c.COLOR_GOLD, font=c.CINZEL_20_BOLD)
-        self.draw_text(player.faction, x + 201, y + 45, color=c.COLOR_LIGHTGRAY, font=c.CINZEL_15)
+        self.draw_text("Przeciwnik" if opponent else "Ty", x + 201, y + 12, color=u.COLOR_GOLD, font=u.CINZEL_20_BOLD)
+        self.draw_text(player.faction, x + 201, y + 45, color=u.COLOR_LIGHTGRAY, font=u.CINZEL_15)
 
         points_pos = c.POINTS_OPP_POS if opponent else c.POINTS_POS
-        self.draw_text(f"{player.points}", *points_pos, color=c.COLOR_BLACK, center=True, font=c.CINZEL_30_BOLD)
+        self.draw_text(f"{player.points}", *points_pos, color=u.COLOR_BLACK, center=True, font=u.CINZEL_30_BOLD)
 
         filename = f"rewers_{player.faction.name.lower()}"
         self.draw_stack(player.deck, c.DECK_OPP_RECT if opponent else c.DECK_RECT,
-                        image=self.load_ico_image(filename, c.DECK_CARD_SIZE), label=True)
+                        image=self.load_ico_image(filename, u.DECK_CARD_SIZE), label=True)
         self.draw_stack(player.grave, c.GRAVE_OPP_RECT if opponent else c.GRAVE_RECT)
 
-    def draw_icon(self, filename, size, x, y):
-        image = self.load_ico_image(filename, size)
-        rect = image.get_rect(topleft=(x, y))
-        self.screen.blit(image, rect)
-
     def draw_stack(self, container, rect, image=None, label=False):
-        card_size = image.get_rect().size if image is not None else c.SMALL_CARD_SIZE
+        card_size = image.get_rect().size if image is not None else u.SMALL_CARD_SIZE
         x, y = rect.centerx - card_size[0] // 2, rect.centery - card_size[1] // 2
 
         for card in container.cards:
@@ -389,7 +385,7 @@ class GameScene(Scene):
         width = rect.width
         x, y = rect.left, rect.top
         count = len(cards)
-        card_width = c.SMALL_CARD_SIZE[0]
+        card_width = u.SMALL_CARD_SIZE[0]
         offset = card_width
 
         total_width = offset * (count - 1) #except last card (fully visible)
@@ -431,7 +427,7 @@ class GameScene(Scene):
     def draw_highlights(self):
         def make_surface(size):
             surface = pygame.Surface(size, pygame.SRCALPHA)
-            surface.fill((*c.COLOR_HIGHLIGHT, c.ALPHA_HIGHLIGHT))
+            surface.fill((*u.COLOR_HIGHLIGHT, u.ALPHA_HIGHLIGHT))
             return surface
 
         selected = self.selected_card
@@ -546,10 +542,11 @@ class GameScene(Scene):
 
     @overrides
     def get_card_paths(self, card, size):
-        if size == "small" or card.faction != "Neutralne":
+        if size == "small" or card.faction != FactionType.NEUTRALNE:
             faction = card.faction
         else:
             faction = card.owner.faction
 
+        faction = FactionType.faction_to_fullname(faction)
         filename = card.filename
         return faction, filename

@@ -9,7 +9,8 @@ from src.model.game import Game
 from src.model.player import Player
 from src.network.ip_config import save_ip
 from src.network.network import Network
-from src.view import constants as c
+from src.view import loader
+from src.view.constants import ui_constants as u
 
 
 class GamePresenter:
@@ -47,7 +48,7 @@ class GamePresenter:
             self.net.disconnect()
 
     def run(self):
-        sleep_time = 1 / c.FRAMERATE
+        sleep_time = 1 / u.FRAMERATE
         while True:
             time.sleep(sleep_time)
             self.process_actions()
@@ -255,10 +256,9 @@ class GamePresenter:
             self.notify({"type": "mode_change", "mode": "deck"})
             return
 
-        with open("./userdata/user_decks.json", "r", encoding="utf-8") as file:
-            data = json.load(file)
-            i = data["last_index"]
-            deck_data = data["decks"][i]
+        userdata = loader.load_data("user_decks", is_userdata=True)
+        i = userdata["last_used_index"]
+        deck_data = userdata["decks"][i]
 
         commander_id = deck_data["commander_id"]
         cards = deck_data["cards"]

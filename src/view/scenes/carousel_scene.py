@@ -2,7 +2,7 @@ import pygame
 from overrides import overrides
 
 from src.model.enums.ability_type import AbilityType
-from src.view import constants as c
+from src.view.constants import ui_constants as u
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 
@@ -11,7 +11,7 @@ class CarouselScene(Scene):
     def __init__(self, screen, cards, get_card_paths, choose_count, cancelable, initial_index=0, label=True, font=None, opacity=0.25):
         super().__init__(screen)
         self.get_card_paths = get_card_paths
-        self.font = font if font is not None else c.DEFAULT_FONT
+        self.font = font if font is not None else u.DEFAULT_FONT
         self.opacity = opacity
         self.cards = list(cards)
         self.selected_index = initial_index
@@ -23,7 +23,7 @@ class CarouselScene(Scene):
 
         self.visible_cards = 5
 
-        button_width, button_height = c.BUTTON_SIZE
+        button_width, button_height = u.BUTTON_SIZE
         button_margin = 150
         button_y = self.screen_height - 200
 
@@ -38,25 +38,25 @@ class CarouselScene(Scene):
 
         for i, (label, action) in enumerate(button_data):
             x = start_x + i * (button_width + button_margin)
-            self.buttons.append(Button(label, (x, button_y), c.BUTTON_SIZE, action))
+            self.buttons.append(Button(label, (x, button_y), u.BUTTON_SIZE, action))
 
     @overrides
     def draw(self):
         self.draw_overlay(self.opacity)
 
         if self.label:
-            height = c.BUTTON_SIZE[1]
+            height = u.BUTTON_SIZE[1]
             overlay = pygame.Surface((self.screen_width, height), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 205))
             self.screen.blit(overlay, (0, 100))
 
-            text = self.font.render(f"Wybierz do {self.choose_count} kart, które chcesz wymienić.", True, c.COLOR_GOLD)
+            text = self.font.render(f"Wybierz do {self.choose_count} kart, które chcesz wymienić.", True, u.COLOR_GOLD)
             text_rect = text.get_rect()
             text_rect.center = (self.screen_width // 2, 100 + height // 2)
             self.screen.blit(text, text_rect)
 
         half_visible = self.visible_cards // 2
-        card_width, card_height = c.MEDIUM_CARD_SIZE
+        card_width, card_height = u.MEDIUM_CARD_SIZE
 
         start_x = 154
         y = 357
@@ -66,7 +66,7 @@ class CarouselScene(Scene):
             card_index = self.selected_index + i
 
             if i == 0:
-                offset += c.LARGE_CARD_SIZE[0] + 120
+                offset += u.LARGE_CARD_SIZE[0] + 120
                 continue
 
             if 0 <= card_index < len(self.cards):
@@ -93,7 +93,7 @@ class CarouselScene(Scene):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x, mouse_y = event.pos
             half_visible = self.visible_cards // 2
-            card_width, card_height = c.MEDIUM_CARD_SIZE
+            card_width, card_height = u.MEDIUM_CARD_SIZE
 
             start_x = 154
             card_y = 357
@@ -101,7 +101,7 @@ class CarouselScene(Scene):
 
             for i in range(-half_visible, half_visible + 1):
                 if i == 0:
-                    offset += c.LARGE_CARD_SIZE[0] + 120
+                    offset += u.LARGE_CARD_SIZE[0] + 120
                     continue
 
                 card_x = start_x + offset

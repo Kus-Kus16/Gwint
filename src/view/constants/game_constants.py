@@ -1,0 +1,79 @@
+import pygame
+
+from src.model.enums.cards_area import CardsArea
+from src.model.enums.row_type import RowType
+
+
+def __row(row_y, text_y_center):
+    return {
+        "UNIT_RECT": __rect((UNIT_X, row_y), UNIT_ROW_SIZE),
+        "BOOST_RECT": __rect((BOOST_X, row_y), BOOST_ROW_SIZE),
+        "TEXT_CENTER": (TEXT_X_CENTER, text_y_center)
+    }
+
+def __rect(pos, size):
+    return pygame.Rect(*pos, *size)
+
+# Game
+SELECTED_CARD_POS = (1544, 265)
+
+UNIT_X = 707
+BOOST_X = 570
+TEXT_X_CENTER = 536
+UNIT_ROW_SIZE = (812, 127)
+BOOST_ROW_SIZE = (130, 127)
+
+WEATHER_POS = (140, 448)
+WEATHER_SIZE = (281, 140)
+WEATHER_OFFSET = (0, 7)
+
+HAND_POS = (577, 841)
+HAND_SIZE = (936, 127)
+
+BOARD_POS = (570, 17)
+BOARD_SIZE = (949, 807)
+
+DECK_SIZE = (112, 147)
+GRAVE_OPP_POS = (1544, 69)
+GRAVE_POS = (1544, 827)
+DECK_OPP_POS = (1725, 69)
+DECK_POS = (1724, 827)
+
+COMM_SIZE = (103, 136)
+COMM_OPP_POS = (137, 80)
+COMM_POS = (137, 832)
+COMM_OFFSET = (5, 5)
+
+POINTS_OPP_POS = (453, 332)
+POINTS_POS = (453, 734)
+
+SELF_ROW_TYPES = [RowType.CLOSE, RowType.RANGED, RowType.SIEGE]
+ROW_TYPES = [RowType.SIEGE_OPP, RowType.RANGED_OPP, RowType.CLOSE_OPP] + SELF_ROW_TYPES
+SIEGE_OPP = __row(9, 74)
+RANGED_OPP = __row(141, 205)
+CLOSE_OPP = __row(278, 343)
+CLOSE = __row(427, 492)
+RANGED = __row(559, 625)
+SIEGE = __row(697, 763)
+
+WEATHER_RECT = __rect(WEATHER_POS, WEATHER_SIZE)
+HAND_RECT = __rect(HAND_POS, HAND_SIZE)
+BOARD_RECT = __rect(BOARD_POS, BOARD_SIZE)
+
+GRAVE_RECT = __rect(GRAVE_POS, DECK_SIZE)
+GRAVE_OPP_RECT = __rect(GRAVE_OPP_POS, DECK_SIZE)
+GRAVES = [(CardsArea.GRAVE, GRAVE_RECT), (CardsArea.GRAVE_OPP, GRAVE_OPP_RECT)]
+
+DECK_RECT = __rect(DECK_POS, DECK_SIZE)
+DECK_OPP_RECT = __rect(DECK_OPP_POS, DECK_SIZE)
+DECKS = [(CardsArea.DECK, DECK_RECT), (CardsArea.DECK_OPP, DECK_OPP_RECT)]
+
+COMM_RECT = __rect(COMM_POS, COMM_SIZE)
+COMM_OPP_RECT = __rect(COMM_OPP_POS, COMM_SIZE)
+COMMANDERS = [(CardsArea.COMMANDER, COMM_RECT), (CardsArea.COMMANDER_OPP, COMM_OPP_RECT)]
+
+INFO_SIZE = (451, 145)
+INFO_POS = (0, 662)
+INFO_OPP_POS = (0, 260)
+INFO_RECT = __rect(INFO_POS, INFO_SIZE)
+INFO_OPP_RECT = __rect(INFO_OPP_POS, INFO_SIZE)
