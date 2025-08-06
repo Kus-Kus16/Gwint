@@ -31,6 +31,11 @@ class Scene(ABC):
     def handle_events(self, event):
         return None
 
+    def handle_temporary(self, event):
+        drawable = self.get_first_handleable_drawable()
+        if drawable:
+            return drawable.handle_events(event)
+
     def lock(self):
         self.locked = True
 
@@ -38,7 +43,7 @@ class Scene(ABC):
         self.locked = False
 
     def draw_temporary(self):
-        if len(self.temporary_drawable) == 0:
+        if not self.temporary_drawable:
             return
 
         drawable = self.temporary_drawable[0]
@@ -51,17 +56,11 @@ class Scene(ABC):
             self.spacing_frames -= 1
             return
 
-        drawable.draw(self.screen)
+        drawable.draw()
         drawable.frames -= 1
 
         if drawable.frames == 0:
-            self.temporary_drawable.pop(0)
-
-            if drawable.locking:
-                if drawable.starting_lock:
-                    self.lock()
-                else:
-                    self.unlock()
+            self.pop_temporary()
 
     def draw_overlay(self, opacity):
         overlay = pygame.Surface(self.size, pygame.SRCALPHA)
@@ -71,15 +70,39 @@ class Scene(ABC):
     def notification(self, name, frames, locking):
         pos = (0, self.screen_height // 2 - 60)
         size = (self.screen_width, 120)
-        notification = Notification(pos, size, name, frames, locking)
-
-        if len(self.temporary_drawable) == 0:
+        notification = Notification(self.screen, pos, size, name, locking, frames)
+        if not self.temporary_drawable:
             self.spacing_frames = self.framerate // 2
 
-        self.temporary_drawable.append(notification)
+        for i, drawable in enumerate(self.temporary_drawable):
+            if drawable.can_be_handled():
+                self.temporary_drawable.insert(i, notification)
+                return
+
+        self.add_temporary(notification)
+
+    def add_temporary(self, drawable):
+        self.temporary_drawable.append(drawable)
+
+    def pop_temporary(self):
+        drawable = self.temporary_drawable.pop(0)
+
+        if not self.temporary_drawable:
+            self.spacing_frames = 0
+
+        if drawable.locking:
+            if drawable.starting_lock:
+                self.lock()
+            else:
+                self.unlock()
 
     def clear_temporary(self):
         self.temporary_drawable.clear()
+
+    def get_first_handleable_drawable(self):
+        for drawable in self.temporary_drawable:
+            if drawable.can_be_handled():
+                return drawable
 
     def draw_text(self, text, x, y, color=u.COLOR_WHITE, font=u.CINZEL_30, center=False):
         text_surface = font.render(str(text), True, color)

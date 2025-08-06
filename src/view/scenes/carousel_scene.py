@@ -2,14 +2,18 @@ import pygame
 from overrides import overrides
 
 from src.model.enums.ability_type import AbilityType
+from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 
 
-class CarouselScene(Scene):
-    def __init__(self, screen, cards, get_card_paths, choose_count, cancelable, initial_index=0, label=True, font=None, opacity=0.25):
-        super().__init__(screen)
+class CarouselScene(Scene, TemporaryDrawable):
+    def __init__(self, screen, cards, get_card_paths, choose_count, cancelable, initial_index=0, allow_ending=True,
+                 label=True, font=None, opacity=0.25):
+        Scene.__init__(self, screen)
+        TemporaryDrawable.__init__(self, locking=False, frames=-1)
+
         self.get_card_paths = get_card_paths
         self.font = font if font is not None else u.DEFAULT_FONT
         self.opacity = opacity
@@ -18,6 +22,7 @@ class CarouselScene(Scene):
         self.choose_count = choose_count
         self.choosable = choose_count != 0
         self.cancellable = cancelable
+        self.allow_ending = allow_ending
         self.label = label
         self.buttons = []
 
@@ -75,8 +80,9 @@ class CarouselScene(Scene):
 
             offset += card_width + 120
 
-        card = self.cards[self.selected_index]
-        self.draw_card(card, 814, 285, "large", highlight=True)
+        if self.selected_index < len(self.cards):
+            card = self.cards[self.selected_index]
+            self.draw_card(card, 814, 285, "large", highlight=True)
 
         mouse_pos = pygame.mouse.get_pos()
         for btn in self.buttons:
@@ -120,7 +126,8 @@ class CarouselScene(Scene):
                     return {
                         "type": "carousel",
                         "card_id": None,
-                        "end": True
+                        "end": True,
+                        "allow_play": self.allow_ending
                     }
 
                 card = self.cards[self.selected_index]
@@ -137,8 +144,13 @@ class CarouselScene(Scene):
                 return {
                     "type": "carousel",
                     "card_id": card.id,
-                    "end": end
+                    "end": end,
+                    "allow_play": self.allow_ending
                 }
 
     def set_cards(self, cards):
         self.cards = cards
+
+    @overrides
+    def can_be_handled(self):
+        return True

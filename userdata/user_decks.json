@@ -207,28 +207,121 @@
         },
         {
             "faction": "Potwory",
-            "commander_id": 133,
-            "cards": []
-        },
-        {
-            "faction": "Scoia'tael",
-            "commander_id": 180,
-            "cards": []
-        },
-        {
-            "faction": "Skellige",
-            "commander_id": 230,
-            "cards": []
-        },
-        {
-            "faction": "Księstwo Toussaint",
-            "commander_id": 275,
-            "cards": []
-        },
-        {
-            "faction": "Kult Wiecznego Ognia",
-            "commander_id": 325,
-            "cards": []
+            "commander_id": 132,
+            "cards": [
+                {
+                    "id": 0,
+                    "count": 1
+                },
+                {
+                    "id": 2,
+                    "count": 1
+                },
+                {
+                    "id": 3,
+                    "count": 1
+                },
+                {
+                    "id": 4,
+                    "count": 1
+                },
+                {
+                    "id": 5,
+                    "count": 1
+                },
+                {
+                    "id": 6,
+                    "count": 1
+                },
+                {
+                    "id": 7,
+                    "count": 1
+                },
+                {
+                    "id": 10,
+                    "count": 1
+                },
+                {
+                    "id": 19,
+                    "count": 1
+                },
+                {
+                    "id": 18,
+                    "count": 3
+                },
+                {
+                    "id": 149,
+                    "count": 1
+                },
+                {
+                    "id": 150,
+                    "count": 1
+                },
+                {
+                    "id": 151,
+                    "count": 1
+                },
+                {
+                    "id": 163,
+                    "count": 1
+                },
+                {
+                    "id": 164,
+                    "count": 1
+                },
+                {
+                    "id": 165,
+                    "count": 1
+                },
+                {
+                    "id": 166,
+                    "count": 1
+                },
+                {
+                    "id": 167,
+                    "count": 1
+                },
+                {
+                    "id": 21,
+                    "count": 1
+                },
+                {
+                    "id": 160,
+                    "count": 1
+                },
+                {
+                    "id": 169,
+                    "count": 1
+                },
+                {
+                    "id": 170,
+                    "count": 1
+                },
+                {
+                    "id": 171,
+                    "count": 1
+                },
+                {
+                    "id": 14,
+                    "count": 1
+                },
+                {
+                    "id": 23,
+                    "count": 1
+                },
+                {
+                    "id": 152,
+                    "count": 1
+                },
+                {
+                    "id": 137,
+                    "count": 1
+                },
+                {
+                    "id": 11,
+                    "count": 1
+                }
+            ]
         }
     ]
 }

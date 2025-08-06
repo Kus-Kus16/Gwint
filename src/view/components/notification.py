@@ -1,6 +1,8 @@
 import pygame
+from overrides import overrides
 
 from src.view import loader as loader
+from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
 
 
@@ -8,23 +10,22 @@ def load_image(name):
     path = f"resources/ico/{name}.png"
     return loader.load_image(path)
 
-class Notification:
-    def __init__(self, pos, size, name, frames, locking, font=None):
+class Notification(TemporaryDrawable):
+    def __init__(self, screen, pos, size, name, locking, frames, font=None):
+        super().__init__(locking, frames)
+        self.screen = screen
         self.font = font if font is not None else u.DEFAULT_FONT
         self.rect = pygame.Rect(pos, size)
         self.texts = None
         self.image = None
-        self.frames = frames
-        self.locking = locking
-        self.starting_lock = None
         self.match_name(name)
 
-    def draw(self, screen):
+    def draw(self):
         overlay = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 216))
-        screen.blit(overlay, self.rect.topleft)
+        self.screen.blit(overlay, self.rect.topleft)
 
-        screen.blit(self.image, (440, 385))
+        self.screen.blit(self.image, (440, 385))
 
         line_height = self.font.get_height()
         x = 890
@@ -35,41 +36,26 @@ class Notification:
         for i, line in enumerate(self.texts):
             text_surface = self.font.render(line, True, u.COLOR_GOLD)
             y = start_y + i * (line_height + y_offset)
-            screen.blit(text_surface, (x, y))
+            self.screen.blit(text_surface, (x, y))
 
     def match_name(self, name):
-        match name:
-            case "playing":
-                self.image = load_image("notif_me_turn")
-                self.texts = ["Twój ruch!"]
-            case "waiting":
-                self.image = load_image("notif_op_turn")
-                self.texts = ["Ruch przeciwnika"]
-            case "start":
-                self.image = load_image("notif_me_coin")
-                self.texts = ["Zaczynasz jako pierwszy."]
-            case "op_start":
-                self.image = load_image("notif_op_coin")
-                self.texts = ["Przeciwnik zaczyna jako pierwszy."]
-            case "round_start":
-                self.image = load_image("notif_round_start")
-                self.texts = ["Początek rundy"]
-            case "pass_op":
-                self.image = load_image("notif_round_passed")
-                self.texts = ["Przeciwnik spasował"]
-            case "pass":
-                self.image = load_image("notif_round_passed")
-                self.texts = ["Koniec rundy"]
-            case "draw_round":
-                self.image = load_image("notif_draw_round")
-                self.texts = ["Runda zakończyła się remisem."]
-            case "lose_round":
-                self.image = load_image("notif_lose_round")
-                self.texts = ["Przeciwnik wygrał tę rundę."]
-            case "win_round":
-                self.image = load_image("notif_win_round")
-                self.texts = ["Wygrałeś tę rundę!"]
-            case _:
-                # Texts array
-                self.image = load_image("notif_shield")
-                self.texts = name
+        notifications = {
+            "playing": ("notif_me_turn", ["Twój ruch!"]),
+            "waiting": ("notif_op_turn", ["Ruch przeciwnika"]),
+            "start": ("notif_me_coin", ["Zaczynasz jako pierwszy."]),
+            "op_start": ("notif_op_coin", ["Przeciwnik zaczyna jako pierwszy."]),
+            "round_start": ("notif_round_start", ["Początek rundy"]),
+            "pass_op": ("notif_round_passed", ["Przeciwnik spasował"]),
+            "pass": ("notif_round_passed", ["Koniec rundy"]),
+            "draw_round": ("notif_draw_round", ["Runda zakończyła się remisem."]),
+            "lose_round": ("notif_lose_round", ["Przeciwnik wygrał tę rundę."]),
+            "win_round": ("notif_win_round", ["Wygrałeś tę rundę!"]),
+        }
+
+        image_name, texts = notifications.get(name, ("notif_shield", name))
+        self.image = load_image(image_name)
+        self.texts = texts
+
+    @overrides
+    def can_be_handled(self):
+        return False

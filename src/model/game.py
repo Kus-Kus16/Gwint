@@ -234,10 +234,10 @@ class Game:
             player = self.players[player_id]
             player.send_to_grave(card)
 
-    def peek_cards(self, player_id, count):
-        cards = list(self.players[player_id].hand.cards)
+    def shuffle_cards(self, card_holder):
+        cards = list(card_holder.cards)
         self.rng.shuffle(cards)
-        return cards[:count]
+        return cards
 
     def reset_gamerules(self):
         for rule in self.gamerules:

@@ -58,3 +58,7 @@ class CardHolder(ABC):
     def transfer_all_cards(self, container):
         for card in list(self.cards):
             self.transfer_card(card, container)
+
+    def filter_cards(self, ability_type):
+        filtered = [card for card in self.cards if card.is_ability_type(ability_type)]
+        return filtered

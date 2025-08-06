@@ -1,14 +1,17 @@
 import pygame
 from overrides import overrides
 
+from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
 from src.view.components.button import Button
 from src.view.scenes.scene import Scene
 
 
-class EndScreen(Scene):
+class EndScreen(Scene, TemporaryDrawable):
     def __init__(self, screen, result, round_history):
-        super().__init__(screen)
+        Scene.__init__(self, screen)
+        TemporaryDrawable.__init__(self, locking=False, frames=-1)
+
         self.round_history = round_history
         self.image = self.load_ico_image(f"end_{result}")
         self.spacing_frames = u.FRAMERATE // 2
@@ -101,3 +104,7 @@ class EndScreen(Scene):
                 if btn.check_click(event.pos):
                     self.lock()
                     return btn.action
+
+    @overrides
+    def can_be_handled(self):
+        return True

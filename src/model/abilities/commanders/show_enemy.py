@@ -7,5 +7,6 @@ class ShowEnemy(CommanderAbilityBase):
     @overrides
     def on_board_play(self, game, player, row_type, targets):
         opponent_id = 1 - player.id
-        shown = game.peek_cards(opponent_id, 3)
-        return shown
+        card_holder = game.get_player(opponent_id).hand
+        cards = game.shuffle_cards(card_holder)
+        return cards[:3]

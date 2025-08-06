@@ -17,7 +17,6 @@ from src.view.scenes.scene import Scene
 class DeckScene(Scene):
     def __init__(self, screen):
         super().__init__(screen)
-        self.carousel_scene = None
 
         # Click rects
         self.commander_rect = None
@@ -29,7 +28,8 @@ class DeckScene(Scene):
         self.scrollbar_right = Scrollbar(c.RIGHT_SCROLLBAR_POS, c.SCROLLBAR_HEIGHT, u.COLOR_GRAY)
 
         # Factions
-        self.factions = [faction for faction in FactionType if faction != FactionType.NEUTRALNE]
+        not_implemented = [FactionType.SCOIATAEL, FactionType.SKELLIGE, FactionType.TOUSSAINT, FactionType.OGIEN]
+        self.factions = [faction for faction in FactionType if faction != FactionType.NEUTRALNE and faction not in not_implemented]
         self.all_decks = {
             faction: {"left": SortedCardHolder(), "right": SortedCardHolder()}
             for faction in self.factions
@@ -102,13 +102,11 @@ class DeckScene(Scene):
         self.draw_texts()
         self.draw_left_cards()
         self.draw_right_cards()
-        self.show_deck_stats()
+        self.draw_deck_stats()
         self.draw_buttons()
         self.draw_commander()
         self.draw_scrollbars()
-
-        if self.carousel_scene:
-            self.carousel_scene.draw()
+        self.draw_temporary()
 
     def draw_scrollbars(self):
         deck_dict = self.get_current_deck_dict()
@@ -153,7 +151,7 @@ class DeckScene(Scene):
         self.draw_icon(ico_filename, None, x_center - 25, y_center, center=True)
         self.draw_text(value, x_center + 25, y_center, font=u.CINZEL_25, color=color, center=True)
 
-    def show_deck_stats(self):
+    def draw_deck_stats(self):
         total_count, unit_count, special_count, total_strength, hero_count = self.calculate_deck_stats()
         lines = [
             ("Wszystkie karty w talii", total_count, "deck_count"),
@@ -168,7 +166,7 @@ class DeckScene(Scene):
 
         for i, (text, value, filename) in enumerate(lines):
             color = u.COLOR_GOLD
-            if i == 0 and total_count < 22:  # Total count
+            if i == 1 and unit_count < 22:  # Unit count
                 color = u.COLOR_RED
             elif i == 2:  # Special count
                 color = u.COLOR_RED if special_count > 10 else u.COLOR_GREEN
@@ -206,8 +204,8 @@ class DeckScene(Scene):
 
     @overrides
     def handle_events(self, event):
-        if self.carousel_scene:
-            result = self.carousel_scene.handle_events(event)
+        if self.temporary_drawable:
+            result = self.handle_temporary(event)
             if result is not None:
                 self.set_commander(result["card_id"])
                 self.close_carousel()
@@ -390,7 +388,7 @@ class DeckScene(Scene):
         return True
 
     def close_carousel(self):
-        self.carousel_scene = None
+        self.pop_temporary()
 
     def open_carousel(self):
         cards_data = db.get_faction_commanders(self.get_faction())
@@ -403,8 +401,9 @@ class DeckScene(Scene):
                 initial_index = i
                 break
 
-        self.carousel_scene = CarouselScene(self.screen, commanders, self.get_card_paths, initial_index=initial_index,
+        carousel = CarouselScene(self.screen, commanders, self.get_card_paths, initial_index=initial_index,
                                             choose_count=1, cancelable=True, label=False, opacity=0.75)
+        self.add_temporary(carousel)
 
     def get_faction(self):
         return self.factions[self.current_deck_index]

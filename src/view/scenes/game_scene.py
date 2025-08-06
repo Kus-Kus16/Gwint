@@ -16,10 +16,10 @@ class GameScene(Scene):
     def __init__(self, screen, volume_slider):
         super().__init__(screen, "resources/board.jpg", volume_slider)
         self.game = None
-        self.ended = False
-        self.end_screen = None
-        self.show_carousel = False
-        self.carousel_scene = None
+        # self.ended = False
+        # self.end_screen = None
+        # self.show_carousel = False
+        # self.carousel_scene = None
         self.player_id = None
         self.selected_card = None
 
@@ -30,11 +30,14 @@ class GameScene(Scene):
     def handle_events(self, event):
         self.volume_slider.handle_event(event)
 
-        if self.ended:
-            return self.end_screen.handle_events(event)
+        if self.temporary_drawable:
+            return self.handle_temporary(event)
 
-        if self.show_carousel:
-            return self.carousel_scene.handle_events(event)
+        # if self.ended:
+        #     return self.end_screen.handle_events(event)
+        #
+        # if self.show_carousel:
+        #     return self.carousel_scene.handle_events(event)
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             return self.handle_right_click(event)
@@ -261,11 +264,11 @@ class GameScene(Scene):
 
         # self.display_cursor_position()
 
-        if self.ended and len(self.temporary_drawable) == 0:
-            self.end_screen.draw()
-
-        if self.show_carousel and len(self.temporary_drawable) == 0:
-            self.carousel_scene.draw()
+        # if self.ended and len(self.temporary_drawable) == 0:
+        #     self.end_screen.draw()
+        #
+        # if self.show_carousel and len(self.temporary_drawable) == 0:
+        #     self.carousel_scene.draw()
 
         self.volume_slider.draw(self.screen)
 
@@ -331,7 +334,7 @@ class GameScene(Scene):
         self.draw_text(player.hand.size(), x + 257, y + 108, color=u.COLOR_GOLD, center=True)
 
         self.draw_text("Przeciwnik" if opponent else "Ty", x + 201, y + 12, color=u.COLOR_GOLD, font=u.CINZEL_20_BOLD)
-        self.draw_text(player.faction, x + 201, y + 45, color=u.COLOR_LIGHTGRAY, font=u.CINZEL_15)
+        self.draw_text(FactionType.faction_to_fullname(player.faction), x + 201, y + 45, color=u.COLOR_LIGHTGRAY, font=u.CINZEL_15)
 
         points_pos = c.POINTS_OPP_POS if opponent else c.POINTS_POS
         self.draw_text(f"{player.points}", *points_pos, color=u.COLOR_BLACK, center=True, font=u.CINZEL_30_BOLD)
@@ -483,8 +486,8 @@ class GameScene(Scene):
 
     def end_game(self, result, round_history):
         self.lock()
-        self.end_screen = EndScreen(self.screen, result, round_history)
-        self.ended = True
+        end_screen = EndScreen(self.screen, result, round_history)
+        self.add_temporary(end_screen)
 
     @overrides
     def reset_all(self):
@@ -493,52 +496,41 @@ class GameScene(Scene):
         self.player_id = None
 
     def reset(self):
-        self.ended = False
-        self.end_screen = None
+        self.clear_temporary()
+        self.selected_card = None
         self.selected_card = None
 
     @overrides
     def lock(self):
-        if self.end_screen is not None:
-            self.end_screen.lock()
-            return
-
-        if self.carousel_scene is not None:
-            self.carousel_scene.lock()
+        drawable = self.get_first_handleable_drawable()
+        if drawable:
+            drawable.lock()
             return
 
         self.locked = True
 
     @overrides
     def unlock(self):
-        if self.end_screen is not None:
-            self.end_screen.unlock()
-            return
-
-        if self.carousel_scene is not None:
-            self.carousel_scene.unlock()
+        drawable = self.get_first_handleable_drawable()
+        if drawable:
+            drawable.unlock()
             return
 
         self.locked = False
 
-    def show_card_carousel(self, cards, choose_count, cancelable, label):
-        self.carousel_scene = CarouselScene(
-            self.screen,
-            cards,
-            self.get_card_paths,
-            choose_count,
-            cancelable,
-            label,
-            opacity=0.5
-        )
-        self.show_carousel = True
+    def show_card_carousel(self, cards, choose_count, cancelable, label, allow_ending):
+        carousel = CarouselScene(self.screen, cards, self.get_card_paths, choose_count,
+            cancelable, allow_ending=allow_ending, label=label, opacity=0.5)
+        self.add_temporary(carousel)
 
     def discard_card_carousel(self):
-        self.show_carousel = False
-        self.carousel_scene = None
+        self.pop_temporary()
 
     def set_card_carousel(self, cards):
-        self.carousel_scene.set_cards(cards)
+        drawable = self.get_first_handleable_drawable()
+        if drawable:
+            drawable.set_cards(cards)
+            return
 
     @overrides
     def get_card_paths(self, card, size):

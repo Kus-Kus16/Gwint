@@ -14,9 +14,9 @@ class VolumeSlider:
         self.dragging = False
         self.volume = 0.5
 
-        self.bg_color = u.COLOR_BUTTON
-        self.hover_color = u.COLOR_BUTTON_HOVER
-        self.shadow_color = u.COLOR_GRAY
+        self.bg_color = u.COLOR_GRAY
+        self.hover_color = u.COLOR_LIGHTGRAY
+        self.shadow_color = u.COLOR_BLACK
         self.handle_color = u.COLOR_WHITE
 
     def draw(self, screen):

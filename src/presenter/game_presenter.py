@@ -1,4 +1,3 @@
-import json
 import logging
 import queue
 import time
@@ -33,7 +32,7 @@ class GamePresenter:
             self.net.connect()
             response, data = self.net.send(("register", [deck, commander]))
         except ConnectionError as e:
-            self.return_to_menu(["Serwer nie odpowiada:", str(e)])
+            self.return_to_menu(("Serwer nie odpowiada:", str(e)))
             return False
 
         if response != "ok":
@@ -77,7 +76,7 @@ class GamePresenter:
             deck, commander = db.create_verified_deck(cards, commander_id)
             self.opponent = Player(deck, commander)
         except ValueError:
-            self.return_to_menu(["Niepoprawna talia przeciwnika"], seconds=3)
+            self.return_to_menu(("Niepoprawna talia przeciwnika",), seconds=3)
 
         self.game = Game(self.seed)
 
@@ -270,7 +269,7 @@ class GamePresenter:
                 self.game_state = "waiting-for-game"
                 self.view.change_scene(self.view.waiting)
         except ValueError as e:
-            self.return_to_menu(["Niepoprawna talia:", str(e)], seconds=3)
+            self.return_to_menu(("Niepoprawna talia:", str(e)), seconds=3)
 
     def handle_play(self, action):
         if action["card_id"] is None:
@@ -416,22 +415,23 @@ class GamePresenter:
 
         self.carousel_dict["targets"].append(action["card_id"])
         if action["end"]:
-            self.notify({
-                "type": "play",
-                "card_id": self.carousel_dict["card_id"],
-                "row_type": self.carousel_dict["row_type"],
-                "targets": self.carousel_dict["targets"]
-            })
-            self.carousel_dict.clear()
+            if action["allow_play"]:
+                self.notify({
+                    "type": "play",
+                    "card_id": self.carousel_dict["card_id"],
+                    "row_type": self.carousel_dict["row_type"],
+                    "targets": self.carousel_dict["targets"]
+                })
+                self.carousel_dict.clear()
             self.view.current_scene.discard_card_carousel()
         else:
             self.view.unlock()
 
-    def show_carousel(self, cards, choose_count=0, cancelable=False, label=False):
+    def show_carousel(self, cards, choose_count=0, cancelable=False, label=False, allow_ending=True):
         if not cards:
             return
 
-        self.view.run_later(lambda: self.view.current_scene.show_card_carousel(cards, choose_count, cancelable, label))
+        self.view.run_later(lambda: self.view.current_scene.show_card_carousel(cards, choose_count, cancelable, label, allow_ending))
 
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:
@@ -478,7 +478,7 @@ class GamePresenter:
 
         #Opponent disconnected
         if server_response == "error":
-            reasons = ["Przeciwnik rozłączył się."] if should_notify else None
+            reasons = ("Przeciwnik rozłączył się.",) if should_notify else None
             self.return_to_menu(reasons)
             return False
 
