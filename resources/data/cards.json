@@ -2268,7 +2268,7 @@
         "faction": "Księstwo Toussaint",
         "power": 4,
         "rows": ["close"],
-        "abilities": ["thirst"],
+        "abilities": ["thirsty"],
         "count": 1,
         "filename": "dettlaff"
     },
@@ -2338,7 +2338,7 @@
         "faction": "Księstwo Toussaint",
         "power": 1,
         "rows": ["ranged"],
-        "abilities": ["thirst"],
+        "abilities": ["thirsty"],
         "count": 1,
         "filename": "marlena"
     },
@@ -2368,7 +2368,7 @@
         "faction": "Księstwo Toussaint",
         "power": 3,
         "rows": ["ranged"],
-        "abilities": ["thirst"],
+        "abilities": ["thirsty"],
         "count": 1,
         "filename": "orianna"
     },
@@ -2408,7 +2408,7 @@
         "faction": "Księstwo Toussaint",
         "power": 4,
         "rows": ["close"],
-        "abilities": ["thirst"],
+        "abilities": ["thirsty"],
         "count": 1,
         "filename": "regis"
     },
@@ -2458,7 +2458,7 @@
         "faction": "Księstwo Toussaint",
         "power": 2,
         "rows": ["close"],
-        "abilities": ["thirst"],
+        "abilities": ["thirsty"],
         "count": 1,
         "filename": "vivienne"
     },

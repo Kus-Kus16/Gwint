@@ -61,15 +61,14 @@ class Board:
         add = []
 
         for i in range(0, 3):
-            self.rows[i].clear_boosts()
             add += self.rows[i].clear(player0)
+            self.rows[i].clear_boosts()
 
         for i in range(3, 6):
-            self.rows[i].clear_boosts()
             add += self.rows[i].clear(player1)
+            self.rows[i].clear_boosts()
 
-        for card, player_id in add:
-            self.play_card(card, card.rows[0], player_id)
+        return add
 
     def get_ordered_rows(self, player_id):
         rows0 = self.rows[0:3]
@@ -114,6 +113,29 @@ class Board:
             for card in all_cards[i]:
                 row.remove_card(card)
                 scorched.append( (card, row_player_id) )
+
+        self.update_rows()
+        return scorched
+
+    def scorch_low(self, player_id):
+        rows = self.rows[player_id * 3 : (player_id + 1) * 3]
+        mini = 10e6
+        all_cards = [[] for _ in range(3)]
+        scorched = []
+
+        for i, row in enumerate(rows):
+            cards = row.find_weakest(ignore_heroes=True)
+            if len(cards) > 0 and cards[0].power <= mini:
+                if cards[0].power < mini:
+                    mini = cards[0].power
+                    all_cards = [[] for _ in range(3)]
+
+                all_cards[i] = cards
+
+        for i, row in enumerate(rows):
+            for card in all_cards[i]:
+                row.remove_card(card)
+                scorched.append((card, player_id))
 
         self.update_rows()
         return scorched

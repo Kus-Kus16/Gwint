@@ -18,6 +18,9 @@ class AbilityBase(ABC):
     def on_carousel_request(self, presenter):
         return []
 
+    def on_power_recalculate(self):
+        return
+
     def get_types(self):
         return []
 

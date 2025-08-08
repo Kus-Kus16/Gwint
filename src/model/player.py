@@ -15,6 +15,9 @@ class Player:
         self.hp = 2
         self.redraws = 2
         self.passed = False
+        self.rules = {
+            "weather_half": False
+        }
 
         self.own_cards()
 
@@ -84,3 +87,10 @@ class Player:
     def get_commander(self, card_id):
         card = self.commander
         return card if card.id == card_id else None
+
+    def reset_rules(self):
+        for rule in self.rules:
+            self.rules[rule] = False
+
+    def get_rule(self, rule):
+        return self.rules[rule]

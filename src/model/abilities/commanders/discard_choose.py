@@ -22,17 +22,18 @@ class DiscardChoose(CommanderAbilityBase):
         if hand.size() < 2 or deck.size() < 1:
             return actions
 
-        actions.append(lambda: self.carousel(presenter, hand.cards, 2, False))
-        actions.append(lambda: self.carousel(presenter, presenter.game.shuffle_cards(deck), 1, True))
+        actions.append(lambda: self.carousel(presenter, hand.cards, 2, False,
+                                             "Wybierz 2 karty do odrzucenia."))
+        actions.append(lambda: self.carousel(presenter, presenter.game.shuffle_cards(deck), 1, True,
+                                             "Wybierz 1 kartę z talii."))
         return actions
 
     @classmethod
-    def carousel(cls, presenter, cards, count, allow_ending):
-        presenter.show_carousel(cards, choose_count=count, cancelable=False, allow_ending=allow_ending)
+    def carousel(cls, presenter, cards, count, allow_ending, label):
+        presenter.show_carousel(cards, choose_count=count, cancelable=False, allow_ending=allow_ending, label=label)
 
     @overrides
     def on_board_play(self, game, player, row_type, targets):
-        print("inhere")
         if len(targets) < 3:
             return
 

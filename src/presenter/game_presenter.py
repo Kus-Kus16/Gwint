@@ -99,7 +99,7 @@ class GamePresenter:
         self.carousel_dict["targets"] = []
         player = self.game.get_player(self.my_id)
         cards = player.hand.cards
-        self.show_carousel(cards, choose_count=player.redraws, cancelable=True, label=True)
+        self.show_carousel(cards, choose_count=player.redraws, cancelable=True, redraw_label=True)
 
     def handle_opponentredraw(self):
         response, data = self.net.send(("waiting", []))
@@ -427,11 +427,12 @@ class GamePresenter:
         else:
             self.view.unlock()
 
-    def show_carousel(self, cards, choose_count=0, cancelable=False, label=False, allow_ending=True):
+    def show_carousel(self, cards, choose_count=0, cancelable=False, label=False, redraw_label=False, allow_ending=True):
         if not cards:
             return
 
-        self.view.run_later(lambda: self.view.current_scene.show_card_carousel(cards, choose_count, cancelable, label, allow_ending))
+        self.view.run_later(lambda: self.view.current_scene.show_card_carousel(cards, choose_count,
+               cancelable, label, redraw_label, allow_ending))
 
     def turn_switch(self):
         if self.game.current_player_id == self.my_id:

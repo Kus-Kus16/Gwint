@@ -10,7 +10,7 @@ from src.view.components.button import Button
 
 class CarouselScene(Scene, TemporaryDrawable):
     def __init__(self, screen, cards, get_card_paths, choose_count, cancelable, initial_index=0, allow_ending=True,
-                 label=True, font=None, opacity=0.25):
+                 label=None, redraw_label=False, font=None, opacity=0.25):
         Scene.__init__(self, screen)
         TemporaryDrawable.__init__(self, locking=False, frames=-1)
 
@@ -24,6 +24,7 @@ class CarouselScene(Scene, TemporaryDrawable):
         self.cancellable = cancelable
         self.allow_ending = allow_ending
         self.label = label
+        self.redraw_label = redraw_label
         self.buttons = []
 
         self.visible_cards = 5
@@ -55,10 +56,11 @@ class CarouselScene(Scene, TemporaryDrawable):
             overlay.fill((0, 0, 0, 205))
             self.screen.blit(overlay, (0, 100))
 
-            text = self.font.render(f"Wybierz do {self.choose_count} kart, które chcesz wymienić.", True, u.COLOR_GOLD)
-            text_rect = text.get_rect()
+            text = self.label if not self.redraw_label else f"Wybierz do {self.choose_count} kart, które chcesz wymienić."
+            text_render = self.font.render(text, True, u.COLOR_GOLD)
+            text_rect = text_render.get_rect()
             text_rect.center = (self.screen_width // 2, 100 + height // 2)
-            self.screen.blit(text, text_rect)
+            self.screen.blit(text_render, text_rect)
 
         half_visible = self.visible_cards // 2
         card_width, card_height = u.MEDIUM_CARD_SIZE

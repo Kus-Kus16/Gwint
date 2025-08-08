@@ -7,6 +7,8 @@ from src.model.card_holders.deck import Deck
 from src.model.enums.card_type import CardType
 from src.model.enums.faction_type import FactionType
 
+#TODO REfactor
+
 with open("./resources/data/cards.json", "r", encoding="utf-8") as file:
     card_list = json.load(file)
     card_dict = {card["id"]: card for card in card_list}
@@ -35,6 +37,12 @@ with open("./resources/data/bond.json", "r", encoding="utf-8") as file:
 
 with open("./resources/data/recall.json", "r", encoding="utf-8") as file:
     recall_dict = json.load(file)
+
+with open("./resources/data/berserker.json", "r", encoding="utf-8") as file:
+    berserker_dict = json.load(file)
+
+with open("./resources/data/thirsty.json", "r", encoding="utf-8") as file:
+    thirsty_dict = json.load(file)
 
 # Dictionary
 def find_card_by_id(card_id):
@@ -134,5 +142,17 @@ def get_bond(card_id):
 # Recall
 def get_recall(card_id):
     card_id = recall_dict[f"{card_id}"]
+    card_data = find_card_by_id(card_id)
+    return Card(card_data)
+
+# Berserker
+def get_berserker(card_id):
+    card_id = berserker_dict[f"{card_id}"]
+    card_data = find_card_by_id(card_id)
+    return Card(card_data)
+
+# Thirsty
+def get_thirsty(card_id):
+    card_id = thirsty_dict[f"{card_id}"]
     card_data = find_card_by_id(card_id)
     return Card(card_data)

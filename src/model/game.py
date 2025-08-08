@@ -1,11 +1,9 @@
 import logging
+import random
 
 from src.model.abilities.commanders.block_ability import BlockAbility
 from src.model.board import Board
-import random
-
 from src.model.enums.card_type import CardType
-from src.model.enums.row_type import RowType
 
 
 class Game:
@@ -19,7 +17,9 @@ class Game:
         self.current_round = 0
         self.round_history = []
         self.gamerules = {
-            "heal_random": False
+            "heal_random": False,
+            "spies_double": False,
+            "weather_half": set()
         }
 
     def play_card(self, player_id, card_id, row_type, targets=None):
@@ -40,7 +40,7 @@ class Game:
             raise ValueError(f"Card {card.id}:{card.name} is not playable for given row: {row_type}")
 
         if card.is_card_type(CardType.COMMANDER):
-            returns = self.handle_commander(player, card, targets)
+            returns = self.handle_commander(player, card, row_type, targets)
             card.disable()
         elif card.is_card_type(CardType.SPECIAL):
             self.handle_special(player, card, row_type, targets)
@@ -59,7 +59,7 @@ class Game:
         return returns
 
     def play_extra_card(self, player_id, card, row_type, targets=None):
-        # Ignores the limits except abilities
+        #Ignores the limits
         if targets is None:
             targets = []
 
@@ -91,12 +91,12 @@ class Game:
 
         return additional_actions
 
-    def handle_commander(self, player, commander, targets):
+    def handle_commander(self, player, commander, row_type, targets):
         if not commander.active:
             raise ValueError(f"Wrong commander use: commander is not active for p{player.id}")
 
         ability = commander.ability()
-        return ability.on_board_play(self, player, RowType.ANY, targets)
+        return ability.on_board_play(self, player, row_type, targets)
 
     def pass_round(self, player_id):
         if self.current_player_id != player_id:
@@ -127,6 +127,11 @@ class Game:
     def end_redraws(self):
         for player in self.players:
             player.redraws = 0
+
+        self.shuffle_decks()
+
+    def shuffle_decks(self):
+        for player in self.players:
             player.shuffle_deck(self.rng)
 
     def next_turn(self):
@@ -187,7 +192,10 @@ class Game:
             player0.lower_hp()
             player1.lower_hp()
 
-        self.board.clear_rows(self.players)
+        extra = self.board.clear_rows(self.players)
+        for card, player_id in extra:
+            self.play_extra_card(player_id, card, card.rows[0])
+
         self.board.clear_weather()
         self.update_points()
 

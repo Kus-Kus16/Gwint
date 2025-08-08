@@ -13,10 +13,13 @@ class Row(SortedCardHolder):
         self.points = 0
         self.effects = {
             "weather": False,
-            "morale": set(),
             "bond": dict(),
-            "horn": set()
+            "morale": set(),
+            "horn": set(),
+            "mardroeme": set(),
+            "sangreal": set()
         }
+        self.boosts = ["horn", "mardroeme", "sangreal"]
 
     @overrides
     def add_card(self, card):
@@ -56,9 +59,16 @@ class Row(SortedCardHolder):
 
         card.power = card.base_power
 
+        # Power mods
+        for ability in card.abilities:
+            ability.on_power_recalculate()
+
         # Weather
         if self.effects["weather"]:
-            card.power = min(card.power, 1)
+            if card.owner.get_rule("weather_half") and card.power > 1:
+                card.power = card.power // 2
+            else:
+                card.power = min(card.power, 1)
 
         # Bond
         if card.is_ability_type(AbilityType.BONDING):
@@ -96,6 +106,41 @@ class Row(SortedCardHolder):
         self.recalculate()
         return True
 
+    def add_mardroeme(self, card):
+        id = card.id
+        for source in self.effects["mardroeme"]:
+            if source.id == id:
+                return False
+
+        self.effects["mardroeme"].add(card)
+
+        remove = []
+        add = []
+        for card in self.cards:
+            if card.is_ability_type(AbilityType.BERSERK):
+                extra = db.get_berserker(card.id)
+                owner = card.owner
+                extra.owner = owner
+                add.append(extra)
+                remove.append(card)
+
+        for card in remove:
+            self.remove_card(card)
+
+        for card in add:
+            self.add_card(card)
+
+        return True
+
+    def add_sangreal(self, card):
+        id = card.id
+        for source in self.effects["sangreal"]:
+            if source.id == id:
+                return False
+
+        self.effects["sangreal"].add(card)
+        return True
+
     def find_strongest(self, ignore_heroes=False):
         maxi = -10e10
         for card in self.cards:
@@ -129,8 +174,12 @@ class Row(SortedCardHolder):
         return self.find_cards(fun)
 
     def clear_boosts(self):
+        for boost in self.boosts:
+            self.clear_boost(boost)
+
+    def clear_boost(self, boost_name):
         remove = []
-        for card in self.effects["horn"]:
+        for card in self.effects[boost_name]:
             if card.is_card_type(CardType.SPECIAL):
                 card.send_to_owner_grave()
                 remove.append(card)
@@ -138,27 +187,48 @@ class Row(SortedCardHolder):
                 remove.append(card)
 
         for card in remove:
-            self.effects["horn"].remove(card)
+            self.effects[boost_name].remove(card)
 
     def clear(self, player):
-        remove = []
         add = []
+        remove = []
+        destroy = []
         for card in self.cards:
             if card.is_ability_type(AbilityType.RECALLING):
                 extra = db.get_recall(card.id)
                 extra.owner = player
                 add.append((extra, player.id))
 
+            elif card.is_ability_type(AbilityType.ENDURING) and card.power > card.base_power:
+                continue
+
+            elif self.effects["sangreal"] and card.is_ability_type(AbilityType.THIRSTY):
+                extra = db.get_thirsty(card.id)
+                extra.owner = player
+                add.append((extra, player.id))
+                destroy.append(card)
+                continue
+
             remove.append(card)
 
         for card in remove:
             self.transfer_card(card, player.grave)
 
+        for card in destroy:
+            self.remove_card(card)
+
         return add
 
-    def get_effect_cards(self):
+    def get_all_boosts_cards(self):
         cards = []
-        for card in self.effects["horn"]:
+        for boost in self.boosts:
+            cards.extend(self.get_boost_cards(boost))
+
+        return cards
+
+    def get_boost_cards(self, boost_name):
+        cards = []
+        for card in self.effects[boost_name]:
             if card.is_card_type(CardType.SPECIAL):
                 cards.append(card)
 

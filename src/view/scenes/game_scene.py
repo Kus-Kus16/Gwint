@@ -16,10 +16,6 @@ class GameScene(Scene):
     def __init__(self, screen, volume_slider):
         super().__init__(screen, "resources/board.jpg", volume_slider)
         self.game = None
-        # self.ended = False
-        # self.end_screen = None
-        # self.show_carousel = False
-        # self.carousel_scene = None
         self.player_id = None
         self.selected_card = None
 
@@ -32,12 +28,6 @@ class GameScene(Scene):
 
         if self.temporary_drawable:
             return self.handle_temporary(event)
-
-        # if self.ended:
-        #     return self.end_screen.handle_events(event)
-        #
-        # if self.show_carousel:
-        #     return self.carousel_scene.handle_events(event)
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             return self.handle_right_click(event)
@@ -262,14 +252,6 @@ class GameScene(Scene):
         self.draw_players()
         self.draw_temporary()
 
-        # self.display_cursor_position()
-
-        # if self.ended and len(self.temporary_drawable) == 0:
-        #     self.end_screen.draw()
-        #
-        # if self.show_carousel and len(self.temporary_drawable) == 0:
-        #     self.carousel_scene.draw()
-
         self.volume_slider.draw(self.screen)
 
     def draw_rows(self):
@@ -373,7 +355,7 @@ class GameScene(Scene):
             self.draw_icon(f"weather_{row_type.name.lower()}", None, row_rect.left - c.BOOST_ROW_SIZE[0], row_rect.top)
 
     def draw_row_boosts(self, row, boost_rect):
-        cards = row.get_effect_cards()
+        cards = row.get_all_boosts_cards()
         self.draw_card_holder(cards, boost_rect, self.card_rects)
 
     def draw_hand(self):
@@ -518,9 +500,9 @@ class GameScene(Scene):
 
         self.locked = False
 
-    def show_card_carousel(self, cards, choose_count, cancelable, label, allow_ending):
+    def show_card_carousel(self, cards, choose_count, cancelable, label, redraw_label, allow_ending):
         carousel = CarouselScene(self.screen, cards, self.get_card_paths, choose_count,
-            cancelable, allow_ending=allow_ending, label=label, opacity=0.5)
+            cancelable, allow_ending=allow_ending, label=label, redraw_label=redraw_label, opacity=0.5)
         self.add_temporary(carousel)
 
     def discard_card_carousel(self):

@@ -3,7 +3,6 @@ from abc import ABC
 from overrides import overrides
 
 from src.model.abilities.commanders.commander_base import CommanderAbilityBase
-from src.model.enums.row_type import RowType
 
 
 class FindBase(CommanderAbilityBase, ABC):
@@ -15,4 +14,4 @@ class FindBase(CommanderAbilityBase, ABC):
     def on_board_play(self, game, player, row_type, targets):
         card = player.get_from_deck(self.seeked_id)
         if card is not None:
-            game.play_extra_card(player.id, card, RowType.ANY)
+            game.play_extra_card(player.id, card, row_type, targets)

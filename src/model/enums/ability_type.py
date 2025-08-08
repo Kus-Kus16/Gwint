@@ -10,3 +10,6 @@ class AbilityType(Enum):
     AVENGING = 5
     ABSOLUTE = 6
     BONDING = 7
+    BERSERK = 8
+    THIRSTY = 9
+    ENDURING = 10

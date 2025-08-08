@@ -7,3 +7,6 @@ class Deck(CardHolder):
 
     def shuffle(self, rng):
         rng.shuffle(self.cards)
+
+    def put_on_top(self, card):
+        self.cards.insert(0, card)
