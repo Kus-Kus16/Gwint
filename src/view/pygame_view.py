@@ -7,7 +7,7 @@ from src.view.scenes.text_scene import TextScene
 from src.view.scenes.deck_scene import DeckScene
 from src.view.scenes.game_scene import GameScene
 from src.view.scenes.menu_scene import MenuScene
-from src.view import loader as loader
+from src.view import loader as loader, settings
 from src.view.constants import ui_constants as u
 from src.view.components.volume_slider import VolumeSlider
 
@@ -32,7 +32,7 @@ class PygameView:
         # Soundtrack
         pygame.mixer.init()
         pygame.mixer.music.load("resources/soundtrack.mp3")
-        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.set_volume(settings.load_setting("volume"))
         pygame.mixer.music.play(-1)
 
         #Screens initiation

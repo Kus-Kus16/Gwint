@@ -1,8 +1,8 @@
 import pygame
 
-from src.network.ip_config import load_ip
 from src.view.components.button import Button
 from src.view.components.input_box import InputBox
+from src.view import settings
 from src.view.scenes.scene import Scene
 from src.view.constants import ui_constants as u
 
@@ -32,14 +32,12 @@ class SettingsScene(Scene):
         )
 
         # Pole do wpisania IP
-        current_ip = load_ip()
+        current_ip = settings.load_setting("ip")
         self.input_box = InputBox(self.screen_width // 2 - 150, 230, 300, 50, text=current_ip)
 
         # Etykieta
         self.label_font = u.DEFAULT_FONT_BOLD
         self.label_text = "Adres IP serwera:"
-
-
 
     def draw(self):
         super().draw()

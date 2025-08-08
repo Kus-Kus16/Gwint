@@ -2,17 +2,17 @@ import logging
 import pickle
 import socket
 
-
-from src.network.ip_config import load_ip
+from src.view import settings
 
 
 class Network:
     def __init__(self):
         self.client = None
         self.port = 5555
-        self.server_ip = load_ip()
+        self.server_ip = settings.load_setting("ip")
         self.addr = (self.server_ip, self.port)
         self.connected = False
+        settings.register_observer(self)
 
     def connect(self):
         if self.connected:
@@ -55,9 +55,8 @@ class Network:
         self._server_ip = new_ip
         self.addr = (self._server_ip, self.port)
 
-    def update_ip(self, new_ip):
-        self.server_ip = new_ip
-        # Opcjonalnie: jeśli jesteś już połączony, to można rozłączyć się i połączyć na nowo
+    def on_settings_update(self):
+        self.server_ip = settings.load_setting("ip")
         if self.connected:
             self.disconnect()
             self.connect()
