@@ -18,10 +18,7 @@ class ChooseDeckWeather(ChooseBase):
             return
 
         deck = player.deck
-        target_id = targets.pop(0)
-        target = deck.find_card_by_id(target_id)
-        if target is None:
-            raise ValueError(f"Wrong commander use: cannot find target {target_id} in p{player.id}")
+        target = self.find_target(targets, player, deck)
 
         deck.remove_card(target)
         game.play_extra_card(player.id, target, RowType.ANY)

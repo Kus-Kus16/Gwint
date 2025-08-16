@@ -14,4 +14,4 @@ class ScorchBase(CommanderAbilityBase, ABC):
     def on_board_play(self, game, player, row_type, targets):
         opponent_id = 1 - player.id
         scorched = game.board.scorch_row(self.row_type, opponent_id)
-        game.grave_cards(scorched)
+        game.grave_scorch_cards(scorched)

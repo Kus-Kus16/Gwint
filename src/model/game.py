@@ -19,6 +19,7 @@ class Game:
         self.gamerules = {
             "heal_random": False,
             "spies_double": False,
+            "weak_scorch": False,
             "weather_half": set()
         }
 
@@ -199,6 +200,10 @@ class Game:
         self.board.clear_weather()
         self.update_points()
 
+        for player in self.players:
+            ability = player.commander.ability()
+            return ability.on_round_end(self, player)
+
     def end_game(self):
         self.board.clear_rows(self.players)
         self.board.clear_weather()
@@ -237,10 +242,18 @@ class Game:
 
         return history
 
-    def grave_cards(self, cards_data):
-        for card, player_id in cards_data:
+    def grave_scorch_cards(self, cards_data):
+        self.rng.shuffle(cards_data)
+        scorched_players = [False, False]
+
+        for card, player_id, row in cards_data:
+            if self.gamerule("weak_scorch") and scorched_players[player_id]:
+                continue
+
+            row.remove_card(card)
             player = self.players[player_id]
             player.send_to_grave(card)
+            scorched_players[player_id] = True
 
     def shuffle_cards(self, card_holder):
         cards = list(card_holder.cards)

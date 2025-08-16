@@ -16,7 +16,8 @@ class Player:
         self.redraws = 2
         self.passed = False
         self.rules = {
-            "weather_half": False
+            "weather_half": False,
+            "swap_morale": False
         }
 
         self.own_cards()
@@ -78,8 +79,8 @@ class Player:
 
         return cards
 
-    def get_from_hand(self, card_id):
-        return self.hand.get_card_by_id(card_id)
+    def get_from_hand(self, card_id, excluding=None):
+        return self.hand.get_card_by_id(card_id, excluding=excluding)
 
     def get_from_deck(self, card_id):
         return self.deck.get_card_by_id(card_id)

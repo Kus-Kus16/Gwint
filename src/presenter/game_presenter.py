@@ -99,7 +99,7 @@ class GamePresenter:
         self.carousel_dict["targets"] = []
         player = self.game.get_player(self.my_id)
         cards = player.hand.cards
-        self.show_carousel(cards, choose_count=player.redraws, cancelable=True, redraw_label=True)
+        self.show_carousel(cards, choose_count=player.redraws, cancelable=True, label=True, redraw_label=True)
 
     def handle_opponentredraw(self):
         response, data = self.net.send(("waiting", []))

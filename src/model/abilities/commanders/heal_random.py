@@ -1,10 +1,6 @@
-from overrides import overrides
-
-from src.model.abilities.commanders.commander_base import CommanderAbilityBase
+from src.model.abilities.commanders.gamerule_base import GameruleBase
 
 
-class HealRandom(CommanderAbilityBase):
-    @overrides
-    def on_start_game(self, game, player):
-        game.gamerules["heal_random"] = True
-        player.commander.disable()
+class HealRandom(GameruleBase):
+    def __init__(self, card):
+        super().__init__(card, "heal_random")

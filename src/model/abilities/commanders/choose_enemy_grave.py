@@ -16,10 +16,7 @@ class ChooseEnemyGrave(ChooseBase):
 
         opponent_id = 1 - player.id
         grave = game.get_player(opponent_id).grave
-        target_id = targets.pop(0)
-        target = grave.find_card_by_id(target_id)
-        if target is None:
-            raise ValueError(f"Wrong commander use: cannot find target {target_id} in p{opponent_id}")
+        target = self.find_target(targets, player, grave)
 
         grave.remove_card(target)
         player.hand.add_card(target)

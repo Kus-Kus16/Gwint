@@ -42,8 +42,11 @@ class CardHolder(ABC):
                 self.remove_card(card)
                 return card
 
-    def get_card_by_id(self, card_id):
-        return self.get_card(lambda card: card.id == card_id)
+    def get_card_by_id(self, card_id, excluding=None):
+        for card in self.cards:
+            if card.id == card_id and card is not excluding:
+                self.remove_card(card)
+                return card
 
     def get_next_card(self):
         if len(self.cards) == 0:

@@ -1,6 +1,6 @@
 from src.model.abilities.commanders.gamerule_base import GameruleBase
 
 
-class SpiesDouble(GameruleBase):
+class WeakScorch(GameruleBase):
     def __init__(self, card):
-        super().__init__(card, "spies_double")
+        super().__init__(card, "weak_scorch")

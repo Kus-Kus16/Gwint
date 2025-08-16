@@ -14,6 +14,7 @@ class Row(SortedCardHolder):
         self.effects = {
             "weather": False,
             "bond": dict(),
+            "low_morale": set(),
             "morale": set(),
             "horn": set(),
             "mardroeme": set(),
@@ -75,10 +76,20 @@ class Row(SortedCardHolder):
             bond_id = db.get_bond(card.id)
             card.power *= self.effects["bond"][bond_id]
 
-        # Morale
-        for source in self.effects["morale"]:
-            if card != source:
-                card.power += 1
+        # Morales
+        morales = {
+            "low_morale": (-1, +1),
+            "morale": (+1, -1)
+        }
+
+        for morale, (normal, swapped) in morales.items():
+            for source in self.effects[morale]:
+                if card != source:
+                    delta = swapped if source.owner.get_rule("swap_morale") else normal
+                    if delta > 0:
+                        card.power += delta
+                    else:
+                        card.power = max(card.power + delta, 0)
 
         # Horn
         horned = False

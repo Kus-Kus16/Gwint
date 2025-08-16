@@ -13,3 +13,6 @@ class CommanderAbilityBase(AbilityBase, ABC):
 
     def on_start_game(self, game, player):
         return
+
+    def on_round_end(self, game, player):
+        return

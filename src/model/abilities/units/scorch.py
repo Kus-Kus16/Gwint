@@ -5,7 +5,7 @@ from src.model.abilities.units.unit_base import UnitAbilityBase
 
 def scorch(game):
     scorched = game.board.scorch()
-    game.grave_cards(scorched)
+    game.grave_scorch_cards(scorched)
 
 class Scorch(UnitAbilityBase):
     @overrides

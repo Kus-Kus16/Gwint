@@ -89,13 +89,12 @@ class Board:
 
         cards = row.find_strongest(ignore_heroes=True)
         for card in cards:
-            row.remove_card(card)
-            scorched.append((card, row_player_id))
+            scorched.append((card, row_player_id, row))
 
         return scorched
 
     def scorch(self):
-        maxi = -10e10
+        maxi = -10e6
         all_cards = [[] for _ in range(6)]
         scorched = []
 
@@ -111,10 +110,8 @@ class Board:
         for i, row in enumerate(self.rows):
             row_player_id = 0 if i < 3 else 1
             for card in all_cards[i]:
-                row.remove_card(card)
-                scorched.append( (card, row_player_id) )
+                scorched.append((card, row_player_id, row))
 
-        self.update_rows()
         return scorched
 
     def scorch_low(self, player_id):
@@ -134,8 +131,6 @@ class Board:
 
         for i, row in enumerate(rows):
             for card in all_cards[i]:
-                row.remove_card(card)
-                scorched.append((card, player_id))
+                scorched.append((card, player_id, row))
 
-        self.update_rows()
         return scorched

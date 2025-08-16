@@ -28,8 +28,7 @@ class DeckScene(Scene):
         self.scrollbar_right = Scrollbar(c.RIGHT_SCROLLBAR_POS, c.SCROLLBAR_HEIGHT, u.COLOR_GRAY)
 
         # Factions
-        not_implemented = [FactionType.OGIEN] #TODO implement
-        self.factions = [faction for faction in FactionType if faction != FactionType.NEUTRALNE and faction not in not_implemented]
+        self.factions = [faction for faction in FactionType if faction != FactionType.NEUTRALNE]
         self.all_decks = {
             faction: {"left": SortedCardHolder(), "right": SortedCardHolder()}
             for faction in self.factions

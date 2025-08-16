@@ -1,5 +1,5 @@
 {
-    "last_used_index": 5,
+    "last_used_index": 6,
     "decks": [
         {
             "faction": "Królestwa Północy",
@@ -509,7 +509,7 @@
         },
         {
             "faction": "Księstwo Toussaint",
-            "commander_id": 276,
+            "commander_id": 279,
             "cards": [
                 {
                     "id": 0,
@@ -521,7 +521,7 @@
                 },
                 {
                     "id": 2,
-                    "count": 1
+                    "count": 2
                 },
                 {
                     "id": 280,
@@ -592,11 +592,85 @@
                     "count": 1
                 },
                 {
+                    "id": 23,
+                    "count": 1
+                },
+                {
                     "id": 281,
                     "count": 1
                 },
                 {
                     "id": 295,
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "faction": "Kult Wiecznego Ognia",
+            "commander_id": 329,
+            "cards": [
+                {
+                    "id": 1,
+                    "count": 2
+                },
+                {
+                    "id": 10,
+                    "count": 1
+                },
+                {
+                    "id": 332,
+                    "count": 2
+                },
+                {
+                    "id": 354,
+                    "count": 3
+                },
+                {
+                    "id": 352,
+                    "count": 1
+                },
+                {
+                    "id": 366,
+                    "count": 1
+                },
+                {
+                    "id": 341,
+                    "count": 3
+                },
+                {
+                    "id": 343,
+                    "count": 1
+                },
+                {
+                    "id": 364,
+                    "count": 3
+                },
+                {
+                    "id": 349,
+                    "count": 2
+                },
+                {
+                    "id": 21,
+                    "count": 1
+                },
+                {
+                    "id": 342,
+                    "count": 1
+                },
+                {
+                    "id": 14,
+                    "count": 1
+                },
+                {
+                    "id": 23,
+                    "count": 1
+                },
+                {
+                    "id": 331,
+                    "count": 1
+                },
+                {
+                    "id": 358,
                     "count": 1
                 }
             ]

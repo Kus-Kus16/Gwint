@@ -12,8 +12,8 @@ class Muster(UnitAbilityBase):
         other_ids = db.get_muster(card_id)
 
         for id in other_ids:
-            extra = player.get_from_hand(id) or player.get_from_deck(id)
-            if extra is not None and extra != self.card:
+            extra = player.get_from_hand(id, excluding=self.card) or player.get_from_deck(id)
+            if extra is not None:
                 actions.append(lambda e=extra, r=extra.rows[0]: self.muster(game, player, e, r))
 
         return actions
