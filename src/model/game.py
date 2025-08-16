@@ -4,12 +4,13 @@ import random
 from src.model.abilities.commanders.block_ability import BlockAbility
 from src.model.board import Board
 from src.model.enums.card_type import CardType
+from src.model.enums.faction_type import FactionType
 
 
 class Game:
-    def __init__(self, seed):
+    def __init__(self, presenter, seed):
+        self.presenter = presenter
         self.rng = random.Random(seed)
-        self.ready = False
         self.board = Board()
         self.players = []
         self.current_player_id = None
@@ -23,8 +24,7 @@ class Game:
             "weather_half": set()
         }
 
-    def play_card(self, player_id, card_id, row_type, targets=None):
-        returns = []
+    def play_card(self, player_id, own_id, card_id, row_type, targets=None):
         if targets is None:
             targets = []
 
@@ -41,8 +41,9 @@ class Game:
             raise ValueError(f"Card {card.id}:{card.name} is not playable for given row: {row_type}")
 
         if card.is_card_type(CardType.COMMANDER):
-            returns = self.handle_commander(player, card, row_type, targets)
+            to_show = self.handle_commander(player, card, row_type, targets)
             card.disable()
+            self.presenter.show_carousel(to_show, cancelable=True)
         elif card.is_card_type(CardType.SPECIAL):
             self.handle_special(player, card, row_type, targets)
             player.play_to_board(card)
@@ -55,9 +56,7 @@ class Game:
                 action()
 
         self.update_points()
-        self.next_turn()
-
-        return returns
+        self.next_turn(own_id)
 
     def play_extra_card(self, player_id, card, row_type, targets=None):
         #Ignores the limits
@@ -99,12 +98,33 @@ class Game:
         ability = commander.ability()
         return ability.on_board_play(self, player, row_type, targets)
 
-    def pass_round(self, player_id):
+    def pass_round(self, player_id, own_id):
         if self.current_player_id != player_id:
             raise ValueError(f"Wrong player, expected p{self.current_player_id}")
 
+        self.presenter.notification("pass" if player_id == own_id else "pass_op")
         self.players[player_id].passed = True
-        self.next_turn()
+        self.next_turn(own_id)
+
+        if not self.players[1 - player_id].passed:
+            # other turn
+            self.presenter.notification("waiting" if player_id == own_id else "playing")
+            return
+
+        # both passed
+        notif = (
+            "win_round" if self.is_winning_round(own_id)
+            else "lose_round" if self.is_winning_round(1 - own_id)
+            else "draw_round"
+        )
+        self.presenter.notification(notif)
+
+        ending = self.end_round()
+        if ending:
+            return
+
+        self.presenter.notification("round_start")
+        self.start_round(own_id)
 
     def redraw_cards(self, player_id, targets):
         player = self.players[player_id]
@@ -125,21 +145,33 @@ class Game:
             player.draw_card()
             player.redraws -= 1
 
-    def end_redraws(self):
+    def end_redraws(self, own_id):
         for player in self.players:
             player.redraws = 0
 
+        for player in self.players:
+            if player.faction == FactionType.OGIEN:
+                self.presenter.notification("fire_ability")
+                break
+
         self.shuffle_decks()
+        self.presenter.notification("round_start")
+        self.start_round(own_id)
 
     def shuffle_decks(self):
         for player in self.players:
             player.shuffle_deck(self.rng)
 
-    def next_turn(self):
+    def next_turn(self, own_id):
         next_player = self.players[1 - self.current_player_id]
 
         if not next_player.passed:
             self.current_player_id = next_player.id
+
+        if any(player.passed for player in self.players):
+            return
+
+        self.presenter.notification("playing" if next_player.id == own_id else "waiting")
 
     def update_points(self):
         player0_pts, player1_pts = self.board.rows_sum()
@@ -147,16 +179,34 @@ class Game:
         self.players[0].points = player0_pts
         self.players[1].points = player1_pts
 
-    def start_game(self):
+    def need_first_player(self):
+        p0 = self.players[0].faction == FactionType.SCOIATAEL
+        p1 = self.players[1].faction == FactionType.SCOIATAEL
+
+        if p0 == p1:
+            return -1
+        return 0 if p0 else 1
+
+    def start_game(self, starting_player, player_id):
         self.reset_gamerules()
         self.current_round = 0
         self.round_history = []
-        self.first_player_id = self.rng.randint(0, 1)
-        self.ready = True
+
+        if starting_player is None:
+            self.first_player_id = self.rng.randint(0, 1)
+            notif = "start" if self.first_player_id == player_id else "op_start"
+        else:
+            self.first_player_id = starting_player
+            if self.get_player(player_id).faction == FactionType.SCOIATAEL:
+                notif = "scoia_start" if self.first_player_id == player_id else "scoia_op_start"
+            else:
+                notif = "op_scoia_start" if self.first_player_id == player_id else "op_scoia_op_start"
+
+        self.presenter.notification(notif)
 
         for player in self.players:
             player.hp = 2
-            player.redraws = 2
+            player.redraws = 2 if player.faction != FactionType.OGIEN else 4
             player.commander.enable()
             player.shuffle_deck(self.rng)
             player.draw_cards(10)
@@ -171,9 +221,10 @@ class Game:
             ability = player.commander.ability()
             ability.on_start_game(self, player)
 
-    def start_round(self):
+    def start_round(self, own_id):
         self.current_round += 1
         self.current_player_id = (1 - self.first_player_id + self.current_round) % 2
+        self.presenter.notification("playing" if self.current_player_id == own_id else "waiting")
 
     def end_round(self):
         self.current_player_id = None
@@ -202,9 +253,15 @@ class Game:
 
         for player in self.players:
             ability = player.commander.ability()
-            return ability.on_round_end(self, player)
+            ability.on_round_end(self, player)
 
-    def end_game(self):
+        if self.current_round == 3 or player0.is_dead() or player1.is_dead():
+            self.presenter.end_game()
+            return True
+
+        return False
+
+    def clear_game(self):
         self.board.clear_rows(self.players)
         self.board.clear_weather()
         self.update_points()
@@ -217,7 +274,7 @@ class Game:
     def add_player(self, player):
         player_count = len(self.players)
         if player_count > 1:
-            raise ValueError(f"Too many players, 2 already added")
+            raise ValueError("Too many players, 2 already added")
 
         self.players.append(player)
         player.id = player_count

@@ -1,42 +1,77 @@
 import pygame
 from overrides import overrides
 
+from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 
 
-class TextScene(Scene):
-    def __init__(self, screen, texts):
-        super().__init__(screen)
+class ChooseScene(Scene, TemporaryDrawable):
+    def __init__(self, screen):
+        Scene.__init__(self, screen)
+        TemporaryDrawable.__init__(self, locking=False, frames=-1)
 
-        self.texts = texts
+        self.texts = ["Talia Scoia'tael daje ci możliwość podjęcia decyzji,", "kto rozpocznie rozgrywkę jako pierwszy."]
+        self.title = "Czy chcesz zacząć jako pierwszy?"
 
-        button_width, button_height = u.BUTTON_SIZE_WIDE
-        self.back_button = Button("Powrót do Menu",((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
-          u.BUTTON_SIZE_WIDE, { "type": "mode_change", "mode": "menu" }, image_paths=u.THEME_BUTTON_PATHS)
+        self.font_title = u.CINZEL_40_BOLD
+        self.font_text = u.CINZEL_30
+        self.spacing = 30
+
+        button_height = u.BUTTON_SIZE_NARROW[1]
+        box_width = 1000
+        box_height = 300
+
+        self.box_rect = pygame.Rect(
+            (self.screen_width - box_width) // 2,
+            (self.screen_height - box_height) // 2,
+            box_width,
+            box_height,
+        )
+
+        total_button_width = 2 * u.BUTTON_SIZE_NARROW[0] + 40
+        start_x = self.box_rect.centerx - total_button_width // 2
+        y_buttons = self.box_rect.bottom - self.spacing - button_height
+
+        self.me_button = Button(
+            "Ja",
+            (start_x, y_buttons),
+            u.BUTTON_SIZE_NARROW,
+            {"type": "first-player", "me": True},
+        )
+        self.opp_button = Button(
+            "Przeciwnik",
+            (start_x + u.BUTTON_SIZE_NARROW[0] + 40, y_buttons),
+            u.BUTTON_SIZE_NARROW,
+            {"type": "first-player", "me": False},
+        )
+
+    def draw_box(self):
+        spacing = 40
+
+        overlay = pygame.Surface(self.box_rect.size, pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 190))
+        self.screen.blit(overlay, self.box_rect.topleft)
+        pygame.draw.rect(self.screen, u.COLOR_WHITE, self.box_rect, 3, border_radius=5)
+
+        title_surface = self.font_title.render(self.title, True, u.COLOR_LIGHTGRAY)
+        title_rect = title_surface.get_rect(center=(self.box_rect.centerx, self.box_rect.top + spacing))
+        self.screen.blit(title_surface, title_rect)
+
+        y_pos = self.box_rect.centery - spacing
+        for line in self.texts:
+            text_surface = self.font_text.render(line, True, u.COLOR_WHITE)
+            text_rect = text_surface.get_rect(center=(self.box_rect.centerx, y_pos))
+            self.screen.blit(text_surface, text_rect)
+            y_pos += spacing
 
     @overrides
     def draw(self):
-        super().draw()
         self.draw_overlay(0.60)
-
-        lines = self.texts
-        font = u.CINZEL_40
-        line_height = font.get_height()
-        spacing = 10
-
-        total_height = len(lines) * line_height + (len(lines) - 1) * spacing
-        start_y = (self.screen_height - total_height) // 2
-
-        y_pos = start_y
-        for line in lines:
-            text_surface = font.render(line, True, u.COLOR_WHITE)
-            text_rect = text_surface.get_rect(center=(self.screen_width // 2, y_pos + line_height // 2))
-            self.screen.blit(text_surface, text_rect)
-            y_pos += line_height + spacing
-
-        self.back_button.draw(self.screen, pygame.mouse.get_pos())
+        self.draw_box()
+        self.me_button.draw(self.screen, pygame.mouse.get_pos())
+        self.opp_button.draw(self.screen, pygame.mouse.get_pos())
 
     @overrides
     def handle_events(self, event):
@@ -44,6 +79,13 @@ class TextScene(Scene):
             return None
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.back_button.check_click(event.pos):
+            if self.me_button.check_click(event.pos):
                 self.lock()
-                return self.back_button.action
+                return self.me_button.action
+            if self.opp_button.check_click(event.pos):
+                self.lock()
+                return self.opp_button.action
+
+    @overrides
+    def can_be_handled(self):
+        return True

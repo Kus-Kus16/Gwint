@@ -8,6 +8,7 @@ from src.model.enums.faction_type import FactionType
 from src.model.enums.row_type import RowType
 from src.view.constants import game_constants as c, ui_constants as u
 from src.view.scenes.carousel_scene import CarouselScene
+from src.view.scenes.choose_scene import ChooseScene
 from src.view.scenes.endscreen import EndScreen
 from src.view.scenes.scene import Scene
 
@@ -466,6 +467,11 @@ class GameScene(Scene):
         position_text = f"{mouse_x}, {mouse_y}, {self.player_id})"
         self.draw_text(position_text, 10, 10)
 
+    def choose_first_player(self):
+        self.lock()
+        choose_screen = ChooseScene(self.screen)
+        self.add_temporary(choose_screen)
+
     def end_game(self, result, round_history):
         self.lock()
         end_screen = EndScreen(self.screen, result, round_history)
@@ -505,7 +511,7 @@ class GameScene(Scene):
             cancelable, allow_ending=allow_ending, label=label, redraw_label=redraw_label, opacity=0.5)
         self.add_temporary(carousel)
 
-    def discard_card_carousel(self):
+    def discard_temporary(self):
         self.pop_temporary()
 
     def set_card_carousel(self, cards):

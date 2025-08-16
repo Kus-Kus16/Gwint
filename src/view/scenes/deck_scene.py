@@ -17,6 +17,13 @@ from src.view.scenes.scene import Scene
 class DeckScene(Scene):
     def __init__(self, screen):
         super().__init__(screen)
+        self.stats = {
+            "total_count": 0,
+            "unit_count": 0,
+            "special_count": 0,
+            "total_strength": 0,
+            "hero_count": 0,
+        }
 
         # Click rects
         self.commander_rect = None
@@ -113,7 +120,6 @@ class DeckScene(Scene):
         self.scrollbar_left.draw(self.screen, deck_dict["left"].size())
         self.scrollbar_right.draw(self.screen, deck_dict["right"].size())
 
-
     def draw_commander(self):
         self.draw_text("Dowódca", *c.COMM_LABEL_POS, color=u.COLOR_GOLD, font=u.CINZEL_25_BOLD, center=True)
 
@@ -151,13 +157,12 @@ class DeckScene(Scene):
         self.draw_text(value, x_center + 25, y_center, font=u.CINZEL_25, color=color, center=True)
 
     def draw_deck_stats(self):
-        total_count, unit_count, special_count, total_strength, hero_count = self.calculate_deck_stats()
         lines = [
-            ("Wszystkie karty w talii", total_count, "deck_count"),
-            ("Liczba kart jednostek", unit_count, "deck_unit"),
-            ("Karty specjalne", f"{special_count}/10", "deck_special"),
-            ("Całkowita siła jednostek", total_strength, "deck_strength"),
-            ("Karty bohaterów", hero_count, "deck_hero"),
+            ("Wszystkie karty w talii", self.stats["total_count"], "deck_count"),
+            ("Liczba kart jednostek", self.stats["unit_count"], "deck_unit"),
+            ("Karty specjalne", f"{self.stats['special_count']}/10", "deck_special"),
+            ("Całkowita siła jednostek", self.stats["total_strength"], "deck_strength"),
+            ("Karty bohaterów", self.stats["hero_count"], "deck_hero"),
         ]
 
         start_y = c.STATS_Y
@@ -165,10 +170,10 @@ class DeckScene(Scene):
 
         for i, (text, value, filename) in enumerate(lines):
             color = u.COLOR_GOLD
-            if i == 1 and unit_count < 22:  # Unit count
+            if i == 1 and self.stats["unit_count"] < 22:  # Unit count
                 color = u.COLOR_RED
             elif i == 2:  # Special count
-                color = u.COLOR_RED if special_count > 10 else u.COLOR_GREEN
+                color = u.COLOR_RED if self.stats["special_count"] > 10 else u.COLOR_GREEN
 
             y = start_y + i * y_offset
             self.draw_single_stat(y, filename, text, value, color)
@@ -299,6 +304,7 @@ class DeckScene(Scene):
 
         self.current_deck_index = (self.current_deck_index + direction) % len(self.factions)
         self.update_faction_buttons()
+        self.calculate_deck_stats()
 
         self.scrollbar_left.offset = 0
         self.scrollbar_right.offset = 0
@@ -330,28 +336,38 @@ class DeckScene(Scene):
 
     def calculate_deck_stats(self):
         deck = self.get_current_deck_dict()["right"]
-        total_count = unit_count = special_count = total_strength = hero_count = 0
+        stats = {
+            "total_count": 0,
+            "unit_count": 0,
+            "special_count": 0,
+            "total_strength": 0,
+            "hero_count": 0,
+        }
 
         for card in deck.cards:
             count = card.count
-            total_count += count
+            self.update_stats(card, count, +1, stats)
 
-            if card.power is None:
-                special_count += count
-            elif card.is_card_type(CardType.UNIT):
-                unit_count += count
-                total_strength += card.power * count
-            elif card.is_card_type(CardType.HERO):
-                hero_count += count
-                total_strength += card.power * count
+        self.stats.update(stats)
 
-        return total_count, unit_count, special_count, total_strength, hero_count
+    @classmethod
+    def update_stats(cls, card, count, sign, dictionary):
+        dictionary["total_count"] += count
+
+        if card.is_card_type(CardType.SPECIAL):
+            dictionary["special_count"] += count * sign
+        elif card.is_card_type(CardType.UNIT) or card.is_card_type(CardType.HERO):
+            dictionary["unit_count"] += count * sign
+            dictionary["total_strength"] += card.power * count * sign
+
+        if card.is_card_type(CardType.HERO):
+            dictionary["hero_count"] += count * sign
 
     def get_current_deck_dict(self):
         current_faction = self.get_faction()
         return self.all_decks[current_faction]
 
-    def move_cards(self, origin, source, id, count):
+    def move_cards(self, origin, source, id, count, stats_sign):
         deck = self.get_current_deck_dict()
         origin = deck[origin]
         source = deck[source]
@@ -373,15 +389,16 @@ class DeckScene(Scene):
 
         source_card.count += count
 
+        self.update_stats(origin_card, count, stats_sign, self.stats)
+
     def move_to_left(self, id, count):
-        self.move_cards("right", "left", id, count)
+        self.move_cards("right", "left", id, count, -1)
 
     def move_to_right(self, id, count):
-        self.move_cards("left", "right", id, count)
+        self.move_cards("left", "right", id, count, +1)
 
     def can_start_game(self):
-        total_count, _, special_count, _, _ = self.calculate_deck_stats()
-        if total_count < 22 or special_count > 10:
+        if self.stats["total_count"] < 22 or self.stats["special_count"] > 10:
             return False
 
         return True

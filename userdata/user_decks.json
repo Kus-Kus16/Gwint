@@ -1,5 +1,5 @@
 {
-    "last_used_index": 6,
+    "last_used_index": 1,
     "decks": [
         {
             "faction": "Królestwa Północy",
@@ -211,6 +211,10 @@
             "cards": [
                 {
                     "id": 0,
+                    "count": 2
+                },
+                {
+                    "id": 1,
                     "count": 1
                 },
                 {
