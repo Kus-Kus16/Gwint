@@ -1,5 +1,6 @@
 from src.model.card_holders.row import Row
 from src.model.card_holders.weather import Weather
+from src.model.enums.card_type import CardType
 from src.model.enums.weather_type import WeatherType
 
 
@@ -56,16 +57,16 @@ class Board:
         for row in self.rows:
             row.recalculate()
 
-    def clear_rows(self, players):
+    def clear_rows(self, players, ignored=None):
         player0, player1 = players
         add = []
 
         for i in range(0, 3):
-            add += self.rows[i].clear(player0)
+            add += self.rows[i].clear(player0, ignored=ignored)
             self.rows[i].clear_boosts()
 
         for i in range(3, 6):
-            add += self.rows[i].clear(player1)
+            add += self.rows[i].clear(player1, ignored=ignored)
             self.rows[i].clear_boosts()
 
         return add
@@ -134,3 +135,13 @@ class Board:
                 scorched.append((card, player_id, row))
 
         return scorched
+
+    def get_random_card(self, player_id, rng):
+        rows = self.get_ordered_rows(player_id)[3:]
+        rows = [r for r in rows if r.size()]
+
+        unit_cards = [card for r in rows for card in r.filter_cards_type(CardType.UNIT)]
+        if not unit_cards:
+            return None
+
+        return rng.choice(unit_cards)

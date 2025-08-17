@@ -200,11 +200,17 @@ class Row(SortedCardHolder):
         for card in remove:
             self.effects[boost_name].remove(card)
 
-    def clear(self, player):
+    def clear(self, player, ignored):
+        if ignored is None:
+            ignored = set()
+
         add = []
         remove = []
         destroy = []
         for card in self.cards:
+            if card in ignored:
+                continue
+
             if card.is_ability_type(AbilityType.RECALLING):
                 extra = db.get_recall(card.id)
                 extra.owner = player

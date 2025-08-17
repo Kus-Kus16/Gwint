@@ -306,7 +306,7 @@ class GameScene(Scene):
         self.draw_icon(f"tarcza_{player.faction.name.lower()}", (45, 50), x + 52, y + 12)
         self.draw_icon(f"total_{"opp" if opponent else "me"}", None, x + 427, y + 45)
 
-        if self.game.is_winning_round(player_id):
+        if self.game.get_round_result(player_id, include_abilities=False) == 1:
             self.draw_icon("high_score", None, x + 403, y + 40)
 
         if self.game.get_player(player_id).passed:

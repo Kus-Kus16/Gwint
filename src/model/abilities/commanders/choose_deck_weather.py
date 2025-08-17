@@ -10,7 +10,7 @@ class ChooseDeckWeather(ChooseBase):
     @overrides
     def get_carousel_cards(self, presenter):
         player = presenter.game.get_player(presenter.my_id)
-        return player.deck.filter_cards(AbilityType.WEATHER)
+        return player.deck.filter_cards_ability(AbilityType.WEATHER)
 
     @overrides
     def on_board_play(self, game, player, row_type, targets):

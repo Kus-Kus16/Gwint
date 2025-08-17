@@ -3,6 +3,7 @@ import random
 
 from src.model.abilities.commanders.block_ability import BlockAbility
 from src.model.board import Board
+from src.model.enums.ability_type import AbilityType
 from src.model.enums.card_type import CardType
 from src.model.enums.faction_type import FactionType
 
@@ -112,18 +113,10 @@ class Game:
             return
 
         # both passed
-        notif = (
-            "win_round" if self.is_winning_round(own_id)
-            else "lose_round" if self.is_winning_round(1 - own_id)
-            else "draw_round"
-        )
-        self.presenter.notification(notif)
-
-        ending = self.end_round()
+        ending = self.end_round(own_id)
         if ending:
             return
 
-        self.presenter.notification("round_start")
         self.start_round(own_id)
 
     def redraw_cards(self, player_id, targets):
@@ -155,7 +148,6 @@ class Game:
                 break
 
         self.shuffle_decks()
-        self.presenter.notification("round_start")
         self.start_round(own_id)
 
     def shuffle_decks(self):
@@ -179,9 +171,9 @@ class Game:
         self.players[0].points = player0_pts
         self.players[1].points = player1_pts
 
-    def need_first_player(self):
-        p0 = self.players[0].faction == FactionType.SCOIATAEL
-        p1 = self.players[1].faction == FactionType.SCOIATAEL
+    def compare_for_faction(self, faction_type):
+        p0 = self.players[0].faction == faction_type
+        p1 = self.players[1].faction == faction_type
 
         if p0 == p1:
             return -1
@@ -224,27 +216,95 @@ class Game:
     def start_round(self, own_id):
         self.current_round += 1
         self.current_player_id = (1 - self.first_player_id + self.current_round) % 2
+        self.presenter.notification("round_start")
+
+        # North ability
+        notify = False
+        for player in self.players:
+            if player.faction == FactionType.POLNOC and self.get_round_result(player.id, self.current_round - 1) == 1:
+                player.draw_card()
+                notify = True
+
+        if notify:
+            self.presenter.notification("north_ability")
+
+        # Toussaint ability
+        notify = False
+        for player in self.players:
+            if player.faction == FactionType.TOUSSAINT and self.get_round_result(player.id, self.current_round - 1) == -1:
+                player.draw_card()
+                notify = True
+
+        if notify:
+            self.presenter.notification("toussaint_ability")
+
+        # Skellige ability
+        if self.current_round == 3:
+            notify = False
+            for player in self.players:
+                if player.faction == FactionType.SKELLIGE:
+                    grave_cards = player.get_grave_cards(playable_only=True)
+                    grave = player.grave
+
+                    if not grave_cards:
+                        continue
+
+                    notify = True
+                    extra = []
+                    to_get = 2
+                    while to_get and grave_cards:
+                        card = self.rng.choice(grave_cards)
+                        grave_cards.remove(card)
+                        grave.remove_card(card)
+                        extra.append(card)
+                        if card.is_ability_type(AbilityType.CHOOSING): #medic
+                            continue
+                        to_get -= 1
+
+                    for card in extra:
+                        self.play_extra_card(player.id, card, card.rows[0])
+
+            if notify:
+                self.presenter.notification("skellige_ability")
+
         self.presenter.notification("playing" if self.current_player_id == own_id else "waiting")
 
-    def end_round(self):
+    def end_round(self, own_id):
+        notifs = {
+            1: "win_round",
+            -1: "lose_round",
+            0: "draw_round"
+        }
+
+        round_result = self.get_round_result(own_id, notify=True)
+        self.presenter.notification(notifs[round_result])
+
         self.current_player_id = None
-        player0, player1 = self.players[0], self.players[1]
+        (me, opponent) = self.players if own_id == 0 else self.players[::-1]
 
-        player0.passed = False
-        player1.passed = False
+        self.round_history.append((self.players[0].points, self.players[1].points))
 
-        player0_pts, player1_pts = player0.points, player1.points
-        self.round_history.append((player0_pts, player1_pts))
-
-        if player0_pts > player1_pts:
-            player1.lower_hp()
-        elif player1_pts > player0_pts:
-            player0.lower_hp()
+        if round_result == 1:
+            opponent.lower_hp()
+        elif round_result == -1:
+            me.lower_hp()
         else:
-            player0.lower_hp()
-            player1.lower_hp()
+            me.lower_hp()
+            opponent.lower_hp()
 
-        extra = self.board.clear_rows(self.players)
+        # Monsters ability
+        ignored = set()
+        for player in self.players:
+            if player.faction == FactionType.POTWORY:
+                card = self.board.get_random_card(player.id, self.rng)
+                if not card:
+                    continue
+                ignored.add(card)
+
+        if len(ignored) > 0:
+            self.presenter.notification("monsters_ability")
+
+        extra = self.board.clear_rows(self.players, ignored=ignored)
         for card, player_id in extra:
             self.play_extra_card(player_id, card, card.rows[0])
 
@@ -252,10 +312,11 @@ class Game:
         self.update_points()
 
         for player in self.players:
+            player.passed = False
             ability = player.commander.ability()
             ability.on_round_end(self, player)
 
-        if self.current_round == 3 or player0.is_dead() or player1.is_dead():
+        if self.current_round == 3 or any(p.is_dead() for p in self.players):
             self.presenter.end_game()
             return True
 
@@ -286,8 +347,39 @@ class Game:
     def set_seed(self, seed):
         self.rng = random.Random(seed)
 
-    def is_winning_round(self, player_id):
-        return self.players[player_id].points > self.players[1- player_id].points
+    def get_round_result(self, player_id, round_num=None, include_abilities=True, notify=False):
+        def compare(points, opp_points):
+            if points < opp_points:
+                return -1
+            if points > opp_points:
+                return 1
+
+            if not include_abilities:
+                return 0
+
+            has_nilfgaard = self.compare_for_faction(FactionType.NILFGAARD)
+            if has_nilfgaard == -1:
+                return 0
+
+            if notify:
+                self.presenter.notification("nilfgaard_ability")
+
+            if has_nilfgaard == player_id:
+                return 1
+            else:
+                return -1
+
+        if round_num is None:
+            return compare(self.players[player_id].points, self.players[1 - player_id].points)
+
+        if not 1 <= round_num <= 3:
+            return
+
+        points = self.round_history[round_num - 1]
+        if player_id == 1:
+            points = points[::-1]
+
+        return compare(*points)
 
     def get_round_history(self, player_id):
         if player_id == 0:

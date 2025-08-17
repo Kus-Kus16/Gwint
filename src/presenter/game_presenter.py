@@ -4,6 +4,7 @@ import time
 
 from src.model.cards import cards_database as db
 from src.model.enums.cards_area import CardsArea
+from src.model.enums.faction_type import FactionType
 from src.model.game import Game
 from src.model.player import Player
 from src.network.ip_config import save_ip
@@ -91,12 +92,12 @@ class GamePresenter:
     def handle_setupgame(self):
         # First time
         if self.first_player is None:
-            need_first = self.game.need_first_player()
-            if need_first == self.my_id:
+            has_scoia = self.game.compare_for_faction(FactionType.SCOIATAEL)
+            if has_scoia == self.my_id:
                 self.first_player = "choose"
                 self.view.current_scene.choose_first_player()
                 return
-            elif need_first == (1 - self.my_id):
+            elif has_scoia == (1 - self.my_id):
                 self.first_player = "wait"
                 return
             else:
