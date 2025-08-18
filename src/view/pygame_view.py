@@ -85,6 +85,11 @@ class PygameView:
         mouse_x, mouse_y = pygame.mouse.get_pos()
         self.screen.blit(self.cursor, (mouse_x, mouse_y))
 
+        fps = self.clock.get_fps()
+        font = pygame.font.SysFont("Arial", 14)
+        text_surface = font.render(f"{int(fps)} FPS", True, (0, 255, 0))
+        self.screen.blit(text_surface, (2, 2))
+
     def set_observer(self, observer):
         self.observer = observer
 

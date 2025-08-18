@@ -5,14 +5,14 @@ from src.view.constants import ui_constants as u
 
 
 class Button:
-	def __init__(self, text, pos, size, action=None, font=None, image_paths=None):
+	def __init__(self, text, pos, size, on_click=None, font=None, image_paths=None):
 		self.font = font if font is not None else u.DEFAULT_FONT_BOLD
 		self.text = text
 		self.pos = pos
 		self.size = size
 		self.image_paths = image_paths if image_paths is not None else u.DEFAULT_BUTTON_PATHS
 		self.images = loader.load_image(self.image_paths[0], self.size), loader.load_image(self.image_paths[1], self.size)
-		self.action = action
+		self.on_click = on_click
 		self.rect = pygame.Rect(pos, size)
 
 		self.color = u.COLOR_BUTTON

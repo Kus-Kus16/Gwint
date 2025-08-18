@@ -18,6 +18,7 @@ class Scene(ABC):
         self.rect = pygame.Rect(self.pos, self.size)
         self.background = loader.load_image(background_path if background_path is not None else u.BACKGROUND_PATH,
                                             (self.screen_width, self.screen_height))
+        self.overlay = pygame.Surface(self.size, pygame.SRCALPHA)
         self.volume_slider = volume_slider
         self.temporary_drawable = []
         self.spacing_frames = 0
@@ -63,9 +64,8 @@ class Scene(ABC):
             self.pop_temporary()
 
     def draw_overlay(self, opacity):
-        overlay = pygame.Surface(self.size, pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 255 * opacity))
-        self.screen.blit(overlay, self.rect.topleft)
+        self.overlay.fill((0, 0, 0, 255 * opacity))
+        self.screen.blit(self.overlay, self.rect.topleft)
 
     def notification(self, name, frames, locking):
         pos = (0, self.screen_height // 2 - 60)
@@ -85,6 +85,9 @@ class Scene(ABC):
         self.temporary_drawable.append(drawable)
 
     def pop_temporary(self):
+        if not self.temporary_drawable:
+            return
+
         drawable = self.temporary_drawable.pop(0)
 
         if not self.temporary_drawable:

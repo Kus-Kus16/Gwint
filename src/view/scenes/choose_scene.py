@@ -34,18 +34,11 @@ class ChooseScene(Scene, TemporaryDrawable):
         start_x = self.box_rect.centerx - total_button_width // 2
         y_buttons = self.box_rect.bottom - self.spacing - button_height
 
-        self.me_button = Button(
-            "Ja",
-            (start_x, y_buttons),
-            u.BUTTON_SIZE_NARROW,
-            {"type": "first-player", "me": True},
-        )
-        self.opp_button = Button(
-            "Przeciwnik",
-            (start_x + u.BUTTON_SIZE_NARROW[0] + 40, y_buttons),
-            u.BUTTON_SIZE_NARROW,
-            {"type": "first-player", "me": False},
-        )
+        self.buttons = [
+            Button("Ja", (start_x, y_buttons), u.BUTTON_SIZE_NARROW, self.button_me),
+            Button("Przeciwnik", (start_x + u.BUTTON_SIZE_NARROW[0] + 40, y_buttons), u.BUTTON_SIZE_NARROW,
+                   self.button_opp)
+        ]
 
     def draw_box(self):
         spacing = 40
@@ -70,8 +63,8 @@ class ChooseScene(Scene, TemporaryDrawable):
     def draw(self):
         self.draw_overlay(0.60)
         self.draw_box()
-        self.me_button.draw(self.screen, pygame.mouse.get_pos())
-        self.opp_button.draw(self.screen, pygame.mouse.get_pos())
+        for button in self.buttons:
+            button.draw(self.screen, pygame.mouse.get_pos())
 
     @overrides
     def handle_events(self, event):
@@ -79,12 +72,23 @@ class ChooseScene(Scene, TemporaryDrawable):
             return None
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.me_button.check_click(event.pos):
-                self.lock()
-                return self.me_button.action
-            if self.opp_button.check_click(event.pos):
-                self.lock()
-                return self.opp_button.action
+            for button in self.buttons:
+                if button.check_click(event.pos):
+                    return button.on_click()
+
+    def button_me(self):
+        self.lock()
+        return {
+            "type": "first-player",
+            "me": True
+        }
+
+    def button_opp(self):
+        self.lock()
+        return {
+            "type": "first-player",
+            "me": False
+        }
 
     @overrides
     def can_be_handled(self):

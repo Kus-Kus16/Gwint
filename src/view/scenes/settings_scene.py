@@ -62,7 +62,7 @@ class SettingsScene(Scene):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.back_button.check_click(event.pos):
                 self.lock()
-                return self.back_button.action
+                return self.back_button.on_click
 
             if self.save_ip_button.check_click(event.pos):
                 new_ip = self.input_box.text.strip()

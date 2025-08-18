@@ -34,6 +34,15 @@ class DeckScene(Scene):
         self.scrollbar_left = Scrollbar(c.LEFT_SCROLLBAR_POS, c.SCROLLBAR_HEIGHT, u.COLOR_GRAY)
         self.scrollbar_right = Scrollbar(c.RIGHT_SCROLLBAR_POS, c.SCROLLBAR_HEIGHT, u.COLOR_GRAY)
 
+        # Buttons
+        button_width, button_height = u.BUTTON_SIZE_NARROW
+        x, y = (self.screen_width - button_width) // 2, self.screen_height - button_height - 30
+
+        self.buttons = [
+            Button("Menu", (x, y), u.BUTTON_SIZE_NARROW, self.button_menu),
+            Button("Graj", (x, y - button_height - 10), u.BUTTON_SIZE_NARROW, self.button_play)
+        ]
+
         # Factions
         self.factions = [faction for faction in FactionType if faction != FactionType.NEUTRALNE]
         self.all_decks = {
@@ -44,18 +53,6 @@ class DeckScene(Scene):
         userdata = loader.load_data("user_decks", is_userdata=True)
         self.current_deck_index = 0
         self.init_decks(userdata)
-
-        # Buttons
-        self.prev_faction_button = None
-        self.next_faction_button = None
-
-        button_width, button_height = u.BUTTON_SIZE_NARROW
-        x, y = (self.screen_width - button_width) // 2, self.screen_height - button_height - 30
-        self.back_button = Button("Menu",(x, y), u.BUTTON_SIZE_NARROW,
-                                  {"type": "mode_change", "mode": "menu"})
-        self.start_button = Button("Graj", (x, y - button_height - 10), u.BUTTON_SIZE_NARROW,
-                                   {"type": "mode_change", "mode": "new_game", "load": True})
-        self.update_faction_buttons()
 
     def init_decks(self, userdata):
         for faction in self.factions:
@@ -96,10 +93,13 @@ class DeckScene(Scene):
         next_name = FactionType.faction_to_fullname(self.factions[next_index])
 
         y = c.TOP_BUTTONS_Y - u.BUTTON_SIZE_WIDE[1] // 2
-        self.prev_faction_button = Button(f"<< {prev_name}", (50, y), u.BUTTON_SIZE_WIDE,
-                                          None, font=u.CINZEL_25_BOLD)
-        self.next_faction_button = Button(f"{next_name} >>", (self.screen_width - 450, y), u.BUTTON_SIZE_WIDE,
-                                          None, font=u.CINZEL_25_BOLD)
+        buttons = [
+            Button(f"<< {prev_name}", (50, y), u.BUTTON_SIZE_WIDE,
+                   self.button_prev, font=u.CINZEL_25_BOLD),
+            Button(f"{next_name} >>", (self.screen_width - 450, y), u.BUTTON_SIZE_WIDE,
+                   self.button_next, font=u.CINZEL_25_BOLD)
+        ]
+        self.buttons[2:] = buttons
 
     @overrides
     def draw(self):
@@ -130,10 +130,8 @@ class DeckScene(Scene):
 
     def draw_buttons(self):
         mouse_pos = pygame.mouse.get_pos()
-        self.prev_faction_button.draw(self.screen, mouse_pos)
-        self.next_faction_button.draw(self.screen, mouse_pos)
-        self.back_button.draw(self.screen, mouse_pos)
-        self.start_button.draw(self.screen, mouse_pos)
+        for button in list(self.buttons):
+            button.draw(self.screen, mouse_pos)
 
     def draw_texts(self):
         # Titles
@@ -243,28 +241,13 @@ class DeckScene(Scene):
                 scrollbar.scroll_start = scrollbar.offset
                 return
 
-        # Back button
-        if self.back_button.check_click(event.pos):
-            self.lock()
-            self.save_user_deck()
-            return self.back_button.action
-
-        # Start button
-        elif self.start_button.check_click(event.pos) and self.can_start_game():
-            self.lock()
-            self.save_user_deck()
-            return self.start_button.action
-
-        # Prev faction button
-        elif self.prev_faction_button.check_click(event.pos):
-            self.change_faction(direction=-1)
-
-        # Next faction button
-        elif self.next_faction_button.check_click(event.pos):
-            self.change_faction(direction=1)
+        # Buttons
+        for button in list(self.buttons):
+            if button.check_click(event.pos):
+                return button.on_click()
 
         # Commander selection
-        elif self.commander_rect.collidepoint(event.pos):
+        if self.commander_rect.collidepoint(event.pos):
             self.open_carousel()
             return
 
@@ -296,6 +279,29 @@ class DeckScene(Scene):
         event_y = event.pos[1]
         self.scrollbar_left.update_drag_scroll(deck_dict["left"].size(), event_y)
         self.scrollbar_right.update_drag_scroll(deck_dict["right"].size(), event_y)
+
+    def button_menu(self):
+        self.lock()
+        self.save_user_deck()
+        return {
+            "type": "mode_change",
+            "mode": "menu"
+        }
+
+    def button_play(self):
+        self.lock()
+        self.save_user_deck()
+        return {
+            "type": "mode_change",
+            "mode": "new_game",
+            "load": True
+        }
+
+    def button_prev(self):
+        self.change_faction(direction=-1)
+
+    def button_next(self):
+        self.change_faction(direction=+1)
 
     def change_faction(self, direction=0, faction=None):
         if faction:

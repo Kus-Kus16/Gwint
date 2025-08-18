@@ -109,7 +109,7 @@ class Game:
 
         if not self.players[1 - player_id].passed:
             # other turn
-            self.presenter.notification("waiting" if player_id == own_id else "playing")
+            self.presenter.notification("op_turn" if player_id == own_id else "me_turn")
             return
 
         # both passed
@@ -163,7 +163,7 @@ class Game:
         if any(player.passed for player in self.players):
             return
 
-        self.presenter.notification("playing" if next_player.id == own_id else "waiting")
+        self.presenter.notification("me_turn" if next_player.id == own_id else "op_turn")
 
     def update_points(self):
         player0_pts, player1_pts = self.board.rows_sum()
@@ -267,7 +267,7 @@ class Game:
             if notify:
                 self.presenter.notification("skellige_ability")
 
-        self.presenter.notification("playing" if self.current_player_id == own_id else "waiting")
+        self.presenter.notification("me_turn" if self.current_player_id == own_id else "op_turn")
 
     def end_round(self, own_id):
         notifs = {

@@ -14,7 +14,7 @@ class TextScene(Scene):
 
         button_width, button_height = u.BUTTON_SIZE_WIDE
         self.back_button = Button("Powrót do Menu",((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
-          u.BUTTON_SIZE_WIDE, { "type": "mode_change", "mode": "menu" }, image_paths=u.THEME_BUTTON_PATHS)
+          u.BUTTON_SIZE_WIDE, self.button_menu, image_paths=u.THEME_BUTTON_PATHS)
 
     @overrides
     def draw(self):
@@ -45,5 +45,11 @@ class TextScene(Scene):
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.back_button.check_click(event.pos):
-                self.lock()
-                return self.back_button.action
+                return self.back_button.on_click()
+
+    def button_menu(self):
+        self.lock()
+        return {
+            "type": "mode_change",
+            "mode": "menu"
+        }

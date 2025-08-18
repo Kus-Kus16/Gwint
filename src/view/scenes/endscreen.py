@@ -20,10 +20,8 @@ class EndScreen(Scene, TemporaryDrawable):
         button_y = self.screen_height - 180
         button_size = u.BUTTON_SIZE
         self.buttons = [
-            Button("Menu", (button_x - 400, button_y), button_size,
-                   {"type": "game-over", "rematch": False}),
-            Button("Rewanż", (button_x + 100, button_y), button_size,
-                   {"type": "game-over", "rematch": True}),
+            Button("Menu", (button_x - 400, button_y), button_size, self.button_menu),
+            Button("Rewanż", (button_x + 100, button_y), button_size, self.button_rematch),
         ]
 
     @overrides
@@ -102,8 +100,21 @@ class EndScreen(Scene, TemporaryDrawable):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             for btn in self.buttons:
                 if btn.check_click(event.pos):
-                    self.lock()
-                    return btn.action
+                    return btn.on_click()
+
+    def button_menu(self):
+        self.lock()
+        return {
+            "type": "game-over",
+            "rematch": False
+        }
+
+    def button_rematch(self):
+        self.lock()
+        return {
+            "type": "game-over",
+            "rematch": True
+        }
 
     @overrides
     def can_be_handled(self):

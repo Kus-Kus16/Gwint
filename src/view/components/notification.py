@@ -6,8 +6,8 @@ from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
 
 notifications = {
-    "playing": ("notif_me_turn", ["Twój ruch!"]),
-    "waiting": ("notif_op_turn", ["Ruch przeciwnika"]),
+    "me_turn": ("notif_me_turn", ["Twój ruch!"]),
+    "op_turn": ("notif_op_turn", ["Ruch przeciwnika"]),
     "start": ("notif_me_coin", ["Zaczynasz jako pierwszy."]),
     "op_start": ("notif_op_coin", ["Przeciwnik zaczyna jako pierwszy."]),
     "scoia_start": ("notif_scoiatael", ["Zaczynasz jako pierwszy."]),
@@ -34,6 +34,7 @@ notifications = {
                                               "po przegranej rundzie dobiera się dodatkową kartę."]),
     "fire_ability": ("notif_fire", ["Dzięki zdolności talii Kultu Wiecznego Ognia,",
                                     "na początku rozgrywki wymienia się do czterech kart."]),
+    "waiting": ("notif_round_start", ["Oczekiwanie na decyzję przeciwnika."])
 }
 
 def load_image(name):

@@ -16,17 +16,17 @@ class MenuScene(Scene):
 		button_y = 387
 		button_size = u.BUTTON_SIZE_WIDE
 		button_paths = u.THEME_BUTTON_PATHS
-		self.menu_buttons = [
+		self.buttons = [
 			Button("Nowa gra", (button_x, button_y), button_size,
-				   { "type": "mode_change", "mode": "new_game", "load": False}, image_paths=button_paths),
+				   self.button_newgame, image_paths=button_paths),
 			Button("Twoja talia", (button_x, button_y + (button_height + 45)), button_size,
-				   {"type": "mode_change", "mode": "deck"}, image_paths=button_paths),
+				   self.button_deck, image_paths=button_paths),
 			Button("Ustawienia", (button_x, button_y + 2 * (button_height + 45)), button_size,
-				   {"type": "mode_change", "mode": "settings"}, image_paths=button_paths),
+				   self.button_settings, image_paths=button_paths),
 			Button("Autorzy", (button_x, button_y + 3 * (button_height + 45)), button_size,
-				   { "type": "mode_change", "mode": "credits" }, image_paths=button_paths),
+				   self.button_credits, image_paths=button_paths),
 			Button("Wyjście", (button_x, button_y + 4 * (button_height + 45)), button_size,
-				   { "type": "mode_change", "mode": "exit" }, image_paths=button_paths)
+				   self.button_exit, image_paths=button_paths)
 		]
 
 	@overrides
@@ -41,7 +41,7 @@ class MenuScene(Scene):
 		self.screen.blit(logo, (192, 73))
 
 		mouse_pos = pygame.mouse.get_pos()
-		for btn in self.menu_buttons:
+		for btn in self.buttons:
 			btn.draw(self.screen, mouse_pos)
 
 		self.draw_temporary()
@@ -55,7 +55,27 @@ class MenuScene(Scene):
 		self.volume_slider.handle_event(event)
 
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-			for btn in self.menu_buttons:
+			for btn in self.buttons:
 				if btn.check_click(event.pos):
-					self.lock()
-					return btn.action
+					return btn.on_click()
+
+	def change_mode(self, mode, **extra):
+		self.lock()
+		data = {"type": "mode_change", "mode": mode}
+		data.update(extra)
+		return data
+
+	def button_newgame(self):
+		return self.change_mode("new_game", load=False)
+
+	def button_deck(self):
+		return self.change_mode("deck")
+
+	def button_settings(self):
+		return self.change_mode("settings")
+
+	def button_credits(self):
+		return self.change_mode("credits")
+
+	def button_exit(self):
+		return self.change_mode("exit")

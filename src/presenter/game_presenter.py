@@ -99,6 +99,7 @@ class GamePresenter:
                 return
             elif has_scoia == (1 - self.my_id):
                 self.first_player = "wait"
+                self.notification_waiting()
                 return
             else:
                 first_player = None
@@ -112,6 +113,7 @@ class GamePresenter:
             if not self.continue_with_response(response):
                 return
 
+            self.notification_discard()
             first_player = data[0]
 
         else:
@@ -137,6 +139,7 @@ class GamePresenter:
             raise ValueError(f"Illegal opponent redraw: {str(e)}")
 
         self.game.end_redraws(self.my_id)
+        self.notification_discard()
         self.turn_switch()
 
     def handle_opponentturn(self):
@@ -161,6 +164,7 @@ class GamePresenter:
         if not self.continue_with_response(response):
             return
 
+        self.notification_discard()
         self.first_player = None
         self.game_state = 'setup-game'
 
@@ -315,6 +319,7 @@ class GamePresenter:
             self.game.set_seed(data[0])
             self.game_state = "waiting-for-endgame"
             self.view.current_scene.reset()
+            self.notification_waiting()
         else:
             self.return_to_menu(None)
 
@@ -398,8 +403,8 @@ class GamePresenter:
 
             self.carousel_dict.clear()
             self.game_state = "waiting-for-redraw"
-
             self.view.current_scene.discard_temporary()
+            self.notification_waiting()
             self.view.lock()
         else:
             self.view.unlock()
@@ -446,6 +451,12 @@ class GamePresenter:
 
     def notification(self, name, seconds=1.5):
         self.view.run_later(lambda: self.view.notification(name, seconds=seconds))
+
+    def notification_waiting(self):
+        self.view.run_later(lambda: self.view.notification("waiting", frames=-1))
+
+    def notification_discard(self):
+        self.view.run_later(lambda: self.view.current_scene.pop_temporary())
 
     def return_to_menu(self, reasons, seconds=1.5):
         self.game_state = "menu"

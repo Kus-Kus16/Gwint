@@ -24,6 +24,8 @@ class CarouselScene(Scene, TemporaryDrawable):
         self.cancellable = cancelable
         self.allow_ending = allow_ending
         self.label = label
+        self.overlay = pygame.Surface((self.screen_width, 100), pygame.SRCALPHA)
+        self.overlay.fill((0, 0, 0, 205))
         self.redraw_label = redraw_label
         self.buttons = []
 
@@ -35,9 +37,9 @@ class CarouselScene(Scene, TemporaryDrawable):
 
         button_data = []
         if self.choosable:
-            button_data.append(("Wybierz", {"type": "select"}))
+            button_data.append(("Wybierz", self.button_select))
         if self.cancellable:
-            button_data.append(("Zamknij", {"type": "cancel"}))
+            button_data.append(("Zamknij", self.button_cancel))
 
         total_width = len(button_data) * button_width + (len(button_data) - 1) * button_margin
         start_x = self.screen_width // 2 - total_width // 2
@@ -51,15 +53,12 @@ class CarouselScene(Scene, TemporaryDrawable):
         self.draw_overlay(self.opacity)
 
         if self.label:
-            height = u.BUTTON_SIZE[1]
-            overlay = pygame.Surface((self.screen_width, height), pygame.SRCALPHA)
-            overlay.fill((0, 0, 0, 205))
-            self.screen.blit(overlay, (0, 100))
+            self.screen.blit(self.overlay, (0, 100))
 
             text = self.label if not self.redraw_label else f"Wybierz do {self.choose_count} kart, które chcesz wymienić."
             text_render = self.font.render(text, True, u.COLOR_GOLD)
             text_rect = text_render.get_rect()
-            text_rect.center = (self.screen_width // 2, 100 + height // 2)
+            text_rect.center = (self.screen_width // 2, 100)
             self.screen.blit(text_render, text_rect)
 
         half_visible = self.visible_cards // 2
@@ -119,36 +118,36 @@ class CarouselScene(Scene, TemporaryDrawable):
 
                 offset += card_width + 120
 
-            return self.handle_button_events(event)
+            for btn in self.buttons:
+                if btn.check_click(event.pos):
+                    return btn.on_click()
 
-    def handle_button_events(self, event):
-        for btn in self.buttons:
-            if btn.check_click(event.pos):
-                if btn.action["type"] == "cancel":
-                    return {
-                        "type": "carousel",
-                        "card_id": None,
-                        "end": True,
-                        "allow_play": self.allow_ending
-                    }
+    def button_cancel(self):
+        return {
+            "type": "carousel",
+            "card_id": None,
+            "end": True,
+            "allow_play": self.allow_ending
+        }
 
-                card = self.cards[self.selected_index]
-                self.cards.remove(card)
-                self.choose_count -= 1
-                self.lock()
+    def button_select(self):
+        card = self.cards[self.selected_index]
+        self.cards.remove(card)
+        self.choose_count -= 1
+        self.lock()
 
-                end = False
-                if self.choose_count == 0 or len(self.cards) == 0:
-                    end = True
-                if self.choose_count < 0 and not card.is_ability_type(AbilityType.CHOOSING):
-                    end = True
+        end = False
+        if self.choose_count == 0 or len(self.cards) == 0:
+            end = True
+        if self.choose_count < 0 and not card.is_ability_type(AbilityType.CHOOSING):
+            end = True
 
-                return {
-                    "type": "carousel",
-                    "card_id": card.id,
-                    "end": end,
-                    "allow_play": self.allow_ending
-                }
+        return {
+            "type": "carousel",
+            "card_id": card.id,
+            "end": end,
+            "allow_play": self.allow_ending
+        }
 
     def set_cards(self, cards):
         self.cards = cards
