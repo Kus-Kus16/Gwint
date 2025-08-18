@@ -332,6 +332,10 @@
             "commander_id": 181,
             "cards": [
                 {
+                    "id": 1,
+                    "count": 1
+                },
+                {
                     "id": 10,
                     "count": 1
                 },

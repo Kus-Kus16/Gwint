@@ -1,7 +1,7 @@
 import pygame
 from overrides import overrides
 
-from src.view import loader as loader
+from src.presenter import loader as loader
 from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
 

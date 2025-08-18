@@ -7,9 +7,8 @@ from src.model.enums.cards_area import CardsArea
 from src.model.enums.faction_type import FactionType
 from src.model.game import Game
 from src.model.player import Player
-from src.network.ip_config import save_ip
 from src.network.network import Network
-from src.view import loader
+from src.presenter import loader, settings
 from src.view.constants import ui_constants as u
 
 
@@ -26,6 +25,10 @@ class GamePresenter:
         self.game_state = "menu"
         self.actions = queue.Queue()
         self.carousel_dict = {}
+
+        self.quick_play = None
+        self.on_setting_update()
+        settings.register_observer(self, "quick_play")
 
     def connect(self, deck, commander):
         try:
@@ -235,16 +238,15 @@ class GamePresenter:
                 self.game_state = "exit"
                 self.disconnect()
                 self.view.running = False
-            case "change_ip":
-                new_ip = action.get("new_ip")
-                if new_ip:
-                    self.net.server_ip = new_ip
-                    save_ip(new_ip)
 
         self.view.unlock()
 
     def handle_newgame(self, action):
-        if not action["load"]:
+        load = action.get("load")
+        if load is None:
+            load = self.quick_play
+
+        if not load:
             self.notify({"type": "mode_change", "mode": "deck"})
             return
 
@@ -486,3 +488,6 @@ class GamePresenter:
             return False
 
         return True
+
+    def on_setting_update(self):
+        self.quick_play = settings.load_setting("quick_play")

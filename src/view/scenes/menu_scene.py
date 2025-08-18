@@ -1,23 +1,23 @@
 import pygame
 from overrides import overrides
 
-from src.view import loader as loader
+from src.presenter import loader as loader
 from src.view.constants import ui_constants as u
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 
 
 class MenuScene(Scene):
-	def __init__(self, screen, volume_slider):
-		super().__init__(screen, volume_slider=volume_slider)
+	def __init__(self, screen):
+		super().__init__(screen)
 
 		button_width, button_height = u.BUTTON_SIZE_WIDE
 		button_x = 184
 		button_y = 387
 		button_size = u.BUTTON_SIZE_WIDE
-		button_paths = u.THEME_BUTTON_PATHS
+		button_paths = self.theme_buttons_paths
 		self.buttons = [
-			Button("Nowa gra", (button_x, button_y), button_size,
+			Button("Graj", (button_x, button_y), button_size,
 				   self.button_newgame, image_paths=button_paths),
 			Button("Twoja talia", (button_x, button_y + (button_height + 45)), button_size,
 				   self.button_deck, image_paths=button_paths),
@@ -45,28 +45,24 @@ class MenuScene(Scene):
 			btn.draw(self.screen, mouse_pos)
 
 		self.draw_temporary()
-		self.volume_slider.draw(self.screen)
 
 	@overrides
 	def handle_events(self, event):
 		if self.locked:
 			return None
 
-		self.volume_slider.handle_event(event)
-
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 			for btn in self.buttons:
 				if btn.check_click(event.pos):
 					return btn.on_click()
 
-	def change_mode(self, mode, **extra):
+	def change_mode(self, mode):
 		self.lock()
 		data = {"type": "mode_change", "mode": mode}
-		data.update(extra)
 		return data
 
 	def button_newgame(self):
-		return self.change_mode("new_game", load=False)
+		return self.change_mode("new_game")
 
 	def button_deck(self):
 		return self.change_mode("deck")

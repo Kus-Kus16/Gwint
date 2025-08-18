@@ -14,8 +14,8 @@ from src.view.scenes.scene import Scene
 
 
 class GameScene(Scene):
-    def __init__(self, screen, volume_slider):
-        super().__init__(screen, "resources/board.jpg", volume_slider)
+    def __init__(self, screen):
+        super().__init__(screen, "resources/board.jpg")
         self.game = None
         self.player_id = None
         self.selected_card = None
@@ -25,8 +25,6 @@ class GameScene(Scene):
 
     @overrides
     def handle_events(self, event):
-        self.volume_slider.handle_event(event)
-
         if self.temporary_drawable:
             return self.handle_temporary(event)
 
@@ -252,8 +250,6 @@ class GameScene(Scene):
         self.draw_selected()
         self.draw_players()
         self.draw_temporary()
-
-        self.volume_slider.draw(self.screen)
 
     def draw_rows(self):
         self.card_rects.clear()

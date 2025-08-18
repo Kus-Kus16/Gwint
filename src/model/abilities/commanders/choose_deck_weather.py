@@ -1,7 +1,6 @@
 from overrides import overrides
 
 from src.model.abilities.commanders.choose_base import ChooseBase
-from src.model.abilities.commanders.commander_base import CommanderAbilityBase
 from src.model.enums.ability_type import AbilityType
 from src.model.enums.row_type import RowType
 

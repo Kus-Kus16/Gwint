@@ -27,7 +27,6 @@ class CarouselScene(Scene, TemporaryDrawable):
         self.overlay = pygame.Surface((self.screen_width, 100), pygame.SRCALPHA)
         self.overlay.fill((0, 0, 0, 205))
         self.redraw_label = redraw_label
-        self.buttons = []
 
         self.visible_cards = 5
 

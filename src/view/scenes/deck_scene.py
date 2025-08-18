@@ -7,7 +7,7 @@ from src.model.cards.card_entry import CardEntry
 from src.model.cards.commander_entry import CommanderEntry
 from src.model.enums.card_type import CardType
 from src.model.enums.faction_type import FactionType
-from src.view import loader, saver
+from src.presenter import loader, saver
 from src.view.components.scrollbar import Scrollbar
 from src.view.constants import deck_constants as c, ui_constants as u
 from src.view.components.button import Button

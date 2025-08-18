@@ -4,22 +4,28 @@ import pygame
 
 from src.model.enums.card_type import CardType
 from src.view.components.notification import Notification
-from src.view import loader as loader
+from src.presenter import loader as loader, settings
 from src.view.constants import ui_constants as u
 
 
 class Scene(ABC):
-    def __init__(self, screen, background_path=None, volume_slider=None):
+    def __init__(self, screen, background_path=None):
         self.screen = screen
-        self.framerate = u.FRAMERATE
-        self.pos = (0, 0)
         self.size = screen.get_size()
         self.screen_width, self.screen_height = self.size
+
+        self.background = None
+        self.never_update = background_path is not None
+        self.load_background(background_path)
+        self.buttons = []
+        self.theme_buttons_paths = None
+        self.on_setting_update()
+        settings.register_observer(self, "theme")
+
+        self.framerate = u.FRAMERATE
+        self.pos = (0, 0)
         self.rect = pygame.Rect(self.pos, self.size)
-        self.background = loader.load_image(background_path if background_path is not None else u.BACKGROUND_PATH,
-                                            (self.screen_width, self.screen_height))
         self.overlay = pygame.Surface(self.size, pygame.SRCALPHA)
-        self.volume_slider = volume_slider
         self.temporary_drawable = []
         self.spacing_frames = 0
         self.locked = False
@@ -205,3 +211,21 @@ class Scene(ABC):
             rect.topleft = (x, y)
 
         self.screen.blit(image, rect)
+
+    def on_setting_update(self):
+        index = settings.load_setting("theme")
+        bck, but = u.THEMES[index]
+
+        self.theme_buttons_paths = but
+        for button in self.buttons:
+            button.load_images(self.theme_buttons_paths)
+
+        self.load_background(bck)
+
+    def load_background(self, background_path):
+        if background_path is None:
+            return
+        if self.never_update and self.background is not None:
+            return
+
+        self.background = loader.load_image(background_path, (self.screen_width, self.screen_height))

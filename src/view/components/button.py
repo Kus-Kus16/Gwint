@@ -1,17 +1,19 @@
 import pygame
 
-from src.view import loader as loader
+from src.presenter import loader as loader
+from src.view.components.component import Component
 from src.view.constants import ui_constants as u
 
 
-class Button:
+class Button(Component):
 	def __init__(self, text, pos, size, on_click=None, font=None, image_paths=None):
-		self.font = font if font is not None else u.DEFAULT_FONT_BOLD
+		super().__init__(font if font is not None else u.DEFAULT_FONT_BOLD)
 		self.text = text
 		self.pos = pos
 		self.size = size
-		self.image_paths = image_paths if image_paths is not None else u.DEFAULT_BUTTON_PATHS
-		self.images = loader.load_image(self.image_paths[0], self.size), loader.load_image(self.image_paths[1], self.size)
+		self.images = None
+		self.never_update = image_paths is None
+		self.load_images(image_paths)
 		self.on_click = on_click
 		self.rect = pygame.Rect(pos, size)
 
@@ -22,13 +24,14 @@ class Button:
 	def draw(self, screen, mouse_pos):
 		image = self.images[0] if not self.rect.collidepoint(mouse_pos) else self.images[1]
 		screen.blit(image, self.pos)
-
-		label = self.font.render(self.text, True, u.COLOR_BLACK)
-		screen.blit(label, (
-			self.rect.centerx - label.get_width() // 2,
-			self.rect.centery - label.get_height() // 2
-		))
+		self.draw_text(self.text, self.rect.centerx, self.rect.centery, screen, u.COLOR_BLACK, center=True)
 
 	def check_click(self, pos):
 		return True if self.rect.collidepoint(pos) else False
 
+	def load_images(self, image_paths):
+		if self.never_update and self.images is not None:
+			return
+
+		image_paths = image_paths if image_paths is not None else u.DEFAULT_BUTTON_PATHS
+		self.images = loader.load_image(image_paths[0], self.size), loader.load_image(image_paths[1], self.size)

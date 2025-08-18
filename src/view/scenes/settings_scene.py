@@ -2,7 +2,8 @@ import pygame
 
 from src.view.components.button import Button
 from src.view.components.input_box import InputBox
-from src.view import settings
+from src.presenter import settings
+from src.view.components.setting import Setting
 from src.view.scenes.scene import Scene
 from src.view.constants import ui_constants as u
 
@@ -14,58 +15,88 @@ class SettingsScene(Scene):
 
         # Przyciski
         button_size = u.BUTTON_SIZE_WIDE
-        button_paths = u.THEME_BUTTON_PATHS
-        self.back_button = Button(
-            "Powrót do Menu",
-            ((self.screen_width - btn_w) // 2, self.screen_height - btn_h - 50),
-            button_size,
-            {"type": "mode_change", "mode": "menu"},
-            image_paths=button_paths
-        )
-
-        self.save_ip_button = Button(
-            "Zapisz IP",
-            ((self.screen_width - btn_w) // 2, 300),
-            button_size,
-            {"type": "custom", "action": "save_ip"},
-            image_paths=button_paths
-        )
+        button_paths = self.theme_buttons_paths
+        self.buttons = [
+            Button(
+                "Powrót do Menu", ((self.screen_width - btn_w) // 2, self.screen_height - btn_h - 50),
+                button_size, {"type": "mode_change", "mode": "menu"}, image_paths=button_paths
+            )
+        ]
 
         # Pole do wpisania IP
-        current_ip = settings.load_setting("ip")
-        self.input_box = InputBox(self.screen_width // 2 - 150, 230, 300, 50, text=current_ip)
+        current_ip = settings.load_setting("server_ip")
 
-        # Etykieta
-        self.label_font = u.DEFAULT_FONT_BOLD
-        self.label_text = "Adres IP serwera:"
+        # Settings
+        all_settings = settings.user_settings
+        self.settings = [
+            Setting("Głośność", (self.screen_width // 4, 200), [f"{i*10}%" for i in range(11)],
+                    self.setting_volume, round(all_settings["volume"] * 10), can_wrap=False),
+            Setting("Motyw", (self.screen_width // 4, 400), ["Ciri", "Gerald", "Yennefer", "Nithral"],
+                    self.setting_theme, all_settings["theme"]),
+            Setting("Licznik FPS", (self.screen_width // 4, 600), ["Wył.", "Wł."],
+                    self.setting_fps, all_settings["show_fps"]),
+            Setting("Język", (3 * self.screen_width // 4, 200), ["PL"],
+                    self.setting_language, all_settings["language"]),
+            Setting("Szybka gra", (3 * self.screen_width // 4, 400), ["Wył.", "Wł."],
+                    self.setting_quickplay, all_settings["quick_play"])
+        ]
+
+        self.input_box = InputBox((3 * self.screen_width // 4, 600), u.TEXT_BOX_SIZE,
+                                  "IP serwera", self.framerate, self.setting_ip, text=current_ip)
 
     def draw(self):
         super().draw()
         self.draw_overlay(0.85)
+        self.draw_text("Ustawienia", self.screen_width // 2, 100, center=True, font=u.CINZEL_50_BOLD)
 
-        # Rysuj etykietę
-        label_surf = self.label_font.render(self.label_text, True, u.COLOR_WHITE)
-        label_rect = label_surf.get_rect(center=(self.screen_width // 2, 200))
-        self.screen.blit(label_surf, label_rect)
+        for setting in self.settings:
+            setting.draw(self.screen, pygame.mouse.get_pos())
 
-        # Pole input i przyciski
         self.input_box.draw(self.screen)
-        self.save_ip_button.draw(self.screen, pygame.mouse.get_pos())
-        self.back_button.draw(self.screen, pygame.mouse.get_pos())
+
+        for button in self.buttons:
+            button.draw(self.screen, pygame.mouse.get_pos())
 
     def handle_events(self, event):
         if self.locked:
-            return None
+            return
 
-        self.input_box.handle_event(event)
+        if self.input_box.handle_events(event):
+            return
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.back_button.check_click(event.pos):
-                self.lock()
-                return self.back_button.on_click
+            for setting in self.settings:
+                if setting.handle_events(event):
+                    return
 
-            if self.save_ip_button.check_click(event.pos):
-                new_ip = self.input_box.text.strip()
-                return {"type": "mode_change", "mode": "change_ip", "new_ip": new_ip}
+            for button in self.buttons:
+                if button.check_click(event.pos):
+                    self.lock()
+                    return button.on_click
 
-        return None
+        return
+
+    @classmethod
+    def setting_volume(cls, setting_index):
+        volume = 0.1 * setting_index
+        settings.save_setting("volume", volume)
+
+    @classmethod
+    def setting_theme(cls, setting_index):
+        settings.save_setting("theme", setting_index)
+
+    @classmethod
+    def setting_fps(cls, setting_index):
+        settings.save_setting("show_fps", setting_index)
+
+    @classmethod
+    def setting_language(cls, setting_index):
+        settings.save_setting("language", setting_index)
+
+    @classmethod
+    def setting_quickplay(cls, setting_index):
+        settings.save_setting("quick_play", setting_index)
+
+    @classmethod
+    def setting_ip(cls, text):
+        settings.save_setting("server_ip", text)

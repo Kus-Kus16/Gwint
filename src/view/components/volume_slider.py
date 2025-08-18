@@ -1,6 +1,7 @@
 import pygame
 from src.view.constants import ui_constants as u
-from src.view import settings
+from src.presenter import settings
+
 
 class VolumeSlider:
     def __init__(self, pos, size=(200, 20)):

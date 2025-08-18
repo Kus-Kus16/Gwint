@@ -7,9 +7,8 @@ from src.view.scenes.text_scene import TextScene
 from src.view.scenes.deck_scene import DeckScene
 from src.view.scenes.game_scene import GameScene
 from src.view.scenes.menu_scene import MenuScene
-from src.view import loader as loader, settings
+from src.presenter import loader as loader, settings
 from src.view.constants import ui_constants as u
-from src.view.components.volume_slider import VolumeSlider
 
 
 class PygameView:
@@ -20,8 +19,8 @@ class PygameView:
         pygame.display.set_caption("Gwint LAN")
         self.clock = pygame.time.Clock()
         self.framerate = u.FRAMERATE
+        self.show_fps = None
         self.cursor = loader.load_image("resources/ico/cursor.png")
-        self.volume_slider = VolumeSlider((self.screen_width - 240, self.screen_height - 60))
 
         self.running = True
         self.observer = None
@@ -32,17 +31,20 @@ class PygameView:
         # Soundtrack
         pygame.mixer.init()
         pygame.mixer.music.load("resources/soundtrack.mp3")
-        pygame.mixer.music.set_volume(settings.load_setting("volume"))
         pygame.mixer.music.play(-1)
 
         #Screens initiation
-        self.menu = MenuScene(self.screen, self.volume_slider)
+        self.menu = MenuScene(self.screen)
         self.credits = TextScene(self.screen, u.AUTHORS)
         self.waiting = TextScene(self.screen, ["Oczekiwanie na przeciwnika"])
-        self.game = GameScene(self.screen, self.volume_slider)
+        self.game = GameScene(self.screen)
         self.deck = DeckScene(self.screen)
         self.settings = SettingsScene(self.screen)
         self.current_scene = self.menu
+
+        self.on_setting_update()
+        settings.register_observer(self, "volume")
+        settings.register_observer(self, "show_fps")
 
     def run(self):
         while self.running:
@@ -50,8 +52,7 @@ class PygameView:
             self.handle_tasks()
             self.handle_pygame_events()
             pygame.display.flip()
-            fps = self.clock.get_fps()
-            pygame.display.set_caption(f"Gwent LAN - FPS: {fps:.2f}")
+            pygame.display.set_caption("Gwint")
             self.clock.tick(self.framerate)
 
     def handle_pygame_events(self):
@@ -85,6 +86,9 @@ class PygameView:
         mouse_x, mouse_y = pygame.mouse.get_pos()
         self.screen.blit(self.cursor, (mouse_x, mouse_y))
 
+        if not self.show_fps:
+            return
+
         fps = self.clock.get_fps()
         font = pygame.font.SysFont("Arial", 14)
         text_surface = font.render(f"{int(fps)} FPS", True, (0, 255, 0))
@@ -101,3 +105,7 @@ class PygameView:
             frames = seconds * self.framerate
 
         self.current_scene.notification(name, frames, True)
+
+    def on_setting_update(self):
+        pygame.mixer.music.set_volume(settings.load_setting("volume"))
+        self.show_fps = settings.load_setting("show_fps")

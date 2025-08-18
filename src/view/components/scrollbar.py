@@ -1,6 +1,6 @@
 import pygame
 
-from src.view import loader as loader
+from src.presenter import loader as loader
 from src.view.constants import ui_constants as u, deck_constants as c
 
 class Scrollbar:

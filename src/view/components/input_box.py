@@ -1,46 +1,47 @@
 import pygame
+
+from src.view.components.component import Component
 from src.view.constants import ui_constants as u
 
 
-class InputBox:
-    def __init__(self, x, y, w, h, text='', font=None,
-                 color_inactive=u.COLOR_GRAY,
-                 color_active=u.COLOR_GOLD,
-                 text_color=u.COLOR_LIGHTGRAY):
-        self.rect = pygame.Rect(x, y, w, h)
-        self.color_inactive = color_inactive
-        self.color_active = color_active
+class InputBox(Component):
+    def __init__(self, pos, size, title, framerate, on_change, text='', font=None):
+        super().__init__(font if font is not None else u.DEFAULT_FONT)
+        self.pos = pos
+        self.rect = pygame.Rect(pos, size)
+        self.rect.topleft = (self.rect.topleft[0] - 250, self.rect.topleft[1] + 86)
+        self.framerate = framerate
+        self.color_inactive = u.COLOR_LIGHTGRAY,
+        self.color_active = u.COLOR_GOLD,
         self.color = self.color_inactive
-
-        self.text_color = text_color
-
-        # Font przekazany z zewnątrz lub domyślny
-        self.font = font or pygame.font.SysFont(None, 32)
+        self.text_color = u.COLOR_WHITE
 
         self.text = text
-        self.txt_surface = self.font.render(text, True, self.text_color)
-
+        self.title = title
+        self.on_change = on_change
+        self.title_font = u.CINZEL_30_BOLD
         self.active = False
         self.cursor_visible = True
         self.cursor_counter = 0
         self.cursor_position = len(text)
 
-    def handle_event(self, event):
+    def handle_events(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            # Aktywacja inputa po kliknięciu
+            self.cursor_counter = 0
+            self.cursor_visible = True
             self.active = self.rect.collidepoint(event.pos)
             self.color = self.color_active if self.active else self.color_inactive
 
         if event.type == pygame.KEYDOWN and self.active:
-            if event.key == pygame.K_RETURN:
-                return self.text  # można zwrócić tekst na Enter
-            elif event.key == pygame.K_BACKSPACE:
+            if event.key == pygame.K_BACKSPACE:
                 if self.cursor_position > 0:
                     self.text = self.text[:self.cursor_position-1] + self.text[self.cursor_position:]
+                    self.on_change(self.text)
                     self.cursor_position -= 1
             elif event.key == pygame.K_DELETE:
                 if self.cursor_position < len(self.text):
                     self.text = self.text[:self.cursor_position] + self.text[self.cursor_position+1:]
+                    self.on_change(self.text)
             elif event.key == pygame.K_LEFT:
                 if self.cursor_position > 0:
                     self.cursor_position -= 1
@@ -48,34 +49,29 @@ class InputBox:
                 if self.cursor_position < len(self.text):
                     self.cursor_position += 1
             else:
-                # Dodawanie znaku na pozycji kursora
                 self.text = self.text[:self.cursor_position] + event.unicode + self.text[self.cursor_position:]
+                self.on_change(self.text)
                 self.cursor_position += 1
 
-            self.txt_surface = self.font.render(self.text, True, self.text_color)
-
-    def update(self):
-        # Dopasowanie szerokości inputa do tekstu (min. 200)
-        width = max(200, self.txt_surface.get_width() + 10)
-        self.rect.w = width
-
-        # Migający kursor
+    def update_cursor(self):
         self.cursor_counter += 1
-        if self.cursor_counter >= 30:
+        if self.cursor_counter >= self.framerate:
             self.cursor_counter = 0
             self.cursor_visible = not self.cursor_visible
 
     def draw(self, screen):
-        # Rysuj tekst
-        screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
+        self.update_cursor()
 
-        # Rysuj kursor jeśli aktywne i widoczne
+        x, y = self.pos
+        self.draw_text(self.title, x, y + 50, screen, font=self.title_font, center=True)
+        text_rect = self.draw_text(self.text, *self.rect.center, screen, center=True)
         if self.active and self.cursor_visible:
-            # Pozycja kursora w pikselach:
-            cursor_x_pos = self.font.size(self.text[:self.cursor_position])[0] + self.rect.x + 5
-            cursor_y_pos = self.rect.y + 5
+            cursor_x_pos = text_rect.x + self.font.size(self.text[:self.cursor_position])[0]
+            cursor_y_pos = text_rect.y
             cursor_height = self.font.get_height()
-            pygame.draw.line(screen, self.text_color, (cursor_x_pos, cursor_y_pos), (cursor_x_pos, cursor_y_pos + cursor_height), 2)
 
-        # Rysuj obramowanie
+            pygame.draw.line(screen, self.text_color,
+                             (cursor_x_pos, cursor_y_pos),
+                             (cursor_x_pos, cursor_y_pos + cursor_height), 2)
+
         pygame.draw.rect(screen, self.color, self.rect, 2)

@@ -13,8 +13,10 @@ class TextScene(Scene):
         self.texts = texts
 
         button_width, button_height = u.BUTTON_SIZE_WIDE
-        self.back_button = Button("Powrót do Menu",((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
-          u.BUTTON_SIZE_WIDE, self.button_menu, image_paths=u.THEME_BUTTON_PATHS)
+        self.buttons = [
+            Button("Powrót do Menu", ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
+                   u.BUTTON_SIZE_WIDE, self.button_menu, image_paths=self.theme_buttons_paths)
+        ]
 
     @overrides
     def draw(self):
@@ -36,7 +38,8 @@ class TextScene(Scene):
             self.screen.blit(text_surface, text_rect)
             y_pos += line_height + spacing
 
-        self.back_button.draw(self.screen, pygame.mouse.get_pos())
+        for button in self.buttons:
+            button.draw(self.screen, pygame.mouse.get_pos())
 
     @overrides
     def handle_events(self, event):
@@ -44,8 +47,10 @@ class TextScene(Scene):
             return None
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.back_button.check_click(event.pos):
-                return self.back_button.on_click()
+            for button in self.buttons:
+                if button.check_click(event.pos):
+                    self.lock()
+                    return button.on_click()
 
     def button_menu(self):
         self.lock()
