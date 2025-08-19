@@ -24,8 +24,6 @@ class CarouselScene(Scene, TemporaryDrawable):
         self.cancellable = cancelable
         self.allow_ending = allow_ending
         self.label = label
-        self.overlay = pygame.Surface((self.screen_width, 100), pygame.SRCALPHA)
-        self.overlay.fill((0, 0, 0, 205))
         self.redraw_label = redraw_label
 
         self.visible_cards = 5
@@ -52,13 +50,12 @@ class CarouselScene(Scene, TemporaryDrawable):
         self.draw_overlay(self.opacity)
 
         if self.label:
-            self.screen.blit(self.overlay, (0, 100))
+            overlay = pygame.Surface((self.screen_width, 100), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 205))
+            self.screen.blit(overlay, (0, 100))
 
             text = self.label if not self.redraw_label else f"Wybierz do {self.choose_count} kart, które chcesz wymienić."
-            text_render = self.font.render(text, True, u.COLOR_GOLD)
-            text_rect = text_render.get_rect()
-            text_rect.center = (self.screen_width // 2, 100)
-            self.screen.blit(text_render, text_rect)
+            self.draw_text(text, self.screen_width // 2, 150, color=u.COLOR_GOLD, center=True)
 
         half_visible = self.visible_cards // 2
         card_width, card_height = u.MEDIUM_CARD_SIZE

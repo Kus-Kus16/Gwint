@@ -456,13 +456,6 @@ class GameScene(Scene):
     def deselect(self):
         self.selected_card = None
 
-    # Debugging method
-    def display_cursor_position(self):
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-
-        position_text = f"{mouse_x}, {mouse_y}, {self.player_id})"
-        self.draw_text(position_text, 10, 10)
-
     def choose_first_player(self):
         self.lock()
         choose_screen = ChooseScene(self.screen)
@@ -518,7 +511,7 @@ class GameScene(Scene):
 
     @overrides
     def get_card_paths(self, card, size):
-        if size == "small" or card.faction != FactionType.NEUTRALNE:
+        if size == "small" or card.faction != FactionType.NEUTRAL:
             faction = card.faction
         else:
             faction = card.owner.faction

@@ -1,28 +1,38 @@
+import random
 from src.presenter import loader, saver
+from src.view.constants import ui_constants as u
 
-user_settings = {}
-observers = {}
+
+_user_settings = {}
+_observers = {}
+_theme_index = None
 
 def load_settings():
     data = loader.load_data("settings", is_userdata=True)
-    user_settings.clear()
-    user_settings.update(data)
+    _user_settings.clear()
+    _user_settings.update(data)
 
 def load_setting(setting_name):
-    return user_settings[setting_name]
+    return _user_settings[setting_name]
 
 def save_setting(setting_name, value):
-    user_settings[setting_name] = value
-    saver.save_userdata("settings", user_settings)
-    notify_observers(setting_name)
+    _user_settings[setting_name] = value
+    saver.save_userdata("settings", _user_settings)
+    _notify_observers(setting_name)
 
 def register_observer(observer, setting_name):
-    if setting_name not in observers:
-        observers[setting_name] = set()
-    observers[setting_name].add(observer)
+    if setting_name not in _observers:
+        _observers[setting_name] = set()
+    _observers[setting_name].add(observer)
 
-def notify_observers(setting_name):
-    for observer in observers[setting_name]:
+def _notify_observers(setting_name):
+    for observer in _observers.get(setting_name, []):
         observer.on_setting_update()
+
+def get_random_theme():
+    global _theme_index
+    if _theme_index is None:
+        _theme_index = random.randrange(len(u.THEMES))
+    return _theme_index
 
 load_settings()

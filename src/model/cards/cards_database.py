@@ -58,7 +58,7 @@ def find_commander_by_id(commander_id):
 def get_faction_cards(faction_type, include_neutral=False):
     cards = list(faction_cards_dict.get(faction_type, []))
     if include_neutral:
-        cards.extend(faction_cards_dict.get(FactionType.NEUTRALNE, []))
+        cards.extend(faction_cards_dict.get(FactionType.NEUTRAL, []))
 
     return cards
 
