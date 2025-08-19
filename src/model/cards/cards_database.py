@@ -64,6 +64,7 @@ def get_faction_cards(faction_type, include_neutral=False):
 
 def get_faction_commanders(faction_type):
     faction_name = FactionType.faction_to_fullname(faction_type)
+    print(faction_name)
     commanders = faction_commanders_dict[faction_type]
 
     for data in commanders:

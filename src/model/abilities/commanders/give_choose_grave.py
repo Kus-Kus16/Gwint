@@ -2,6 +2,7 @@ from overrides import overrides
 
 from src.model.abilities.commanders.commander_base import CommanderAbilityBase
 from src.model.enums.ability_type import AbilityType
+from src.presenter.settings import locale
 
 
 class GiveChooseGrave(CommanderAbilityBase):
@@ -27,9 +28,9 @@ class GiveChooseGrave(CommanderAbilityBase):
         graves = opponent.get_grave_cards(playable_only=True)
         graves.extend(player.get_grave_cards(playable_only=True))
         actions.append(lambda: self.carousel(presenter, hand.cards, 1, False,
-                                             "Wybierz kartę do oddania."))
+                                             locale("abilites.give_choose_grave.give1")))
         actions.append(lambda: self.carousel(presenter, graves, 1, True,
-                                             "Wybierz 1 kartę ze stosów kart odrzuconych."))
+                                             locale("abilites.give_choose_grave.choose1")))
         return actions
 
     @classmethod

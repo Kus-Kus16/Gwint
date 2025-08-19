@@ -1,0 +1,93 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0\n"
+"POT-Creation-Date: 2025-08-19 17:19+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+# Model
+## Abilities
+msgid "abilites.discard_choose.discard2"
+msgstr "Wybierz 2 karty do odrzucenia."
+
+msgid "abilites.discard_choose.choose1"
+msgstr "Wybierz 1 kartę z talii."
+
+msgid "abilites.give_choose_grave.give1"
+msgstr "Wybierz kartę do oddania."
+
+msgid "abilites.give_choose_grave.choose1"
+msgstr "Wybierz 1 kartę ze stosów kart odrzuconych."
+
+msgid "abilites.restack_deck.discard1"
+msgstr "Odłóż karty na stos talii."
+
+## Factions
+msgid "faction.neutral"
+msgstr "Neutralne"
+
+msgid "faction.north"
+msgstr "Królestwa Północy"
+
+msgid "faction.nilfgaard"
+msgstr "Cesarstwo Nilfgaardu"
+
+msgid "faction.monsters"
+msgstr "Potwory"
+
+msgid "faction.scoiatael"
+msgstr "Scoia'tael"
+
+msgid "faction.skellige"
+msgstr "Skellige"
+
+msgid "faction.toussaint"
+msgstr  "Księstwo Toussaint"
+
+msgid "faction.fire"
+msgstr  "Kult Wiecznego Ognia"
+
+# Presenter
+## Errors
+msgid "error.connection"
+msgstr "Połączenie nieudane"
+
+msgid "error.communication"
+msgstr  "Błąd komunikacji"
+
+msgid "error.server_not_responding"
+msgstr  "Serwer nie odpowiada"
+
+msgid "error.server_responded"
+msgstr  "Serwer odpowiedział kodem"
+
+msgid "error.deck.own"
+msgstr  "Niepoprawna talia"
+
+msgid "error.deck.opponent"
+msgstr  "Niepoprawna talia przeciwnika"
+
+msgid "error.disconnect.opponent"
+msgstr "Przeciwnik rozłączył się."
+
+# View
+
+msgid "menu.play"
+msgstr "Graj"
+
+msgid "menu.deck"
+msgstr "Twoja talia"
+
+msgid "menu.settings"
+msgstr "Ustawienia"
+
+msgid "menu.credits"
+msgstr "Autorzy"
+
+msgid "menu.exit"
+msgstr "Wyjście"

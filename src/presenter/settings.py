@@ -3,12 +3,13 @@ import random
 from src.presenter import loader, saver
 from src.view.constants import ui_constants as u
 
+lang = gettext.translation("base", localedir="locales", languages=["PL"])
+lang.install()
+locale = lang.gettext
 
 _user_settings = {}
 _observers = {}
 _theme_index = None
-
-locale = gettext.gettext
 
 def load_settings():
     data = loader.load_data("settings", is_userdata=True)
