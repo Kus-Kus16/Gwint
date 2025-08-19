@@ -9,7 +9,6 @@ from src.model.enums.row_type import RowType
 class Optimise(CommanderAbilityBase):
     @overrides
     def on_board_play(self, game, player, row_type, targets):
-
         def copy(set_to_copy):
             copied_set = set()
             for element in set_to_copy:
@@ -34,9 +33,7 @@ class Optimise(CommanderAbilityBase):
                         cards.append(card)
                     row.remove_card(card)
 
-        fake_row_close = Row()
-        fake_row_range = Row()
-        fake_rows = [fake_row_close, fake_row_range]
+        fake_rows = [Row(), Row()]
         for i in range(len(fake_rows)):
             fake_rows[i].effects["weather"] = rows[i].effects["weather"]
             fake_rows[i].effects["morale"] = copy(rows[i].effects["morale"])
@@ -56,5 +53,3 @@ class Optimise(CommanderAbilityBase):
             fake_row_points[row_idx] = fake_rows[row_idx].points
 
             rows[row_idx].add_card(card)
-
-        return
