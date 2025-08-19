@@ -143,7 +143,7 @@ class Game:
             player.redraws = 0
 
         for player in self.players:
-            if player.faction == FactionType.OGIEN:
+            if player.faction == FactionType.FIRE:
                 self.presenter.notification("fire_ability")
                 break
 
@@ -198,7 +198,7 @@ class Game:
 
         for player in self.players:
             player.hp = 2
-            player.redraws = 2 if player.faction != FactionType.OGIEN else 4
+            player.redraws = 2 if player.faction != FactionType.FIRE else 4
             player.commander.enable()
             player.shuffle_deck(self.rng)
             player.draw_cards(10)
@@ -221,7 +221,7 @@ class Game:
         # North ability
         notify = False
         for player in self.players:
-            if player.faction == FactionType.POLNOC and self.get_round_result(player.id, self.current_round - 1) == 1:
+            if player.faction == FactionType.NORTH and self.get_round_result(player.id, self.current_round - 1) == 1:
                 player.draw_card()
                 notify = True
 
@@ -295,7 +295,7 @@ class Game:
         # Monsters ability
         ignored = set()
         for player in self.players:
-            if player.faction == FactionType.POTWORY:
+            if player.faction == FactionType.MONSTERS:
                 card = self.board.get_random_card(player.id, self.rng)
                 if not card:
                     continue

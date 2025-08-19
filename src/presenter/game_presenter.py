@@ -199,7 +199,6 @@ class GamePresenter:
     def process_actions(self):
         while not self.actions.empty():
             action = self.actions.get()
-            print(action)
             match action["type"]:
                 case "mode_change":
                     self.handle_mode_change(action)
@@ -446,19 +445,19 @@ class GamePresenter:
         self.relock()
 
     def relock(self):
-        if self.game.current_player_id == 1 - self.my_id or self.game_state == "waiting-for-redraw":
+        if self.game.current_player_id == 1 - self.my_id:
             self.view.lock()
         else:
             self.view.unlock()
 
     def notification(self, name, seconds=1.5):
-        self.view.run_later(lambda: self.view.notification(name, seconds=seconds))
+        self.view.notification(name, seconds=seconds)
 
     def notification_waiting(self):
-        self.view.run_later(lambda: self.view.notification("waiting", frames=-1))
+        self.view.notification("waiting", frames=-1)
 
     def notification_discard(self):
-        self.view.run_later(lambda: self.view.current_scene.pop_temporary())
+        self.view.current_scene.pop_temporary()
 
     def return_to_menu(self, reasons, seconds=1.5):
         self.game_state = "menu"

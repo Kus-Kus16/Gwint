@@ -1,11 +1,11 @@
 import pygame
 
+from src.presenter import settings
 from src.view.components.button import Button
 from src.view.components.input_box import InputBox
-from src.presenter import settings
 from src.view.components.setting import Setting
-from src.view.scenes.scene import Scene
 from src.view.constants import ui_constants as u
+from src.view.scenes.scene import Scene
 
 
 class SettingsScene(Scene):
@@ -27,18 +27,17 @@ class SettingsScene(Scene):
         current_ip = settings.load_setting("server_ip")
 
         # Settings
-        all_settings = settings.user_settings
         self.settings = [
             Setting("Głośność", (self.screen_width // 4, 200), [f"{i*10}%" for i in range(11)],
-                    self.setting_volume, round(all_settings["volume"] * 10), can_wrap=False),
-            Setting("Motyw", (self.screen_width // 4, 400), ["Ciri", "Gerald", "Yennefer", "Nithral"],
-                    self.setting_theme, all_settings["theme"]),
+                    self.setting_volume, round(settings.load_setting("volume") * 10), can_wrap=False),
+            Setting("Motyw", (self.screen_width // 4, 400), ["Ciri", "Gerald", "Yennefer", "Nithral", "Losowy"],
+                    self.setting_theme, settings.load_setting("theme")),
             Setting("Licznik FPS", (self.screen_width // 4, 600), ["Wył.", "Wł."],
-                    self.setting_fps, all_settings["show_fps"]),
+                    self.setting_fps, settings.load_setting("show_fps")),
             Setting("Język", (3 * self.screen_width // 4, 200), ["PL"],
-                    self.setting_language, all_settings["language"]),
+                    self.setting_language, settings.load_setting("language")),
             Setting("Szybka gra", (3 * self.screen_width // 4, 400), ["Wył.", "Wł."],
-                    self.setting_quickplay, all_settings["quick_play"])
+                    self.setting_quickplay, settings.load_setting("quick_play"))
         ]
 
         self.input_box = InputBox((3 * self.screen_width // 4, 600), u.TEXT_BOX_SIZE,

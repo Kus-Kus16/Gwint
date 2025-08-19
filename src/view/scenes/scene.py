@@ -214,6 +214,9 @@ class Scene(ABC):
 
     def on_setting_update(self):
         index = settings.load_setting("theme")
+        if index >= len(u.THEMES):
+            index = settings.get_random_theme()
+
         bck, but = u.THEMES[index]
 
         self.theme_buttons_paths = but

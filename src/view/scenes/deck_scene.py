@@ -44,7 +44,7 @@ class DeckScene(Scene):
         ]
 
         # Factions
-        self.factions = [faction for faction in FactionType if faction != FactionType.NEUTRALNE]
+        self.factions = [faction for faction in FactionType if faction != FactionType.NEUTRAL]
         self.all_decks = {
             faction: {"left": SortedCardHolder(), "right": SortedCardHolder()}
             for faction in self.factions
@@ -433,7 +433,7 @@ class DeckScene(Scene):
     @overrides
     def get_card_paths(self, card, size):
         faction = card.faction
-        if faction is FactionType.NEUTRALNE:
+        if faction is FactionType.NEUTRAL:
             faction = self.get_faction()
 
         faction = FactionType.faction_to_fullname(faction)
