@@ -15,8 +15,11 @@ class PygameView:
     def __init__(self):
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.screen_width, self.screen_height = self.screen.get_size()
+        pygame.display.set_caption("Gwint")
 
-        pygame.display.set_caption("Gwint LAN")
+        icon = pygame.image.load(u.ICON_PATH).convert_alpha()
+        pygame.display.set_icon(icon)
+
         self.clock = pygame.time.Clock()
         self.framerate = u.FRAMERATE
         self.show_fps = None
@@ -35,8 +38,8 @@ class PygameView:
 
         #Screens initiation
         self.menu = MenuScene(self.screen)
-        self.credits = TextScene(self.screen, u.AUTHORS)
-        self.waiting = TextScene(self.screen, ["Oczekiwanie na przeciwnika"])
+        self.credits = TextScene(self.screen, "Autorzy", u.AUTHORS)
+        self.waiting = TextScene(self.screen, "Oczekiwanie na przeciwnika")
         self.game = GameScene(self.screen)
         self.deck = DeckScene(self.screen)
         self.settings = SettingsScene(self.screen)
@@ -52,7 +55,6 @@ class PygameView:
             self.handle_tasks()
             self.handle_pygame_events()
             pygame.display.flip()
-            pygame.display.set_caption("Gwint")
             self.clock.tick(self.framerate)
 
     def handle_pygame_events(self):

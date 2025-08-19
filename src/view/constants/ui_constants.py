@@ -61,6 +61,8 @@ DEFAULT_FONT = CINZEL_30
 DEFAULT_FONT_BOLD = CINZEL_30_BOLD
 
 LOGO_PATH = "resources/gwent/backgrounds/logo-solo.png"
+ICON_PATH = "resources/gwent/icons/icon-transparent.png"
+
 SCROLL_PATH = "resources/gwent/buttons/scroll.png"
 BLUE_BUTTON_PATH = "resources/gwent/buttons/button-blue-big.png"
 BLUE_BUTTON_PATH_HOVER = "resources/gwent/buttons/button-blue-big-hover.png"
@@ -83,4 +85,11 @@ DEFAULT_RIGHT_ARROW_PATHS = (GOLD_RIGHT_ARROW_PATH, GOLD_RIGHT_ARROW_PATH_HOVER)
 
 # Menu
 THEMES = __themes()
-AUTHORS = ["Autorzy:", "Krzysztof Pieczka", "Maciej Kus"]
+AUTHORS = [
+    "Model, Frontend, Talia Toussaint:",
+    "Maciej Kus",
+    "Serwer, Frontend:",
+    "Krzysztof Pieczka",
+    "Talia Wiecznego Ognia, Optymalizacja Scoia'tael:",
+    "Maciej Fraś"
+]
