@@ -13,3 +13,6 @@ class AbilityType(Enum):
     BERSERK = 8
     THIRSTY = 9
     ENDURING = 10
+    MORALIZING = 11
+    DEMORALIZING = 12
+    AGILE = 13
