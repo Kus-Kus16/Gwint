@@ -1,0 +1,14 @@
+msgid "Graj"
+msgstr "dakwagaming"
+
+msgid "Twoja talia"
+msgstr "dakwagaming"
+
+msgid "Ustawienia"
+msgstr "dakwagaming"
+
+msgid "Autorzy"
+msgstr "dakwagaming"
+
+msgid "Wyjście"
+msgstr "dakwagaming"
