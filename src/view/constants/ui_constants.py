@@ -48,15 +48,15 @@ MASON_20 = __font("mason", 20)
 MASON_30 = __font("mason", 30)
 MASON_40 = __font("mason", 40)
 MASON_50 = __font("mason", 50)
-CINZEL_15 = __font("Cinzel-Regular", 15)
-CINZEL_25 = __font("Cinzel-Regular", 25)
-CINZEL_30 = __font("Cinzel-Regular", 30)
-CINZEL_40 = __font("Cinzel-Regular", 40)
-CINZEL_20_BOLD = __font("Cinzel-SemiBold", 20)
-CINZEL_25_BOLD = __font("Cinzel-SemiBold", 25)
-CINZEL_30_BOLD = __font("Cinzel-SemiBold", 30)
-CINZEL_40_BOLD = __font("Cinzel-SemiBold", 40)
-CINZEL_50_BOLD = __font("Cinzel-SemiBold", 50)
+CINZEL_15 = __font("Cinzel/static/Cinzel-Regular", 15)
+CINZEL_25 = __font("Cinzel/static/Cinzel-Regular", 25)
+CINZEL_30 = __font("Cinzel/static/Cinzel-Regular", 30)
+CINZEL_40 = __font("Cinzel/static/Cinzel-Regular", 40)
+CINZEL_20_BOLD = __font("Cinzel/static/Cinzel-SemiBold", 20)
+CINZEL_25_BOLD = __font("Cinzel/static/Cinzel-SemiBold", 25)
+CINZEL_30_BOLD = __font("Cinzel/static/Cinzel-SemiBold", 30)
+CINZEL_40_BOLD = __font("Cinzel/static/Cinzel-SemiBold", 40)
+CINZEL_50_BOLD = __font("Cinzel/static/Cinzel-SemiBold", 50)
 DEFAULT_FONT = CINZEL_30
 DEFAULT_FONT_BOLD = CINZEL_30_BOLD
 
@@ -86,10 +86,10 @@ DEFAULT_RIGHT_ARROW_PATHS = (GOLD_RIGHT_ARROW_PATH, GOLD_RIGHT_ARROW_PATH_HOVER)
 # Menu
 THEMES = __themes()
 AUTHORS = [
-    "Model, Frontend, Talia Toussaint:",
+    l("authors.1"),
     "Maciej Kus",
-    "Serwer, Frontend:",
+    l("authors.2"),
     "Krzysztof Pieczka",
-    "Talia Wiecznego Ognia, Optymalizacja Scoia'tael:",
+    l("authors.3"),
     "Maciej Fraś"
 ]

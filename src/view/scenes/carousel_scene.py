@@ -34,9 +34,9 @@ class CarouselScene(Scene, TemporaryDrawable):
 
         button_data = []
         if self.choosable:
-            button_data.append(("Wybierz", self.button_select))
+            button_data.append((l("scene.choose"), self.button_select))
         if self.cancellable:
-            button_data.append(("Zamknij", self.button_cancel))
+            button_data.append((l("scene.close"), self.button_cancel))
 
         total_width = len(button_data) * button_width + (len(button_data) - 1) * button_margin
         start_x = self.screen_width // 2 - total_width // 2

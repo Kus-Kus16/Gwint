@@ -12,8 +12,8 @@ class ChooseScene(Scene, TemporaryDrawable):
         Scene.__init__(self, screen)
         TemporaryDrawable.__init__(self, locking=False, frames=-1)
 
-        self.texts = ["Talia Scoia'tael daje ci możliwość podjęcia decyzji,", "kto rozpocznie rozgrywkę jako pierwszy."]
-        self.title = "Czy chcesz zacząć jako pierwszy?"
+        self.texts = [l("scene.talscoi"), l("scene.whofirst")]
+        self.title = l("scene.startfirst")
 
         self.font_title = u.CINZEL_40_BOLD
         self.font_text = u.CINZEL_30
@@ -35,8 +35,8 @@ class ChooseScene(Scene, TemporaryDrawable):
         y_buttons = self.box_rect.bottom - self.spacing - button_height
 
         self.buttons = [
-            Button("Ja", (start_x, y_buttons), u.BUTTON_SIZE_NARROW, self.button_me),
-            Button("Przeciwnik", (start_x + u.BUTTON_SIZE_NARROW[0] + 40, y_buttons), u.BUTTON_SIZE_NARROW,
+            Button(l("scene.me"), (start_x, y_buttons), u.BUTTON_SIZE_NARROW, self.button_me),
+            Button(l("scene.op"), (start_x + u.BUTTON_SIZE_NARROW[0] + 40, y_buttons), u.BUTTON_SIZE_NARROW,
                    self.button_opp)
         ]
 
