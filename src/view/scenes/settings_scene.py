@@ -41,12 +41,12 @@ class SettingsScene(Scene):
         ]
 
         self.input_box = InputBox((3 * self.screen_width // 4, 600), u.TEXT_BOX_SIZE,
-                                  "IP serwera", self.framerate, self.setting_ip, text=current_ip)
+                                  l("scene.ip"), self.framerate, self.setting_ip, text=current_ip)
 
     def draw(self):
         super().draw()
         self.draw_overlay(0.85)
-        self.draw_text("Ustawienia", self.screen_width // 2, 100, center=True, font=u.CINZEL_50_BOLD)
+        self.draw_text(l("scene.settings"), self.screen_width // 2, 100, center=True, font=u.CINZEL_50_BOLD)
 
         for setting in self.settings:
             setting.draw(self.screen, pygame.mouse.get_pos())

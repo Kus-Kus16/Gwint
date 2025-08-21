@@ -20,8 +20,8 @@ class EndScreen(Scene, TemporaryDrawable):
         button_y = self.screen_height - 180
         button_size = u.BUTTON_SIZE
         self.buttons = [
-            Button("Menu", (button_x - 400, button_y), button_size, self.button_menu),
-            Button("Rewanż", (button_x + 100, button_y), button_size, self.button_rematch),
+            Button(l("scene.menu"), (button_x - 400, button_y), button_size, self.button_menu),
+            Button(l("scene.rematch"), (button_x + 100, button_y), button_size, self.button_rematch),
         ]
 
     @overrides
@@ -58,7 +58,7 @@ class EndScreen(Scene, TemporaryDrawable):
         self.screen.blit(me, me_rect)
         self.screen.blit(opp, opp_rect)
 
-        for i, text in enumerate(["Runda 1", "Runda 2", "Runda 3"]):
+        for i, text in enumerate([f"{l("scene.round")} 1", f"{l("scene.round")} 2", f"{l("scene.round")} 3"]):
             x = x_center + (i - 1) * x_offset
             label = bold.render(text, True, u.COLOR_LIGHTGRAY)
             label_rect = label.get_rect(center=(x, y - y_offset))

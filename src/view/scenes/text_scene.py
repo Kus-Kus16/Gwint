@@ -15,7 +15,7 @@ class TextScene(Scene):
 
         button_width, button_height = u.BUTTON_SIZE_WIDE
         self.buttons = [
-            Button("Powrót do Menu", ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
+            Button(l("scene.backtomenu"), ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
                    u.BUTTON_SIZE_WIDE, self.button_menu, image_paths=self.theme_buttons_paths)
         ]
 

@@ -279,7 +279,7 @@ class GameScene(Scene):
             self.screen.blit(overlay, overlay_rect)
 
             centerx, centery = overlay_rect.center
-            self.draw_text("Wciśnij spację aby spasować", centerx, centery, center=True,
+            self.draw_text(l("scene.pressspace"), centerx, centery, center=True,
                            color=u.COLOR_LIGHTGRAY, font=u.CINZEL_20_BOLD)
 
     def draw_player(self, player_id, info_rect, opponent=False):
@@ -312,7 +312,7 @@ class GameScene(Scene):
         self.draw_icon("cards", None, x + 201, y + 88)
         self.draw_text(player.hand.size(), x + 257, y + 108, color=u.COLOR_GOLD, center=True)
 
-        self.draw_text("Przeciwnik" if opponent else "Ty", x + 201, y + 12, color=u.COLOR_GOLD, font=u.CINZEL_20_BOLD)
+        self.draw_text(l("scene.op") if opponent else l("scene.you"), x + 201, y + 12, color=u.COLOR_GOLD, font=u.CINZEL_20_BOLD)
         self.draw_text(FactionType.faction_to_fullname(player.faction), x + 201, y + 45, color=u.COLOR_LIGHTGRAY, font=u.CINZEL_15)
 
         points_pos = c.POINTS_OPP_POS if opponent else c.POINTS_POS
