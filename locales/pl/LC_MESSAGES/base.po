@@ -91,3 +91,432 @@ msgstr "Autorzy"
 
 msgid "menu.exit"
 msgstr "Wyjście"
+
+msgid "notif.yourturn"
+msgstr "Twój ruch!"
+
+msgid "notif.opturn"
+msgstr "Ruch przeciwnika"
+
+msgid "notif.yourcoin"
+msgstr "Zaczynasz jako pierwszy."
+
+msgid "notif.opcoin"
+msgstr "Przeciwnik zaczyna jako pierwszy."
+
+msgid "notif.youfirst"
+msgstr "Zaczynasz jako pierwszy."
+
+msgid "notif.specscoi"
+msgstr "Przeciwnik użył zdolności specjalnej talii Scoia'tael,"
+
+msgid "notif.startfirst1"
+msgstr "by rozpocząć rozgrywkę jako pierwszy."
+
+msgid "notif.startfirst2"
+msgstr "byś rozpoczął rozgrywkę jako pierwszy."
+
+msgid "notif.roundstart"
+msgstr "Początek rundy"
+
+msgid "notif.oppassed"
+msgstr "Przeciwnik spasował"
+
+msgid "notif.roundend"
+msgstr "Koniec rundy"
+
+msgid "notif.rounddraw"
+msgstr "Runda zakończyła się remisem."
+
+msgid "notif.opwon"
+msgstr "Przeciwnik wygrał tę rundę."
+
+msgid "notif.youwon"
+msgstr "Wygrałeś tę rundę!"
+
+msgid "notif.thankstal"
+msgstr "Dzięki zdolności talii"
+
+msgid "notif.kingdom"
+msgstr "Królestw Północy,"
+
+msgid "notif.empire"
+msgstr "Cesarstwa Nilfgaardu,"
+
+msgid "notif.monsters"
+msgstr "Potworów,"
+
+msgid "notif.island"
+msgstr "Skellige,"
+
+msgid "notif.principality"
+msgstr "Księstwa Toussaint,"
+
+msgid "notif.cult"
+msgstr "Kultu Wiecznego Ognia,"
+
+msgid "notif.opwait"
+msgstr "Oczekiwanie na decyzję przeciwnika."
+
+msgid "notif.afterround"
+msgstr "po wygranej rundzie dobiera się dodatkową kartę."
+
+msgid "notif.insteaempire"
+msgstr "zamiast remisu następuje wygrana Nilfgaardu"
+
+msgid "notif.randomnextround"
+msgstr "losowo wybrana jednostka zostaje do następnej rundy."
+
+msgid "notif.thirdround"
+msgstr "w trzeciej rundzie dwie losowe karty wracają na stół."
+
+msgid "notif.addcard"
+msgstr "po przegranej rundzie dobiera się dodatkową kartę."
+
+msgid "notif.change4cards"
+msgstr "na początku rozgrywki wymienia się do czterech kart."
+
+msgid "authors.1"
+msgstr "Model, Frontend, Talia Toussaint:"
+
+msgid "authors.2"
+msgstr "Serwer, Frontend:"
+
+msgid "authors.3"
+msgstr ""Talia Wiecznego Ognia, Optymalizacja Scoia'tael:""
+
+msgid "scene.choose"
+msgstr "Wybierz"
+
+msgid "scene.close"
+msgstr "Zamknij"
+
+msgid "scene.startfirst"
+msgstr "Czy chcesz zacząć jako pierwszy?"
+
+msgid "scene.talscoi"
+msgstr "Talia Scoia'tael daje ci możliwość podjęcia decyzji,"
+
+msgid "scene.whofirst"
+msgstr "kto rozpocznie rozgrywkę jako pierwszy."
+
+msgid "scene.me"
+msgstr "Ja"
+
+msgid "scene.op"
+msgstr "Przeciwnik"
+
+msgid "scene.menu"
+msgstr "Menu"
+
+msgid "scene.play"
+msgstr "Graj"
+
+msgid "scene.commander"
+msgstr "Dowódca"
+
+msgid "scene.cardcol"
+msgstr "Kolekcja Kart"
+
+msgid "scene.cardtal"
+msgstr "Karty w Talii"
+
+msgid "scene.allcards"
+msgstr "Wszystkie karty w talii"
+
+msgid "scene.countcards"
+msgstr "Liczba kart jednostek"
+
+msgid "scene.speccards"
+msgstr "Karty specjalne"
+
+msgid "scene.allstrength"
+msgstr "Całkowita siła jednostek"
+
+msgid "scene.herocards"
+msgstr "Karty bohaterów"
+
+msgid "scene.rematch"
+msgstr "Rewanż"
+
+msgid "scene.round"
+msgstr "Runda"
+
+msgid "scene.pressspace"
+msgstr "Wciśnij spację aby spasować"
+
+msgid "scene.you"
+msgstr "Ty"
+
+msgid "scene.ip"
+msgstr "IP serwera"
+
+msgid "scene.settings"
+msgstr "Ustawienia"
+
+msgid "scene.backtomenu"
+msgstr "Powrót do Menu"
+
+msgid "view.waitop"
+msgstr "Oczekiwanie na przeciwnika"
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""

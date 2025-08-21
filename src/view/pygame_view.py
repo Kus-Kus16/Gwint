@@ -38,8 +38,8 @@ class PygameView:
 
         #Screens initiation
         self.menu = MenuScene(self.screen)
-        self.credits = TextScene(self.screen, "Autorzy", u.AUTHORS)
-        self.waiting = TextScene(self.screen, "Oczekiwanie na przeciwnika")
+        self.credits = TextScene(self.screen, l("menu.credits"), u.AUTHORS)
+        self.waiting = TextScene(self.screen, l("view.waitop")")
         self.game = GameScene(self.screen)
         self.deck = DeckScene(self.screen)
         self.settings = SettingsScene(self.screen)

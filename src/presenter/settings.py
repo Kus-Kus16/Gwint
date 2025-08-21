@@ -5,7 +5,7 @@ from src.view.constants import ui_constants as u
 
 lang = gettext.translation("base", localedir="locales", languages=["PL"])
 lang.install()
-locale = lang.gettext
+l = lang.gettext
 
 _user_settings = {}
 _observers = {}
