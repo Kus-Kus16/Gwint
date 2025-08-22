@@ -2,7 +2,7 @@ from overrides import overrides
 
 from src.model.abilities.commanders.commander_base import CommanderAbilityBase
 from src.model.enums.ability_type import AbilityType
-from src.presenter.settings import locale
+from src.presenter.settings import locale as l
 
 
 class DiscardChoose(CommanderAbilityBase):
@@ -24,9 +24,9 @@ class DiscardChoose(CommanderAbilityBase):
             return actions
 
         actions.append(lambda: self.carousel(presenter, hand.cards, 2, False,
-                                             locale("abilites.discard_choose.discard2")))
+                                             l("abilites.discard_choose.discard2")))
         actions.append(lambda: self.carousel(presenter, presenter.game.shuffle_cards(deck), 1, True,
-                                             locale("abilites.discard_choose.choose1")))
+                                             l("abilites.discard_choose.choose1")))
         return actions
 
     @classmethod

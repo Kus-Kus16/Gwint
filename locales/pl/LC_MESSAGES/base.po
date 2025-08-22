@@ -123,37 +123,34 @@ msgid "notif.oppassed"
 msgstr "Przeciwnik spasował"
 
 msgid "notif.roundend"
-msgstr "Koniec rundy"
+msgstr "Round passed"
 
 msgid "notif.rounddraw"
-msgstr "Runda zakończyła się remisem."
+msgstr "The round ended in a draw."
 
 msgid "notif.opwon"
-msgstr "Przeciwnik wygrał tę rundę."
+msgstr "Your opponent won the round."
 
 msgid "notif.youwon"
-msgstr "Wygrałeś tę rundę!"
+msgstr "You won the round!"
 
-msgid "notif.thankstal"
-msgstr "Dzięki zdolności talii"
+msgid "notif.thankskingom"
+msgstr "Dzięki zdolności talii Królestw Północy,"
 
-msgid "notif.kingdom"
-msgstr "Królestw Północy,"
+msgid "notif.thanksnilfgaard"
+msgstr "Dzięki zdolności talii Cesarstwa Nilfgaardu,"
 
-msgid "notif.empire"
-msgstr "Cesarstwa Nilfgaardu,"
+msgid "notif.thanksmonsters"
+msgstr "Dzięki zdolności talii Potworów,"
 
-msgid "notif.monsters"
-msgstr "Potworów,"
+msgid "notif.thanksskellige"
+msgstr "Dzięki zdolności talii Skellige,"
 
-msgid "notif.island"
-msgstr "Skellige,"
+msgid "notif.thankstoussaint"
+msgstr "Dzięki zdolności talii Księstwa Toussaint,"
 
-msgid "notif.principality"
-msgstr "Księstwa Toussaint,"
-
-msgid "notif.cult"
-msgstr "Kultu Wiecznego Ognia,"
+msgid "notif.thanksfire"
+msgstr "Dzięki zdolności talii Kultu Wiecznego Ognia,"
 
 msgid "notif.opwait"
 msgstr "Oczekiwanie na decyzję przeciwnika."
@@ -168,7 +165,7 @@ msgid "notif.randomnextround"
 msgstr "losowo wybrana jednostka zostaje do następnej rundy."
 
 msgid "notif.thirdround"
-msgstr "w trzeciej rundzie dwie losowe karty wracają na stół."
+msgstr "dwie losowe karty wracają na stół."
 
 msgid "notif.addcard"
 msgstr "po przegranej rundzie dobiera się dodatkową kartę."
@@ -183,7 +180,7 @@ msgid "authors.2"
 msgstr "Serwer, Frontend:"
 
 msgid "authors.3"
-msgstr ""Talia Wiecznego Ognia, Optymalizacja Scoia'tael:""
+msgstr "Talia Wiecznego Ognia, Optymalizacja Scoia'tael:"
 
 msgid "scene.choose"
 msgstr "Wybierz"
@@ -260,263 +257,8 @@ msgstr "Powrót do Menu"
 msgid "view.waitop"
 msgstr "Oczekiwanie na przeciwnika"
 
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
-
-msgid ""
-msgstr ""
+msgid "scene.chooseupto"
+msgstr "Wybierz do"
+
+msgid "scene.cardstodiscard"
+msgstr "kart, które chcesz wymienić."

@@ -5,11 +5,20 @@ from src.view.constants import ui_constants as u
 
 lang = gettext.translation("base", localedir="locales", languages=["PL"])
 lang.install()
-l = lang.gettext
+locale = lang.gettext
 
 _user_settings = {}
 _observers = {}
 _theme_index = None
+
+AUTHORS = [
+    locale("authors.1"),
+    "Maciej Kus",
+    locale("authors.2"),
+    "Krzysztof Pieczka",
+    locale("authors.3"),
+    "Maciej Fraś"
+]
 
 def load_settings():
     data = loader.load_data("settings", is_userdata=True)
