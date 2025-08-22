@@ -1,6 +1,6 @@
 from overrides import overrides
 
-from src.model.cards import cards_database as db
+from src.model.cards.cards_database import CardsDatabase
 from src.model.abilities.units.unit_base import UnitAbilityBase
 from src.model.enums.ability_type import AbilityType
 
@@ -8,7 +8,7 @@ from src.model.enums.ability_type import AbilityType
 class Bond(UnitAbilityBase):
     def __init__(self, card):
         super().__init__(card)
-        self.bond_id = db.get_bond(self.card.id)
+        self.bond_id = CardsDatabase.get_bond(self.card.id)
 
     @overrides
     def get_types(self):

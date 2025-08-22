@@ -29,8 +29,8 @@ class DiscardChoose(CommanderAbilityBase):
                                              l("Choose 1 card from your deck.")))
         return actions
 
-    @classmethod
-    def carousel(cls, presenter, cards, count, allow_ending, label):
+    @staticmethod
+    def carousel(presenter, cards, count, allow_ending, label):
         presenter.show_carousel(cards, choose_count=count, cancelable=False, allow_ending=allow_ending, label=label)
 
     @overrides

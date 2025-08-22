@@ -1,7 +1,7 @@
 from overrides import overrides
 
 from src.model.card_holders.sorted_card_holder import SortedCardHolder
-from src.model.cards import cards_database as db
+from src.model.cards.cards_database import CardsDatabase
 
 from src.model.enums.ability_type import AbilityType
 from src.model.enums.card_type import CardType
@@ -73,7 +73,7 @@ class Row(SortedCardHolder):
 
         # Bond
         if card.is_ability_type(AbilityType.BONDING):
-            bond_id = db.get_bond(card.id)
+            bond_id = CardsDatabase.get_bond(card.id)
             card.power *= self.effects["bond"][bond_id]
 
         # Morales
@@ -129,7 +129,7 @@ class Row(SortedCardHolder):
         add = []
         for card in self.cards:
             if card.is_ability_type(AbilityType.BERSERK):
-                extra = db.get_berserker(card.id)
+                extra = CardsDatabase.get_berserker_card(card.id)
                 owner = card.owner
                 extra.owner = owner
                 add.append(extra)
@@ -212,7 +212,7 @@ class Row(SortedCardHolder):
                 continue
 
             if card.is_ability_type(AbilityType.RECALLING):
-                extra = db.get_recall(card.id)
+                extra = CardsDatabase.get_recall_card(card.id)
                 extra.owner = player
                 add.append((extra, player.id))
 
@@ -220,7 +220,7 @@ class Row(SortedCardHolder):
                 continue
 
             elif self.effects["sangreal"] and card.is_ability_type(AbilityType.THIRSTY):
-                extra = db.get_thirsty(card.id)
+                extra = CardsDatabase.get_thirsty_card(card.id)
                 extra.owner = player
                 add.append((extra, player.id))
                 destroy.append(card)

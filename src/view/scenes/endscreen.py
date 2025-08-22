@@ -5,6 +5,7 @@ from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
 from src.presenter.settings import locale as l
 from src.view.components.button import Button
+from src.view.constants.ui_constants import COLOR_LIGHTGRAY
 from src.view.scenes.scene import Scene
 
 
@@ -21,8 +22,8 @@ class EndScreen(Scene, TemporaryDrawable):
         button_y = self.screen_height - 180
         button_size = u.BUTTON_SIZE
         self.buttons = [
-            Button(l("Menu"), (button_x - 400, button_y), button_size, self.button_menu),
-            Button(l("Rematch"), (button_x + 100, button_y), button_size, self.button_rematch),
+            Button(self.screen, l("Menu"), (button_x - 400, button_y), button_size, self.button_menu),
+            Button(self.screen, l("Rematch"), (button_x + 100, button_y), button_size, self.button_rematch),
         ]
 
     @overrides
@@ -47,23 +48,13 @@ class EndScreen(Scene, TemporaryDrawable):
         regular = u.CINZEL_30
         bold = u.CINZEL_30_BOLD
 
-        me = bold.render("Ty", True, u.COLOR_GOLD)
-        opp = bold.render("Przeciwnik", True, u.COLOR_GOLD)
+        self.draw_text(l("You"), x_center - x_offset, y, color=u.COLOR_GOLD, font=bold, center=True)
+        self.draw_text(l("Opponent"), x_center - x_offset, y + y_offset, color=u.COLOR_GOLD, font=bold, center=True)
 
-        me_rect = me.get_rect()
-        me_rect.topleft = (x_center - 2 * x_offset, y - me.get_height() // 2)
-
-        opp_rect = opp.get_rect()
-        opp_rect.topleft = (x_center - 2 * x_offset, y + y_offset - opp.get_height() // 2)
-
-        self.screen.blit(me, me_rect)
-        self.screen.blit(opp, opp_rect)
 
         for i, text in enumerate([f"{l("Round")} 1", f"{l("Round")} 2", f"{l("Round")} 3"]):
             x = x_center + (i - 1) * x_offset
-            label = bold.render(text, True, u.COLOR_LIGHTGRAY)
-            label_rect = label.get_rect(center=(x, y - y_offset))
-            self.screen.blit(label, label_rect)
+            self.draw_text(text, x, y - y_offset, color=COLOR_LIGHTGRAY, font=bold, center=True)
 
             if i < len(self.round_history):
                 me_score, opp_score = self.round_history[i]
@@ -77,21 +68,18 @@ class EndScreen(Scene, TemporaryDrawable):
                 else:
                     me_color = opp_color = u.COLOR_WHITE
 
-                me_result = regular.render(str(me_score), True, me_color)
-                opp_result = regular.render(str(opp_score), True, opp_color)
+                me_text = me_score
+                opp_text = opp_score
             else:
-                me_result = regular.render("-", True, u.COLOR_WHITE)
-                opp_result = regular.render("-", True, u.COLOR_WHITE)
+                me_text = opp_text = "-"
+                me_color = opp_color = u.COLOR_WHITE
 
-            me_result_rect = me_result.get_rect(center=(x, y))
-            opp_result_rect = opp_result.get_rect(center=(x, y + y_offset))
-
-            self.screen.blit(me_result, me_result_rect)
-            self.screen.blit(opp_result, opp_result_rect)
+            self.draw_text(me_text, x, y, color=me_color, font=regular, center=True)
+            self.draw_text(opp_text, x, y + y_offset, color=opp_color, font=regular, center=True)
 
         mouse_pos = pygame.mouse.get_pos()
         for btn in self.buttons:
-            btn.draw(self.screen, mouse_pos)
+            btn.draw(mouse_pos)
 
     @overrides()
     def handle_events(self, event):

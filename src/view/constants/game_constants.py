@@ -3,7 +3,6 @@ import pygame
 from src.model.enums.cards_area import CardsArea
 from src.model.enums.row_type import RowType
 
-
 def __row(row_y, text_y_center):
     return {
         "UNIT_RECT": __rect((UNIT_X, row_y), UNIT_ROW_SIZE),
@@ -14,7 +13,6 @@ def __row(row_y, text_y_center):
 def __rect(pos, size):
     return pygame.Rect(*pos, *size)
 
-# Game
 SELECTED_CARD_POS = (1544, 265)
 
 UNIT_X = 707

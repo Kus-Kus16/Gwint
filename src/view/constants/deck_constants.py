@@ -1,4 +1,3 @@
-# Deck
 from src.view.constants.ui_constants import MEDIUM_CARD_SIZE
 
 ROW_COUNT = 2

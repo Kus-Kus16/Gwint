@@ -23,8 +23,8 @@ class Medic(UnitAbilityBase):
 
         return actions
 
-    @classmethod
-    def carousel(cls, presenter, cards):
+    @staticmethod
+    def carousel(presenter, cards):
         presenter.show_carousel(cards, choose_count=-1, cancelable=False)
 
     @overrides
@@ -49,7 +49,7 @@ class Medic(UnitAbilityBase):
         actions = [lambda: self.medic(game, player, target, targets)]
         return actions
 
-    @classmethod
-    def medic(cls, game, player, medic_target, targets):
+    @staticmethod
+    def medic(game, player, medic_target, targets):
         player.grave.remove_card(medic_target)
         game.play_extra_card(player.id, medic_target, medic_target.rows[0], targets)

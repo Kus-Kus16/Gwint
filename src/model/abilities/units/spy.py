@@ -14,8 +14,8 @@ class Spy(UnitAbilityBase):
         actions = [lambda: self.spy(player)]
         return actions
 
-    @classmethod
-    def spy(cls, player):
+    @staticmethod
+    def spy(player):
         player.draw_cards(2)
 
     @overrides

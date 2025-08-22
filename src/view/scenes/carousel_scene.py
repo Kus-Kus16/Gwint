@@ -44,7 +44,7 @@ class CarouselScene(Scene, TemporaryDrawable):
 
         for i, (label, action) in enumerate(button_data):
             x = start_x + i * (button_width + button_margin)
-            self.buttons.append(Button(label, (x, button_y), u.BUTTON_SIZE, action))
+            self.buttons.append(Button(self.screen, label, (x, button_y), u.BUTTON_SIZE, action))
 
     @overrides
     def draw(self):
@@ -56,7 +56,7 @@ class CarouselScene(Scene, TemporaryDrawable):
             self.screen.blit(overlay, (0, 100))
 
             text = self.label if not self.redraw_label else \
-                f"{l("Chooseupto")} {self.choose_count} {l("cards to discard.")}"
+                f"{l("Choose up to")} {self.choose_count} {l("cards to discard.")}"
             self.draw_text(text, self.screen_width // 2, 150, color=u.COLOR_GOLD, center=True)
 
         half_visible = self.visible_cards // 2
@@ -85,7 +85,7 @@ class CarouselScene(Scene, TemporaryDrawable):
 
         mouse_pos = pygame.mouse.get_pos()
         for btn in self.buttons:
-            btn.draw(self.screen, mouse_pos)
+            btn.draw(mouse_pos)
 
     @overrides
     def handle_events(self, event):
