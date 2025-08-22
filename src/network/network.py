@@ -27,7 +27,7 @@ class Network:
             self.connected = True
         except (socket.error, ConnectionRefusedError) as e:
             self.connected = False
-            raise ConnectionError(f"{l("error.connection")}: {str(e)}")
+            raise ConnectionError(f"{l("Connection failed")}: {str(e)}")
 
     def disconnect(self):
         if not self.connected:
@@ -45,7 +45,7 @@ class Network:
             return pickle.loads(self.client.recv(8192))
 
         except (socket.error, pickle.PickleError, EOFError) as e:
-            raise ConnectionError(f"{l("error.communication")}: {str(e)}")
+            raise ConnectionError(f"{l("Communication error")}: {str(e)}")
 
     @property
     def server_ip(self):

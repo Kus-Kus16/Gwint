@@ -40,8 +40,8 @@ class DeckScene(Scene):
         x, y = (self.screen_width - button_width) // 2, self.screen_height - button_height - 30
 
         self.buttons = [
-            Button(l("scene.menu"), (x, y), u.BUTTON_SIZE_NARROW, self.button_menu),
-            Button(l("scene.play"), (x, y - button_height - 10), u.BUTTON_SIZE_NARROW, self.button_play)
+            Button(l("Menu"), (x, y), u.BUTTON_SIZE_NARROW, self.button_menu),
+            Button(l("Play"), (x, y - button_height - 10), u.BUTTON_SIZE_NARROW, self.button_play)
         ]
 
         # Factions
@@ -122,7 +122,7 @@ class DeckScene(Scene):
         self.scrollbar_right.draw(self.screen, deck_dict["right"].size())
 
     def draw_commander(self):
-        self.draw_text(l("scene.commander"), *c.COMM_LABEL_POS, color=u.COLOR_GOLD, font=u.CINZEL_25_BOLD, center=True)
+        self.draw_text(l("Commander"), *c.COMM_LABEL_POS, color=u.COLOR_GOLD, font=u.CINZEL_25_BOLD, center=True)
 
         commander = self.get_current_deck_dict().get("commander")
         if commander:
@@ -139,8 +139,8 @@ class DeckScene(Scene):
         font = u.CINZEL_25_BOLD
         color = u.COLOR_WHITE
 
-        self.draw_text(l("scene.cardcol"), *c.LEFT_LABEL_POS, color=color, font=font)
-        self.draw_text(l("scene.cardtal"), *c.RIGHT_LABEL_POS, color=color, font=font)
+        self.draw_text(l("Card Collection"), *c.LEFT_LABEL_POS, color=color, font=font)
+        self.draw_text(l("Cards in Deck"), *c.RIGHT_LABEL_POS, color=color, font=font)
 
         # Faction name
         font = u.CINZEL_50_BOLD
@@ -157,11 +157,11 @@ class DeckScene(Scene):
 
     def draw_deck_stats(self):
         lines = [
-            (l("scene.allcards"), self.stats["total_count"], "deck_count"),
-            (l("scene.countcards"), self.stats["unit_count"], "deck_unit"),
-            (l("scene.speccards"), f"{self.stats['special_count']}/10", "deck_special"),
-            (l("scene.allstrength"), self.stats["total_strength"], "deck_strength"),
-            (l("scene.herocards"), self.stats["hero_count"], "deck_hero"),
+            (l("Total cards in deck"), self.stats["total_count"], "deck_count"),
+            (l("Number of unit cards"), self.stats["unit_count"], "deck_unit"),
+            (l("Special cards"), f"{self.stats['special_count']}/10", "deck_special"),
+            (l("Total Unit Card Strength"), self.stats["total_strength"], "deck_strength"),
+            (l("Hero Cards"), self.stats["hero_count"], "deck_hero"),
         ]
 
         start_y = c.STATS_Y

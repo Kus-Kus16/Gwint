@@ -5,12 +5,357 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2025-08-19 17:19+0200\n"
+"POT-Creation-Date: 2025-08-22 15:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=cp1250\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
+
+
+#: Gwint/src/model/abilities/commanders/discard_choose.py:27
+msgid "Choose 2 cards to discard."
+msgstr ""
+
+#: Gwint/src/model/abilities/commanders/discard_choose.py:29
+msgid "Choose 1 card from your deck."
+msgstr ""
+
+#: Gwint/src/model/abilities/commanders/give_choose_grave.py:31
+msgid "Choose a card to donate."
+msgstr ""
+
+#: Gwint/src/model/abilities/commanders/give_choose_grave.py:33
+msgid "Choose 1 card from the discard piles."
+msgstr ""
+
+#: Gwint/src/model/abilities/commanders/restack_deck.py:33
+msgid "Put the cards back on the deck."
+msgstr ""
+
+#: Gwint/src/model/enums/faction_type.py:23
+msgid "Neutral"
+msgstr ""
+
+#: Gwint/src/model/enums/faction_type.py:24
+msgid "Northern Realms"
+msgstr ""
+
+#: Gwint/src/model/enums/faction_type.py:25
+msgid "Nilfgaardian Empire"
+msgstr ""
+
+#: Gwint/src/model/enums/faction_type.py:26
+msgid "Monsters"
+msgstr ""
+
+#: Gwint/src/model/enums/faction_type.py:27
+msgid "Scoia'tael"
+msgstr ""
+
+#: Gwint/src/model/enums/faction_type.py:28
+msgid "Skellige"
+msgstr ""
+
+#: Gwint/src/model/enums/faction_type.py:29
+msgid "Duchy of Toussaint"
+msgstr ""
+
+#: Gwint/src/model/enums/faction_type.py:30
+msgid "Cult of Eternal Fire"
+msgstr ""
+
+#: Gwint/src/network/network.py:30
+msgid "Connection failed"
+msgstr ""
+
+#: Gwint/src/network/network.py:48
+msgid "Communication error"
+msgstr ""
+
+#: Gwint/src/presenter/game_presenter.py:39
+msgid "Server not responding"
+msgstr ""
+
+#: Gwint/src/presenter/game_presenter.py:43
+msgid "Server responded with"
+msgstr ""
+
+#: Gwint/src/presenter/game_presenter.py:83
+msgid "Incorrect opponent deck"
+msgstr ""
+
+#: Gwint/src/presenter/game_presenter.py:267
+msgid "Incorrect deck"
+msgstr ""
+
+#: Gwint/src/presenter/game_presenter.py:486
+msgid "Opponent disconnected."
+msgstr ""
+
+#: Gwint/src/presenter/settings.py:48
+msgid "Model, Frontend, Toussaint Deck:"
+msgstr ""
+
+#: Gwint/src/presenter/settings.py:50
+msgid "Server, Frontend:"
+msgstr ""
+
+#: Gwint/src/presenter/settings.py:52
+msgid "Eternal Fire Deck, Scoia'tael Optimise:"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:15
+msgid "Your turn!"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:16
+msgid "Opponent's turn"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:17
+#: Gwint/src/view/components/notification.py:19
+msgid "You will go first."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:18
+#: Gwint/src/view/components/notification.py:20
+msgid "Your opponent will go first."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:21
+#: Gwint/src/view/components/notification.py:23
+msgid "Opponent used the Scoia'tael faction perk"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:22
+msgid "to go first."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:24
+msgid "for you to go first."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:25
+msgid "Round start"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:26
+msgid "Your opponent has passed"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:27
+msgid "Round passed"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:28
+msgid "The round ended in a draw."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:29
+msgid "Your opponent won the round."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:30
+msgid "You won the round!"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:31
+msgid "Northern Realms faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:32
+msgid "North draws an additional card."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:33
+msgid "Nilfgaardian Empire faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:34
+msgid "Nilfgaard wins the tie."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:35
+msgid "Monsters faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:36
+msgid "one randomly chosen Monster card stays on board."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:37
+msgid "Skellige faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:38
+msgid "Two random cards are returned to the board."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:39
+msgid "Duchy of Toussaint faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:40
+msgid "Toussaint draws an additional card."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:41
+msgid "Cult of Eternal Fire faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:42
+msgid "At the beginning of the game, up to four cards are redrawn."
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:43
+msgid "Awaiting your opponent's decision."
+msgstr ""
+
+#: Gwint/src/view/pygame_view.py:41 Gwint/src/view/scenes/menu_scene.py:27
+msgid "Credits"
+msgstr ""
+
+#: Gwint/src/view/pygame_view.py:42
+msgid "Waiting for the opponent"
+msgstr ""
+
+#: Gwint/src/view/scenes/carousel_scene.py:38
+msgid "Choose"
+msgstr ""
+
+#: Gwint/src/view/scenes/carousel_scene.py:40
+msgid "Close"
+msgstr ""
+
+#: Gwint/src/view/scenes/carousel_scene.py:59
+msgid "Chooseupto"
+msgstr ""
+
+#: Gwint/src/view/scenes/carousel_scene.py:59
+msgid "cards to discard."
+msgstr ""
+
+#: Gwint/src/view/scenes/choose_scene.py:16
+msgid "The Scoia'tael faction perk allows you to decide"
+msgstr ""
+
+#: Gwint/src/view/scenes/choose_scene.py:16
+msgid "who will get to go first."
+msgstr ""
+
+#: Gwint/src/view/scenes/choose_scene.py:17
+msgid "Would you like to go first?"
+msgstr ""
+
+#: Gwint/src/view/scenes/choose_scene.py:39
+msgid "Me"
+msgstr ""
+
+#: Gwint/src/view/scenes/choose_scene.py:40
+#: Gwint/src/view/scenes/game_scene.py:316
+msgid "Opponent"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:43
+#: Gwint/src/view/scenes/endscreen.py:24
+msgid "Menu"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:44
+#: Gwint/src/view/scenes/menu_scene.py:21
+msgid "Play"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:125
+msgid "Commander"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:142
+msgid "Card Collection"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:143
+msgid "Cards in Deck"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:160
+msgid "Total cards in deck"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:161
+msgid "Number of unit cards"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:162
+msgid "Special cards"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:163
+msgid "Total Unit Card Strength"
+msgstr ""
+
+#: Gwint/src/view/scenes/deck_scene.py:164
+msgid "Hero Cards"
+msgstr ""
+
+#: Gwint/src/view/scenes/endscreen.py:25
+msgid "Rematch"
+msgstr ""
+
+#: Gwint/src/view/scenes/endscreen.py:62
+msgid "Round"
+msgstr ""
+
+#: Gwint/src/view/scenes/game_scene.py:283
+msgid "Press spacebar to pass"
+msgstr ""
+
+#: Gwint/src/view/scenes/game_scene.py:316
+msgid "You"
+msgstr ""
+
+#: Gwint/src/view/scenes/menu_scene.py:23
+msgid "Your Deck"
+msgstr ""
+
+#: Gwint/src/view/scenes/menu_scene.py:25
+#: Gwint/src/view/scenes/settings_scene.py:50
+msgid "Settings"
+msgstr ""
+
+#: Gwint/src/view/scenes/menu_scene.py:29
+msgid "Exit"
+msgstr ""
+
+#: Gwint/src/view/scenes/settings_scene.py:22
+#: Gwint/src/view/scenes/text_scene.py:19
+msgid "Return to Menu"
+msgstr ""
+
+#: Gwint/src/view/scenes/settings_scene.py:32
+msgid "Volume"
+msgstr ""
+
+#: Gwint/src/view/scenes/settings_scene.py:34
+msgid "Theme"
+msgstr ""
+
+#: Gwint/src/view/scenes/settings_scene.py:36
+msgid "FPS Counter"
+msgstr ""
+
+#: Gwint/src/view/scenes/settings_scene.py:38
+msgid "Language"
+msgstr ""
+
+#: Gwint/src/view/scenes/settings_scene.py:40
+msgid "Quick Play"
+msgstr ""
+
+#: Gwint/src/view/scenes/settings_scene.py:45
+msgid "Server IP"
+msgstr ""
 
