@@ -16,8 +16,8 @@ class RawCard(CardBase, ABC):
             else CardType.UNIT
         )
 
-    @classmethod
-    def create_rows(cls, strings):
+    @staticmethod
+    def create_rows(strings):
         rows = []
         for row_name in strings:
             rows.append(RowType[row_name.upper()])

@@ -1,30 +1,41 @@
 import json
+import logging
 import os
+from abc import ABC
 
 import pygame
 
-image_cache = {}
+class Loader(ABC):
+    __image_cache = {}
 
-def load_image(path, size=None):
-    if (path, size) in image_cache:
-        return image_cache[(path, size)]
+    @classmethod
+    def load_image(cls, path, size=None):
+        if (path, size) in cls.__image_cache:
+            return cls.__image_cache[(path, size)]
 
-    if not os.path.exists(path):
-        print(f"Can't find {path}")
-        placeholder = "resources/placeholder.png"
-        return load_image(placeholder, size)
+        if not os.path.exists(path):
+            logging.info(f"Can't find image path: {path}")
+            placeholder = "resources/placeholder.png"
+            return cls.load_image(placeholder, size)
 
-    image = pygame.image.load(path).convert_alpha()
-    if size is not None:
-        image = pygame.transform.scale(image, size)
+        image = pygame.image.load(path).convert_alpha()
+        if size is not None:
+            image = pygame.transform.scale(image, size)
 
-    image_cache[(path, size)] = image
-    return image
+        cls.__image_cache[(path, size)] = image
+        return image
 
-def load_json(path):
-    with open(path, "r", encoding="utf-8") as file:
-        return json.load(file)
+    @staticmethod
+    def load_data(filename):
+        path = f"./resources/data/{filename}.json"
+        return Loader.load_json(path)
 
-def load_data(filename, is_userdata=False):
-    path = f"./userdata/{filename}.json" if is_userdata else f"./resources/data/{filename}.json"
-    return load_json(path)
+    @staticmethod
+    def load_userdata(filename):
+        path = f"./userdata/{filename}.json"
+        return Loader.load_json(path)
+
+    @staticmethod
+    def load_json(path):
+        with open(path, "r", encoding="utf-8") as file:
+            return json.load(file)

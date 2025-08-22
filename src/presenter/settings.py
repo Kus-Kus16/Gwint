@@ -1,55 +1,60 @@
 import gettext
 import random
-from src.presenter import loader, saver
+from abc import ABC
+
+from src.presenter.saver import Saver
+from src.presenter.loader import Loader
 from src.view.constants import ui_constants as u
 
-#TODO refactor
+class Settings(ABC):
+    __user_settings = Loader.load_userdata("settings")
+    __observers = {}
+    __theme_index = None
+    __lang_provider = None
 
-def load_settings():
-    data = loader.load_data("settings", is_userdata=True)
-    _user_settings.clear()
-    _user_settings.update(data)
+    LANGUAGES = ["EN", "PL"]
+    THEMES = ["Ciri", "Gerald", "Yennefer", "Nithral", "Losowy"]
+    OFFON = ["Wył.", "Wł."]
+    AUTHORS = "Model, Frontend, Toussaint Deck:\nMaciej Kus\nServer, Frontend:\nKrzysztof Pieczka\nEternal Fire Deck, Scoia'tael Optimise:\nMaciej Fraś"
 
-def load_setting(setting_name):
-    return _user_settings[setting_name]
+    @classmethod
+    def get_setting(cls, setting_name):
+        return cls.__user_settings[setting_name]
 
-def save_setting(setting_name, value):
-    _user_settings[setting_name] = value
-    saver.save_userdata("settings", _user_settings)
-    _notify_observers(setting_name)
+    @classmethod
+    def save_setting(cls, setting_name, value):
+        cls.__user_settings[setting_name] = value
+        Saver.save_userdata("settings", cls.__user_settings)
+        cls.__notify_observers(setting_name)
 
-def register_observer(observer, setting_name):
-    if setting_name not in _observers:
-        _observers[setting_name] = set()
-    _observers[setting_name].add(observer)
+    @classmethod
+    def register_observer(cls, observer, setting_name):
+        if setting_name not in cls.__observers:
+            cls.__observers[setting_name] = set()
+        cls.__observers[setting_name].add(observer)
 
-def _notify_observers(setting_name):
-    for observer in _observers.get(setting_name, []):
-        observer.on_setting_update()
+    @classmethod
+    def __notify_observers(cls, setting_name):
+        for observer in cls.__observers.get(setting_name, []):
+            observer.on_setting_update()
 
-def get_random_theme():
-    global _theme_index
-    if _theme_index is None:
-        _theme_index = random.randrange(len(u.THEMES))
-    return _theme_index
+    @classmethod
+    def get_random_theme(cls):
+        if cls.__theme_index is None:
+            cls.__theme_index = random.randrange(len(u.THEMES))
+        return cls.__theme_index
 
+    @classmethod
+    def reload_language(cls):
+        language_id = cls.LANGUAGES[cls.get_setting("language")]
+        lang = gettext.translation("base", localedir="locales", fallback=True, languages=[language_id])
+        cls.__lang_provider = lang.gettext
 
-_user_settings = {}
-_observers = {}
-_theme_index = None
-load_settings()
-LANGUAGES = ["EN", "PL"]
+    @classmethod
+    def gettext(cls, text):
+        if cls.__lang_provider is None:
+            cls.reload_language()
+        return cls.__lang_provider(text)
 
-lang = gettext.translation("base", localedir="locales",
-                           fallback=True, languages=[LANGUAGES[load_setting("language")]])
-lang.install()
-locale = lang.gettext
-
-AUTHORS = [
-    locale("Model, Frontend, Toussaint Deck:"),
-    "Maciej Kus",
-    locale("Server, Frontend:"),
-    "Krzysztof Pieczka",
-    locale("Eternal Fire Deck, Scoia'tael Optimise:"),
-    "Maciej Fraś"
-]
+locale = Settings.gettext
+#todo remove  ^

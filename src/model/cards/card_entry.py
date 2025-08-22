@@ -1,4 +1,4 @@
-from src.model.cards import cards_database as db
+from src.model.cards.cards_database import CardsDatabase
 from src.model.cards.raw_card import RawCard
 
 class CardEntry(RawCard):
@@ -7,7 +7,7 @@ class CardEntry(RawCard):
         self.count = data['count']
 
     def copy(self, count):
-        card_data = db.find_card_by_id(self.id)
+        card_data = CardsDatabase.find_card_by_id(self.id)
         card = CardEntry(card_data)
         card.count = count
         return card

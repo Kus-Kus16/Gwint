@@ -2,7 +2,7 @@ import logging
 import pickle
 import socket
 
-from src.presenter import settings
+from src.presenter.settings import Settings
 from src.presenter.settings import locale as l
 
 
@@ -10,10 +10,10 @@ class Network:
     def __init__(self):
         self.client = None
         self.port = 5555
-        self.server_ip = settings.load_setting("server_ip")
+        self.server_ip = Settings.get_setting("server_ip")
         self.addr = (self.server_ip, self.port)
         self.connected = False
-        settings.register_observer(self, "server_ip")
+        Settings.register_observer(self, "server_ip")
 
     def connect(self):
         if self.connected:
@@ -57,7 +57,7 @@ class Network:
         self.addr = (self._server_ip, self.port)
 
     def on_setting_update(self):
-        self.server_ip = settings.load_setting("server_ip")
+        self.server_ip = Settings.get_setting("server_ip")
         if self.connected:
             self.disconnect()
             self.connect()

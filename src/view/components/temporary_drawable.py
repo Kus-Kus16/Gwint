@@ -9,8 +9,8 @@ class TemporaryDrawable:
 
     @abstractmethod
     def draw(self):
-        return
+        pass
 
     @abstractmethod
     def can_be_handled(self):
-        return None
+        pass

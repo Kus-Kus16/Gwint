@@ -125,17 +125,12 @@ msgstr ""
 msgid "Your opponent will go first."
 msgstr ""
 
-#: Gwint/src/view/components/notification.py:21
-#: Gwint/src/view/components/notification.py:23
-msgid "Opponent used the Scoia'tael faction perk"
-msgstr ""
-
-#: Gwint/src/view/components/notification.py:22
-msgid "to go first."
+#: Gwint/src/view/components/notification.py:18
+msgid "Opponent used the Scoia'tael faction perk\nto go first."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:24
-msgid "for you to go first."
+msgid "Opponent used the Scoia'tael faction perk\nfor you to go first."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:25
@@ -163,51 +158,27 @@ msgid "You won the round!"
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:31
-msgid "Northern Realms faction ability triggered -"
-msgstr ""
-
-#: Gwint/src/view/components/notification.py:32
-msgid "North draws an additional card."
+msgid "Northern Realms faction ability triggered -\nNorth draws an additional card."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:33
-msgid "Nilfgaardian Empire faction ability triggered -"
-msgstr ""
-
-#: Gwint/src/view/components/notification.py:34
-msgid "Nilfgaard wins the tie."
+msgid "Nilfgaardian Empire faction ability triggered -\nNilfgaard wins the tie."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:35
-msgid "Monsters faction ability triggered -"
-msgstr ""
-
-#: Gwint/src/view/components/notification.py:36
-msgid "one randomly chosen Monster card stays on board."
+msgid "Monsters faction ability triggered -\none randomly chosen Monster card stays on board."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:37
-msgid "Skellige faction ability triggered -"
-msgstr ""
-
-#: Gwint/src/view/components/notification.py:38
-msgid "Two random cards are returned to the board."
+msgid "Skellige faction ability triggered -\nTwo random cards are returned to the board."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:39
-msgid "Duchy of Toussaint faction ability triggered -"
-msgstr ""
-
-#: Gwint/src/view/components/notification.py:40
-msgid "Toussaint draws an additional card."
+msgid "Duchy of Toussaint faction ability triggered -\nToussaint draws an additional card."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:41
-msgid "Cult of Eternal Fire faction ability triggered -"
-msgstr ""
-
-#: Gwint/src/view/components/notification.py:42
-msgid "At the beginning of the game, up to four cards are redrawn."
+msgid "Cult of Eternal Fire faction ability triggered -\nat the beginning of the game, up to four cards are redrawn."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:43
@@ -231,7 +202,7 @@ msgid "Close"
 msgstr ""
 
 #: Gwint/src/view/scenes/carousel_scene.py:59
-msgid "Chooseupto"
+msgid "Choose up to"
 msgstr ""
 
 #: Gwint/src/view/scenes/carousel_scene.py:59
@@ -239,11 +210,7 @@ msgid "cards to discard."
 msgstr ""
 
 #: Gwint/src/view/scenes/choose_scene.py:16
-msgid "The Scoia'tael faction perk allows you to decide"
-msgstr ""
-
-#: Gwint/src/view/scenes/choose_scene.py:16
-msgid "who will get to go first."
+msgid "The Scoia'tael faction perk allows you to decide\nwho will get to go first."
 msgstr ""
 
 #: Gwint/src/view/scenes/choose_scene.py:17
@@ -311,6 +278,10 @@ msgstr ""
 
 #: Gwint/src/view/scenes/game_scene.py:283
 msgid "Press spacebar to pass"
+msgstr ""
+
+#: Gwint/src/view/scenes/game_scene.py:310
+msgid "Passed"
 msgstr ""
 
 #: Gwint/src/view/scenes/game_scene.py:316

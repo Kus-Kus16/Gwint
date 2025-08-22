@@ -4,8 +4,9 @@ from src.view.components.component import Component
 from src.view.constants import ui_constants as u
 
 class Setting(Component):
-    def __init__(self, title, pos, options, on_change, initial_index, can_wrap=True):
-        super().__init__(u.CINZEL_25)
+    def __init__(self, screen, title, pos, options, on_change, initial_index, can_wrap=True):
+        super().__init__(screen)
+        self.font = u.CINZEL_25
         self.title_font = u.CINZEL_30_BOLD
         self.title = title
         self.pos = pos
@@ -16,20 +17,20 @@ class Setting(Component):
 
         x, y = self.pos
         self.arrows = [
-            Button("", (x - 250 - u.ARROW_SIZE[0], y + 80), u.ARROW_SIZE,
+            Button(self.screen, "", (x - 250 - u.ARROW_SIZE[0], y + 80), u.ARROW_SIZE,
                    self.button_left, image_paths=u.DEFAULT_LEFT_ARROW_PATHS),
-            Button("", (x + 250, y + 80), u.ARROW_SIZE,
+            Button(self.screen,"", (x + 250, y + 80), u.ARROW_SIZE,
                    self.button_right, image_paths=u.DEFAULT_RIGHT_ARROW_PATHS)
         ]
 
-    def draw(self, screen, mouse_pos):
+    def draw(self, mouse_pos):
         x, y = self.pos
 
-        self.draw_text(self.title, x, y + 50, screen, font=self.title_font, center=True)
-        self.draw_text(self.options[self.index], x, y + 121, screen, font=self.font, center=True)
+        self.draw_text(self.title, x, y + 50, font=self.title_font, center=True)
+        self.draw_text(self.options[self.index], x, y + 121, font=self.font, center=True)
 
         for arrow in self.arrows:
-            arrow.draw(screen, mouse_pos)
+            arrow.draw(mouse_pos)
 
     def handle_events(self, event):
         for arrow in self.arrows:

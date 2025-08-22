@@ -2,13 +2,14 @@ import logging
 import queue
 import time
 
-from src.model.cards import cards_database as db
+from src.model.cards.cards_database import CardsDatabase
 from src.model.enums.cards_area import CardsArea
 from src.model.enums.faction_type import FactionType
 from src.model.game import Game
 from src.model.player import Player
 from src.network.network import Network
-from src.presenter import loader, settings
+from src.presenter.settings import Settings
+from src.presenter.loader import Loader
 from src.presenter.settings import locale as l
 from src.view.constants import ui_constants as u
 
@@ -29,14 +30,14 @@ class GamePresenter:
 
         self.quick_play = None
         self.on_setting_update()
-        settings.register_observer(self, "quick_play")
+        Settings.register_observer(self, "quick_play")
 
     def connect(self, deck, commander):
         try:
             self.net.connect()
             response, data = self.net.send(("register", [deck, commander]))
         except ConnectionError as e:
-            self.return_to_menu((f"{l("Server not responding")}:", str(e)))
+            self.return_to_menu(f"{l("Server not responding")}:\n{str(e)}")
             return False
 
         if response != "ok":
@@ -77,10 +78,10 @@ class GamePresenter:
 
         cards, commander_id = data[0], data[1]
         try:
-            deck, commander = db.create_verified_deck(cards, commander_id)
+            deck, commander = CardsDatabase.create_verified_deck(cards, commander_id)
             self.opponent = Player(deck, commander)
         except ValueError:
-            self.return_to_menu((l("Incorrect opponent deck"),), seconds=3)
+            self.return_to_menu(l("Incorrect opponent deck"), seconds=3)
 
         self.game = Game(self, self.seed)
 
@@ -99,7 +100,7 @@ class GamePresenter:
             has_scoia = self.game.compare_for_faction(FactionType.SCOIATAEL)
             if has_scoia == self.my_id:
                 self.first_player = "choose"
-                self.view.current_Choose_first_player()
+                self.view.current_scene.choose_first_player()
                 return
             elif has_scoia == (1 - self.my_id):
                 self.first_player = "wait"
@@ -250,7 +251,7 @@ class GamePresenter:
             self.notify({"type": "mode_change", "mode": "deck"})
             return
 
-        userdata = loader.load_data("user_decks", is_userdata=True)
+        userdata = Loader.load_userdata("user_decks")
         i = userdata["last_used_index"]
         deck_data = userdata["decks"][i]
 
@@ -258,13 +259,13 @@ class GamePresenter:
         cards = deck_data["cards"]
 
         try:
-            deck, commander = db.create_verified_deck(cards, commander_id)
+            deck, commander = CardsDatabase.create_verified_deck(cards, commander_id)
             if self.connect(cards, commander_id):
                 self.me = Player(deck, commander)
                 self.game_state = "waiting-for-game"
                 self.view.change_scene(self.view.waiting)
         except ValueError as e:
-            self.return_to_menu((f"{l("Incorrect deck")}:", str(e)), seconds=3)
+            self.return_to_menu(f"{l("Incorrect deck")}:\n{str(e)}", seconds=3)
 
     def handle_play(self, action):
         if action["card_id"] is None:
@@ -483,11 +484,11 @@ class GamePresenter:
 
         #Opponent disconnected
         if server_response == "error":
-            reasons = (l("Opponent disconnected."),) if should_notify else None
+            reasons = l("Opponent disconnected.") if should_notify else None
             self.return_to_menu(reasons)
             return False
 
         return True
 
     def on_setting_update(self):
-        self.quick_play = settings.load_setting("quick_play")
+        self.quick_play = Settings.get_setting("quick_play")

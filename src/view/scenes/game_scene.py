@@ -198,45 +198,45 @@ class GameScene(Scene):
             "row_type": row_type
         }
 
-    @classmethod
-    def check_card_click(cls, event, rect_container):
+    @staticmethod
+    def check_card_click(event, rect_container):
         for card, rect in rect_container:
             if rect.collidepoint(event.pos):
                 return card
 
-    @classmethod
-    def check_row_click(cls, event, row_types):
+    @staticmethod
+    def check_row_click(event, row_types):
         for row_type in row_types:
             row_rect = getattr(c, row_type.name)["UNIT_RECT"]
             if row_rect.collidepoint(event.pos):
                 return row_type
 
-    @classmethod
-    def check_boost_click(cls, event, row_types):
+    @staticmethod
+    def check_boost_click(event, row_types):
         for row_type in row_types:
             boost_rect = getattr(c, row_type.name)["BOOST_RECT"]
             if boost_rect.collidepoint(event.pos):
                 return row_type
 
-    @classmethod
-    def check_grave_click(cls, event):
+    @staticmethod
+    def check_grave_click(event):
         for grave_type, grave_rect in c.GRAVES:
             if grave_rect.collidepoint(event.pos):
                 return grave_type
 
-    @classmethod
-    def check_commander_click(cls, event):
+    @staticmethod
+    def check_commander_click(event):
         for comm_type, comm_rect in c.COMMANDERS:
             if comm_rect.collidepoint(event.pos):
                 return comm_type
 
-    @classmethod
-    def check_weather_click(cls, event):
+    @staticmethod
+    def check_weather_click(event):
         weather_rect = c.WEATHER_RECT
         return weather_rect.collidepoint(event.pos)
 
-    @classmethod
-    def check_board_click(cls, event):
+    @staticmethod
+    def check_board_click(event):
         board_rect = c.BOARD_RECT
         return board_rect.collidepoint(event.pos)
 
@@ -300,14 +300,14 @@ class GameScene(Scene):
 
         self.draw_icon("player_border", (116, 122), x + 60, y + 11)
         self.draw_icon("profile", (89, 90), x + 74, y + 30)
-        self.draw_icon(f"tarcza_{player.faction.name.lower()}", (45, 50), x + 52, y + 12)
+        self.draw_icon(f"shield_{FactionType.faction_to_filename(player.faction)}", (45, 50), x + 52, y + 12)
         self.draw_icon(f"total_{"opp" if opponent else "me"}", None, x + 427, y + 45)
 
         if self.game.get_round_result(player_id, include_abilities=False) == 1:
             self.draw_icon("high_score", None, x + 403, y + 40)
 
         if self.game.get_player(player_id).passed:
-            self.draw_text("Pas", x + 453, y + 132, color=u.COLOR_WHITE, center=True, font=u.CINZEL_25_BOLD)
+            self.draw_text(l("Passed"), x + 453, y + 132, color=u.COLOR_WHITE, center=True, font=u.CINZEL_25_BOLD)
 
         self.draw_gems(player.hp, x, y)
         self.draw_icon("cards", None, x + 201, y + 88)
@@ -319,7 +319,7 @@ class GameScene(Scene):
         points_pos = c.POINTS_OPP_POS if opponent else c.POINTS_POS
         self.draw_text(f"{player.points}", *points_pos, color=u.COLOR_BLACK, center=True, font=u.CINZEL_30_BOLD)
 
-        filename = f"rewers_{player.faction.name.lower()}"
+        filename = f"back_{FactionType.faction_to_filename(player.faction)}"
         self.draw_stack(player.deck, c.DECK_OPP_RECT if opponent else c.DECK_RECT,
                         image=self.load_ico_image(filename, u.DECK_CARD_SIZE), label=True)
         self.draw_stack(player.grave, c.GRAVE_OPP_RECT if opponent else c.GRAVE_RECT)
@@ -517,6 +517,6 @@ class GameScene(Scene):
         else:
             faction = card.owner.faction
 
-        faction = FactionType.faction_to_fullname(faction)
+        faction = FactionType.faction_to_filename(faction)
         filename = card.filename
         return faction, filename

@@ -2,12 +2,13 @@ import pygame
 from overrides import overrides
 
 from src.model.card_holders.sorted_card_holder import SortedCardHolder
-from src.model.cards import cards_database as db
+from src.model.cards.cards_database import CardsDatabase
 from src.model.cards.card_entry import CardEntry
 from src.model.cards.commander_entry import CommanderEntry
 from src.model.enums.card_type import CardType
 from src.model.enums.faction_type import FactionType
-from src.presenter import loader, saver
+from src.presenter.loader import Loader
+from src.presenter.saver import Saver
 from src.view.components.scrollbar import Scrollbar
 from src.view.constants import deck_constants as c, ui_constants as u
 from src.presenter.settings import locale as l
@@ -32,16 +33,16 @@ class DeckScene(Scene):
         self.right_card_rects = []
 
         # Scroll
-        self.scrollbar_left = Scrollbar(c.LEFT_SCROLLBAR_POS, c.SCROLLBAR_HEIGHT, u.COLOR_GRAY)
-        self.scrollbar_right = Scrollbar(c.RIGHT_SCROLLBAR_POS, c.SCROLLBAR_HEIGHT, u.COLOR_GRAY)
+        self.scrollbar_left = Scrollbar(self.screen, c.LEFT_SCROLLBAR_POS, c.SCROLLBAR_HEIGHT, u.COLOR_GRAY)
+        self.scrollbar_right = Scrollbar(self.screen, c.RIGHT_SCROLLBAR_POS, c.SCROLLBAR_HEIGHT, u.COLOR_GRAY)
 
         # Buttons
         button_width, button_height = u.BUTTON_SIZE_NARROW
         x, y = (self.screen_width - button_width) // 2, self.screen_height - button_height - 30
 
         self.buttons = [
-            Button(l("Menu"), (x, y), u.BUTTON_SIZE_NARROW, self.button_menu),
-            Button(l("Play"), (x, y - button_height - 10), u.BUTTON_SIZE_NARROW, self.button_play)
+            Button(self.screen, l("Menu"), (x, y), u.BUTTON_SIZE_NARROW, self.button_menu),
+            Button(self.screen, l("Play"), (x, y - button_height - 10), u.BUTTON_SIZE_NARROW, self.button_play)
         ]
 
         # Factions
@@ -51,7 +52,7 @@ class DeckScene(Scene):
             for faction in self.factions
         }
 
-        userdata = loader.load_data("user_decks", is_userdata=True)
+        userdata = Loader.load_userdata("user_decks")
         self.current_deck_index = 0
         self.init_decks(userdata)
 
@@ -60,8 +61,8 @@ class DeckScene(Scene):
             self.change_faction(faction=faction)
             decks = self.get_current_deck_dict()
 
-            card_list = db.get_faction_cards(faction, include_neutral=True)
-            commander_data = db.get_faction_commanders(faction)[0]
+            card_list = CardsDatabase.get_faction_cards(faction, include_neutral=True)
+            commander_data = CardsDatabase.get_faction_commanders(faction)[0]
             decks["commander"] = CommanderEntry(commander_data)
             holder = decks["left"]
 
@@ -95,9 +96,9 @@ class DeckScene(Scene):
 
         y = c.TOP_BUTTONS_Y - u.BUTTON_SIZE_WIDE[1] // 2
         buttons = [
-            Button(f"<< {prev_name}", (50, y), u.BUTTON_SIZE_WIDE,
+            Button(self.screen, f"<< {prev_name}", (50, y), u.BUTTON_SIZE_WIDE,
                    self.button_prev, font=u.CINZEL_25_BOLD),
-            Button(f"{next_name} >>", (self.screen_width - 450, y), u.BUTTON_SIZE_WIDE,
+            Button(self.screen, f"{next_name} >>", (self.screen_width - 450, y), u.BUTTON_SIZE_WIDE,
                    self.button_next, font=u.CINZEL_25_BOLD)
         ]
         self.buttons[2:] = buttons
@@ -118,8 +119,8 @@ class DeckScene(Scene):
     def draw_scrollbars(self):
         deck_dict = self.get_current_deck_dict()
 
-        self.scrollbar_left.draw(self.screen, deck_dict["left"].size())
-        self.scrollbar_right.draw(self.screen, deck_dict["right"].size())
+        self.scrollbar_left.draw(deck_dict["left"].size())
+        self.scrollbar_right.draw(deck_dict["right"].size())
 
     def draw_commander(self):
         self.draw_text(l("Commander"), *c.COMM_LABEL_POS, color=u.COLOR_GOLD, font=u.CINZEL_25_BOLD, center=True)
@@ -132,7 +133,7 @@ class DeckScene(Scene):
     def draw_buttons(self):
         mouse_pos = pygame.mouse.get_pos()
         for button in list(self.buttons):
-            button.draw(self.screen, mouse_pos)
+            button.draw(mouse_pos)
 
     def draw_texts(self):
         # Titles
@@ -332,13 +333,13 @@ class DeckScene(Scene):
             decks.append(dump_deck)
 
         self.change_faction(faction=self.factions[last_used_index])
-        saver.save_userdata("user_decks", {"last_used_index": last_used_index, "decks": decks})
+        Saver.save_userdata("user_decks", {"last_used_index": last_used_index, "decks": decks})
 
     def set_commander(self, commander_id):
         if commander_id is None:
             return
 
-        commander_data = db.find_commander_by_id(commander_id)
+        commander_data = CardsDatabase.find_commander_by_id(commander_id)
         self.get_current_deck_dict()["commander"] = CommanderEntry(commander_data)
 
     def calculate_deck_stats(self):
@@ -357,8 +358,8 @@ class DeckScene(Scene):
 
         self.stats.update(stats)
 
-    @classmethod
-    def update_stats(cls, card, count, sign, dictionary):
+    @staticmethod
+    def update_stats(card, count, sign, dictionary):
         dictionary["total_count"] += count
 
         if card.is_card_type(CardType.SPECIAL):
@@ -414,7 +415,7 @@ class DeckScene(Scene):
         self.pop_temporary()
 
     def open_carousel(self):
-        cards_data = db.get_faction_commanders(self.get_faction())
+        cards_data = CardsDatabase.get_faction_commanders(self.get_faction())
         commanders = [CommanderEntry(data) for data in cards_data]
 
         initial_index = 0
@@ -437,6 +438,6 @@ class DeckScene(Scene):
         if faction is FactionType.NEUTRAL:
             faction = self.get_faction()
 
-        faction = FactionType.faction_to_fullname(faction)
+        faction = FactionType.faction_to_filename(faction)
         filename = card.filename
         return faction, filename

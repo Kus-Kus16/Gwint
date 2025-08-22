@@ -9,8 +9,8 @@ class ScorchRow(UnitAbilityBase):
         actions = [lambda: self.scorch_row(game, player, row_type)]
         return actions
 
-    @classmethod
-    def scorch_row(cls, game, player, row_type):
+    @staticmethod
+    def scorch_row(game, player, row_type):
         opponent_id = 1 - player.id
         scorched = game.board.scorch_row(row_type, opponent_id)
         game.grave_scorch_cards(scorched)

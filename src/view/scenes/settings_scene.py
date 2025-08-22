@@ -1,11 +1,11 @@
 import pygame
 
-from src.presenter import settings
 from src.view.components.button import Button
 from src.view.components.input_box import InputBox
 from src.view.components.setting import Setting
 from src.view.constants import ui_constants as u
-from src.presenter.settings import locale as l, LANGUAGES
+from src.presenter.settings import locale as l
+from src.presenter.settings import Settings
 from src.view.scenes.scene import Scene
 
 
@@ -18,30 +18,26 @@ class SettingsScene(Scene):
         button_size = u.BUTTON_SIZE_WIDE
         button_paths = self.theme_buttons_paths
         self.buttons = [
-            Button(
-                l("Return to Menu"), ((self.screen_width - btn_w) // 2, self.screen_height - btn_h - 50),
-                button_size, {"type": "mode_change", "mode": "menu"}, image_paths=button_paths
-            )
+            Button(self.screen, l("Return to Menu"), ((self.screen_width - btn_w) // 2, self.screen_height - btn_h - 50),
+                button_size, {"type": "mode_change", "mode": "menu"}, image_paths=button_paths)
         ]
-
-        # Pole do wpisania IP
-        current_ip = settings.load_setting("server_ip")
 
         # Settings
         self.settings = [
-            Setting(l("Volume"), (self.screen_width // 4, 200), [f"{i*10}%" for i in range(11)],
-                    self.setting_volume, round(settings.load_setting("volume") * 10), can_wrap=False),
-            Setting(l("Theme"), (self.screen_width // 4, 400), ["Ciri", "Gerald", "Yennefer", "Nithral", "Losowy"],
-                    self.setting_theme, settings.load_setting("theme")),
-            Setting(l("FPS Counter"), (self.screen_width // 4, 600), ["Wył.", "Wł."],
-                    self.setting_fps, settings.load_setting("show_fps")),
-            Setting(l("Language"), (3 * self.screen_width // 4, 200), LANGUAGES,
-                    self.setting_language, settings.load_setting("language")),
-            Setting(l("Quick Play"), (3 * self.screen_width // 4, 400), ["Wył.", "Wł."],
-                    self.setting_quickplay, settings.load_setting("quick_play"))
+            Setting(self.screen, l("Volume"), (self.screen_width // 4, 200), [f"{i*10}%" for i in range(11)],
+                    self.setting_volume, round(Settings.get_setting("volume") * 10), can_wrap=False),
+            Setting(self.screen, l("Theme"), (self.screen_width // 4, 400), Settings.THEMES,
+                    self.setting_theme, Settings.get_setting("theme")),
+            Setting(self.screen, l("FPS Counter"), (self.screen_width // 4, 600), Settings.OFFON,
+                    self.setting_fps, Settings.get_setting("show_fps")),
+            Setting(self.screen, l("Language"), (3 * self.screen_width // 4, 200), Settings.LANGUAGES,
+                    self.setting_language, Settings.get_setting("language")),
+            Setting(self.screen, l("Quick Play"), (3 * self.screen_width // 4, 400), Settings.OFFON,
+                    self.setting_quickplay, Settings.get_setting("quick_play"))
         ]
 
-        self.input_box = InputBox((3 * self.screen_width // 4, 600), u.TEXT_BOX_SIZE,
+        current_ip = Settings.get_setting("server_ip")
+        self.input_box = InputBox(self.screen, (3 * self.screen_width // 4, 600), u.TEXT_BOX_SIZE,
                                   l("Server IP"), self.framerate, self.setting_ip, text=current_ip)
 
     def draw(self):
@@ -50,12 +46,12 @@ class SettingsScene(Scene):
         self.draw_text(l("Settings"), self.screen_width // 2, 100, center=True, font=u.CINZEL_50_BOLD)
 
         for setting in self.settings:
-            setting.draw(self.screen, pygame.mouse.get_pos())
+            setting.draw(pygame.mouse.get_pos())
 
-        self.input_box.draw(self.screen)
+        self.input_box.draw()
 
         for button in self.buttons:
-            button.draw(self.screen, pygame.mouse.get_pos())
+            button.draw(pygame.mouse.get_pos())
 
     def handle_events(self, event):
         if self.locked:
@@ -76,27 +72,27 @@ class SettingsScene(Scene):
 
         return
 
-    @classmethod
-    def setting_volume(cls, setting_index):
+    @staticmethod
+    def setting_volume(setting_index):
         volume = 0.1 * setting_index
-        settings.save_setting("volume", volume)
+        Settings.save_setting("volume", volume)
 
-    @classmethod
-    def setting_theme(cls, setting_index):
-        settings.save_setting("theme", setting_index)
+    @staticmethod
+    def setting_theme(setting_index):
+        Settings.save_setting("theme", setting_index)
 
-    @classmethod
-    def setting_fps(cls, setting_index):
-        settings.save_setting("show_fps", setting_index)
+    @staticmethod
+    def setting_fps(setting_index):
+        Settings.save_setting("show_fps", setting_index)
 
-    @classmethod
-    def setting_language(cls, setting_index):
-        settings.save_setting("language", setting_index)
+    @staticmethod
+    def setting_language(setting_index):
+        Settings.save_setting("language", setting_index)
 
-    @classmethod
-    def setting_quickplay(cls, setting_index):
-        settings.save_setting("quick_play", setting_index)
+    @staticmethod
+    def setting_quickplay(setting_index):
+        Settings.save_setting("quick_play", setting_index)
 
-    @classmethod
-    def setting_ip(cls, text):
-        settings.save_setting("server_ip", text)
+    @staticmethod
+    def setting_ip(text):
+        Settings.save_setting("server_ip", text)
