@@ -20,12 +20,12 @@ class FactionType(Enum):
     @classmethod
     def _get_fullname_map(cls):
         return {
-            cls.NEUTRAL: l("faction.neutral"),
-            cls.NORTH: l("faction.north"),
-            cls.NILFGAARD: l("faction.nilfgaard"),
-            cls.MONSTERS: l("faction.monsters"),
-            cls.SCOIATAEL: l("faction.scoiatael"),
-            cls.SKELLIGE: l("faction.skellige"),
-            cls.TOUSSAINT: l("faction.toussaint"),
-            cls.FIRE: l("faction.fire"),
+            cls.NEUTRAL: l("Neutral"),
+            cls.NORTH: l("Northern Realms"),
+            cls.NILFGAARD: l("Nilfgaardian Empire"),
+            cls.MONSTERS: l("Monsters"),
+            cls.SCOIATAEL: l("Scoia'tael"),
+            cls.SKELLIGE: l("Skellige"),
+            cls.TOUSSAINT: l("Duchy of Toussaint"),
+            cls.FIRE: l("Cult of Eternal Fire"),
         }

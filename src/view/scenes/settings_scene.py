@@ -5,7 +5,7 @@ from src.view.components.button import Button
 from src.view.components.input_box import InputBox
 from src.view.components.setting import Setting
 from src.view.constants import ui_constants as u
-from src.presenter.settings import locale as l
+from src.presenter.settings import locale as l, LANGUAGES
 from src.view.scenes.scene import Scene
 
 
@@ -19,7 +19,7 @@ class SettingsScene(Scene):
         button_paths = self.theme_buttons_paths
         self.buttons = [
             Button(
-                "Powrót do Menu", ((self.screen_width - btn_w) // 2, self.screen_height - btn_h - 50),
+                l("Return to Menu"), ((self.screen_width - btn_w) // 2, self.screen_height - btn_h - 50),
                 button_size, {"type": "mode_change", "mode": "menu"}, image_paths=button_paths
             )
         ]
@@ -29,25 +29,25 @@ class SettingsScene(Scene):
 
         # Settings
         self.settings = [
-            Setting("Głośność", (self.screen_width // 4, 200), [f"{i*10}%" for i in range(11)],
+            Setting(l("Volume"), (self.screen_width // 4, 200), [f"{i*10}%" for i in range(11)],
                     self.setting_volume, round(settings.load_setting("volume") * 10), can_wrap=False),
-            Setting("Motyw", (self.screen_width // 4, 400), ["Ciri", "Gerald", "Yennefer", "Nithral", "Losowy"],
+            Setting(l("Theme"), (self.screen_width // 4, 400), ["Ciri", "Gerald", "Yennefer", "Nithral", "Losowy"],
                     self.setting_theme, settings.load_setting("theme")),
-            Setting("Licznik FPS", (self.screen_width // 4, 600), ["Wył.", "Wł."],
+            Setting(l("FPS Counter"), (self.screen_width // 4, 600), ["Wył.", "Wł."],
                     self.setting_fps, settings.load_setting("show_fps")),
-            Setting("Język", (3 * self.screen_width // 4, 200), ["PL"],
+            Setting(l("Language"), (3 * self.screen_width // 4, 200), LANGUAGES,
                     self.setting_language, settings.load_setting("language")),
-            Setting("Szybka gra", (3 * self.screen_width // 4, 400), ["Wył.", "Wł."],
+            Setting(l("Quick Play"), (3 * self.screen_width // 4, 400), ["Wył.", "Wł."],
                     self.setting_quickplay, settings.load_setting("quick_play"))
         ]
 
         self.input_box = InputBox((3 * self.screen_width // 4, 600), u.TEXT_BOX_SIZE,
-                                  l("scene.ip"), self.framerate, self.setting_ip, text=current_ip)
+                                  l("Server IP"), self.framerate, self.setting_ip, text=current_ip)
 
     def draw(self):
         super().draw()
         self.draw_overlay(0.85)
-        self.draw_text(l("scene.settings"), self.screen_width // 2, 100, center=True, font=u.CINZEL_50_BOLD)
+        self.draw_text(l("Settings"), self.screen_width // 2, 100, center=True, font=u.CINZEL_50_BOLD)
 
         for setting in self.settings:
             setting.draw(self.screen, pygame.mouse.get_pos())

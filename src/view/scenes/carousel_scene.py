@@ -35,9 +35,9 @@ class CarouselScene(Scene, TemporaryDrawable):
 
         button_data = []
         if self.choosable:
-            button_data.append((l("scene.choose"), self.button_select))
+            button_data.append((l("Choose"), self.button_select))
         if self.cancellable:
-            button_data.append((l("scene.close"), self.button_cancel))
+            button_data.append((l("Close"), self.button_cancel))
 
         total_width = len(button_data) * button_width + (len(button_data) - 1) * button_margin
         start_x = self.screen_width // 2 - total_width // 2
@@ -56,7 +56,7 @@ class CarouselScene(Scene, TemporaryDrawable):
             self.screen.blit(overlay, (0, 100))
 
             text = self.label if not self.redraw_label else \
-                f"{l("scene.chooseupto")} {self.choose_count} {l("scene.cardstodiscard")}"
+                f"{l("Chooseupto")} {self.choose_count} {l("cards to discard.")}"
             self.draw_text(text, self.screen_width // 2, 150, color=u.COLOR_GOLD, center=True)
 
         half_visible = self.visible_cards // 2

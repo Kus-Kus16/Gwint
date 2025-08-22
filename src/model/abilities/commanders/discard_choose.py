@@ -24,9 +24,9 @@ class DiscardChoose(CommanderAbilityBase):
             return actions
 
         actions.append(lambda: self.carousel(presenter, hand.cards, 2, False,
-                                             l("abilites.discard_choose.discard2")))
+                                             l("Choose 2 cards to discard.")))
         actions.append(lambda: self.carousel(presenter, presenter.game.shuffle_cards(deck), 1, True,
-                                             l("abilites.discard_choose.choose1")))
+                                             l("Choose 1 card from your deck.")))
         return actions
 
     @classmethod
