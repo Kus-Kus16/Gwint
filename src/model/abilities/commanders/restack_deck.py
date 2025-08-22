@@ -30,7 +30,7 @@ class RestackDeck(CommanderAbilityBase):
     @classmethod
     def carousel(cls, presenter, cards, count):
         presenter.show_carousel(cards, choose_count=count, cancelable=False,
-                                label=l("abilites.restack_deck.discard1"))
+                                label=l("Put the cards back on the deck."))
 
     @overrides
     def on_board_play(self, game, player, row_type, targets):

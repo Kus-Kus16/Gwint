@@ -3,22 +3,7 @@ import random
 from src.presenter import loader, saver
 from src.view.constants import ui_constants as u
 
-lang = gettext.translation("base", localedir="locales", languages=["PL"])
-lang.install()
-locale = lang.gettext
-
-_user_settings = {}
-_observers = {}
-_theme_index = None
-
-AUTHORS = [
-    locale("authors.1"),
-    "Maciej Kus",
-    locale("authors.2"),
-    "Krzysztof Pieczka",
-    locale("authors.3"),
-    "Maciej Fraś"
-]
+#TODO refactor
 
 def load_settings():
     data = loader.load_data("settings", is_userdata=True)
@@ -48,4 +33,23 @@ def get_random_theme():
         _theme_index = random.randrange(len(u.THEMES))
     return _theme_index
 
+
+_user_settings = {}
+_observers = {}
+_theme_index = None
 load_settings()
+LANGUAGES = ["EN", "PL"]
+
+lang = gettext.translation("base", localedir="locales",
+                           fallback=True, languages=[LANGUAGES[load_setting("language")]])
+lang.install()
+locale = lang.gettext
+
+AUTHORS = [
+    locale("Model, Frontend, Toussaint Deck:"),
+    "Maciej Kus",
+    locale("Server, Frontend:"),
+    "Krzysztof Pieczka",
+    locale("Eternal Fire Deck, Scoia'tael Optimise:"),
+    "Maciej Fraś"
+]

@@ -36,11 +36,11 @@ class GamePresenter:
             self.net.connect()
             response, data = self.net.send(("register", [deck, commander]))
         except ConnectionError as e:
-            self.return_to_menu((f"{l("error.server_not_responding")}:", str(e)))
+            self.return_to_menu((f"{l("Server not responding")}:", str(e)))
             return False
 
         if response != "ok":
-            raise ConnectionError(f"{l("error.server_responded")}: {response}")
+            raise ConnectionError(f"{l("Server responded with")}: {response}")
 
         self.my_id, self.seed = data
 
@@ -80,7 +80,7 @@ class GamePresenter:
             deck, commander = db.create_verified_deck(cards, commander_id)
             self.opponent = Player(deck, commander)
         except ValueError:
-            self.return_to_menu((l("error.deck.opponent"),), seconds=3)
+            self.return_to_menu((l("Incorrect opponent deck"),), seconds=3)
 
         self.game = Game(self, self.seed)
 
@@ -99,7 +99,7 @@ class GamePresenter:
             has_scoia = self.game.compare_for_faction(FactionType.SCOIATAEL)
             if has_scoia == self.my_id:
                 self.first_player = "choose"
-                self.view.current_scene.choose_first_player()
+                self.view.current_Choose_first_player()
                 return
             elif has_scoia == (1 - self.my_id):
                 self.first_player = "wait"
@@ -264,7 +264,7 @@ class GamePresenter:
                 self.game_state = "waiting-for-game"
                 self.view.change_scene(self.view.waiting)
         except ValueError as e:
-            self.return_to_menu((f"{l("error.deck.own")}:", str(e)), seconds=3)
+            self.return_to_menu((f"{l("Incorrect deck")}:", str(e)), seconds=3)
 
     def handle_play(self, action):
         if action["card_id"] is None:
@@ -483,7 +483,7 @@ class GamePresenter:
 
         #Opponent disconnected
         if server_response == "error":
-            reasons = (l("error.disconnect.opponent"),) if should_notify else None
+            reasons = (l("Opponent disconnected."),) if should_notify else None
             self.return_to_menu(reasons)
             return False
 

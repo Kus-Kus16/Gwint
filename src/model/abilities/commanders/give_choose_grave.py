@@ -28,9 +28,9 @@ class GiveChooseGrave(CommanderAbilityBase):
         graves = opponent.get_grave_cards(playable_only=True)
         graves.extend(player.get_grave_cards(playable_only=True))
         actions.append(lambda: self.carousel(presenter, hand.cards, 1, False,
-                                             l("abilites.give_choose_grave.give1")))
+                                             l("Choose a card to donate.")))
         actions.append(lambda: self.carousel(presenter, graves, 1, True,
-                                             l("abilites.give_choose_grave.choose1")))
+                                             l("Choose 1 card from the discard piles.")))
         return actions
 
     @classmethod
