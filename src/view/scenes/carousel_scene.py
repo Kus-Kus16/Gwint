@@ -4,6 +4,7 @@ from overrides import overrides
 from src.model.enums.ability_type import AbilityType
 from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
+from src.presenter.settings import locale as l
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 
@@ -54,7 +55,8 @@ class CarouselScene(Scene, TemporaryDrawable):
             overlay.fill((0, 0, 0, 205))
             self.screen.blit(overlay, (0, 100))
 
-            text = self.label if not self.redraw_label else f"Wybierz do {self.choose_count} kart, które chcesz wymienić."
+            text = self.label if not self.redraw_label else \
+                f"{l("scene.chooseupto")} {self.choose_count} {l("scene.cardstodiscard")}"
             self.draw_text(text, self.screen_width // 2, 150, color=u.COLOR_GOLD, center=True)
 
         half_visible = self.visible_cards // 2

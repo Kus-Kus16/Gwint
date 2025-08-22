@@ -10,6 +10,7 @@ from src.model.enums.faction_type import FactionType
 from src.presenter import loader, saver
 from src.view.components.scrollbar import Scrollbar
 from src.view.constants import deck_constants as c, ui_constants as u
+from src.presenter.settings import locale as l
 from src.view.components.button import Button
 from src.view.scenes.carousel_scene import CarouselScene
 from src.view.scenes.scene import Scene
@@ -71,7 +72,7 @@ class DeckScene(Scene):
         user_decks = userdata["decks"]
         final_faction = None
         for i, deck in enumerate(user_decks):
-            faction = FactionType.fullname_to_faction(deck["faction"])
+            faction = FactionType(deck["faction"])
             self.change_faction(faction=faction)
 
             self.set_commander(deck["commander_id"])
@@ -324,7 +325,7 @@ class DeckScene(Scene):
             current_deck = self.get_current_deck_dict()
             dump_deck = dict()
 
-            dump_deck["faction"] = FactionType.faction_to_fullname(self.get_faction())
+            dump_deck["faction"] = self.get_faction().value
             dump_deck["commander_id"] = current_deck["commander"].dump()
             dump_deck["cards"] = [card.dump() for card in current_deck["right"].cards]
 

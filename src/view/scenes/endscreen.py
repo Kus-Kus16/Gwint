@@ -3,6 +3,7 @@ from overrides import overrides
 
 from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
+from src.presenter.settings import locale as l
 from src.view.components.button import Button
 from src.view.scenes.scene import Scene
 

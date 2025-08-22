@@ -1,6 +1,6 @@
 [
     {
-        "name": "Królestwa Północy",
+        "faction": 1,
         "description": "Gdy wygrasz rundę, weż dodatkową kartę.",
         "commanders": [
             {
@@ -41,7 +41,7 @@
         ]
     },
     {
-        "name": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "description": "Jeśli runda kończy się remisem, to Ty odnosisz zwycięstwo.",
         "commanders": [
             {
@@ -82,7 +82,7 @@
         ]
     },
     {
-        "name": "Potwory",
+        "faction": 3,
         "description": "Po każdej rundzie, losowo wybrana jednostka pozostaje na polu bitwy.",
         "commanders": [
             {
@@ -123,7 +123,7 @@
         ]
     },
     {
-        "name": "Scoia'tael",
+        "faction": 4,
         "description": "Zadecyduj kto rozpoczyna rozgrywkę.",
         "commanders": [
             {
@@ -164,7 +164,7 @@
         ]
     },
     {
-        "name": "Skellige",
+        "faction": 5,
         "description": "Na początku 3 rundy, wylosuj dwie jednostki ze stosu kart odrzuconych i zagraj je na pole bitwy.",
         "commanders": [
             {
@@ -205,7 +205,7 @@
         ]
     },
     {
-        "name": "Księstwo Toussaint",
+        "faction": 6,
         "description": "Gdy przegrasz rundę, weż dodatkową kartę.",
         "commanders": [
             {
@@ -246,7 +246,7 @@
         ]
     },
     {
-        "name": "Kult Wiecznego Ognia",
+        "faction": 7,
         "description": "Na początku rozgrywki wymień do 4 zamiast do 2 kart.",
         "commanders": [
             {

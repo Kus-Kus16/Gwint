@@ -2,7 +2,7 @@ from overrides import overrides
 
 from src.model.abilities.commanders.commander_base import CommanderAbilityBase
 from src.model.enums.ability_type import AbilityType
-from src.presenter.settings import locale
+from src.presenter.settings import locale as l
 
 
 class RestackDeck(CommanderAbilityBase):
@@ -30,7 +30,7 @@ class RestackDeck(CommanderAbilityBase):
     @classmethod
     def carousel(cls, presenter, cards, count):
         presenter.show_carousel(cards, choose_count=count, cancelable=False,
-                                label=locale("abilites.restack_deck.discard1"))
+                                label=l("abilites.restack_deck.discard1"))
 
     @overrides
     def on_board_play(self, game, player, row_type, targets):

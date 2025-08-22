@@ -18,7 +18,7 @@ with open("./resources/data/cards.json", "r", encoding="utf-8") as file:
         if card["count"] == 0:
             continue
 
-        faction = FactionType.fullname_to_faction(card["faction"])
+        faction = FactionType(card["faction"])
         faction_cards_dict[faction].append(card)
 
 with open("./resources/data/factions.json", "r", encoding="utf-8") as file:
@@ -26,7 +26,7 @@ with open("./resources/data/factions.json", "r", encoding="utf-8") as file:
 
     faction_commanders_dict = defaultdict(list)
     for faction_data in faction_list:
-        faction = FactionType.fullname_to_faction(faction_data["name"])
+        faction = FactionType(faction_data["faction"])
         faction_commanders_dict[faction] = faction_data["commanders"]
 
 with open("./resources/data/muster.json", "r", encoding="utf-8") as file:
@@ -52,7 +52,7 @@ def find_commander_by_id(commander_id):
     for faction in faction_list:
         for commander in faction["commanders"]:
             if commander["id"] == commander_id:
-                commander["faction"] = faction["name"]
+                commander["faction"] = FactionType(faction["faction"])
                 return commander
 
 def get_faction_cards(faction_type, include_neutral=False):
@@ -63,22 +63,19 @@ def get_faction_cards(faction_type, include_neutral=False):
     return cards
 
 def get_faction_commanders(faction_type):
-    faction_name = FactionType.faction_to_fullname(faction_type)
-    print(faction_name)
     commanders = faction_commanders_dict[faction_type]
 
     for data in commanders:
-        data["faction"] = faction_name
+        data["faction"] = faction_type
 
     return commanders
 
 def create_verified_deck(data, commander_id):
     commander_data = find_commander_by_id(commander_id)
-
     if commander_data is None:
         raise ValueError(f"Commander: {commander_id} does not exist")
 
-    faction = commander_data["faction"]
+    faction_type = commander_data["faction"]
     commander = Commander(commander_data)
 
     processed = {}
@@ -94,10 +91,10 @@ def create_verified_deck(data, commander_id):
             if card_data is None:
                 raise ValueError(f"Card: {card_id} does not exist")
 
-            faction_valid = card_data["faction"] in ("Neutralne", faction)
+            faction_valid = FactionType(card_data["faction"]) in (FactionType.NEUTRAL, faction_type)
 
             if not faction_valid:
-                raise ValueError(f"Card: {card_id}:{card_data['name']} does not belong to {faction}")
+                raise ValueError(f"Card: {card_id}:{card_data['name']} does not belong to {faction_type}")
 
             processed[card_id] = {
                 "count": 0,

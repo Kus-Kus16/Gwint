@@ -5,6 +5,7 @@ from src.view.components.button import Button
 from src.view.components.input_box import InputBox
 from src.view.components.setting import Setting
 from src.view.constants import ui_constants as u
+from src.presenter.settings import locale as l
 from src.view.scenes.scene import Scene
 
 

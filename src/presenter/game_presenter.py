@@ -9,7 +9,7 @@ from src.model.game import Game
 from src.model.player import Player
 from src.network.network import Network
 from src.presenter import loader, settings
-from src.presenter.settings import locale
+from src.presenter.settings import locale as l
 from src.view.constants import ui_constants as u
 
 
@@ -36,11 +36,11 @@ class GamePresenter:
             self.net.connect()
             response, data = self.net.send(("register", [deck, commander]))
         except ConnectionError as e:
-            self.return_to_menu((f"{locale("error.server_not_responding")}:", str(e)))
+            self.return_to_menu((f"{l("error.server_not_responding")}:", str(e)))
             return False
 
         if response != "ok":
-            raise ConnectionError(f"{locale("error.server_responded")}: {response}")
+            raise ConnectionError(f"{l("error.server_responded")}: {response}")
 
         self.my_id, self.seed = data
 
@@ -80,7 +80,7 @@ class GamePresenter:
             deck, commander = db.create_verified_deck(cards, commander_id)
             self.opponent = Player(deck, commander)
         except ValueError:
-            self.return_to_menu((locale("error.deck.opponent"),), seconds=3)
+            self.return_to_menu((l("error.deck.opponent"),), seconds=3)
 
         self.game = Game(self, self.seed)
 
@@ -264,7 +264,7 @@ class GamePresenter:
                 self.game_state = "waiting-for-game"
                 self.view.change_scene(self.view.waiting)
         except ValueError as e:
-            self.return_to_menu((f"{locale("error.deck.own")}:", str(e)), seconds=3)
+            self.return_to_menu((f"{l("error.deck.own")}:", str(e)), seconds=3)
 
     def handle_play(self, action):
         if action["card_id"] is None:
@@ -483,7 +483,7 @@ class GamePresenter:
 
         #Opponent disconnected
         if server_response == "error":
-            reasons = (locale("error.disconnect.opponent"),) if should_notify else None
+            reasons = (l("error.disconnect.opponent"),) if should_notify else None
             self.return_to_menu(reasons)
             return False
 

@@ -4,6 +4,7 @@ from overrides import overrides
 from src.view.constants import ui_constants as u
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
+from src.presenter.settings import locale as l
 
 
 class TextScene(Scene):
