@@ -2,7 +2,7 @@
     {
         "id": 0,
         "name": "Róg Dowódcy",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": null,
         "rows": [],
         "abilities": ["horn"],
@@ -12,7 +12,7 @@
     {
         "id": 1,
         "name": "Manekin do Ćwiczeń",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": null,
         "rows": [],
         "abilities": ["decoy"],
@@ -22,7 +22,7 @@
     {
         "id": 2,
         "name": "Pożoga",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": null,
         "rows": [],
         "abilities": ["scorch"],
@@ -32,7 +32,7 @@
     {
         "id": 3,
         "name": "Trzaskający Mróz",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": null,
         "rows": [],
         "abilities": ["frost"],
@@ -42,7 +42,7 @@
     {
         "id": 4,
         "name": "Gęsta Mgła",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": null,
         "rows": [],
         "abilities": ["fog"],
@@ -52,7 +52,7 @@
     {
         "id": 5,
         "name": "Ulewny Deszcz",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": null,
         "rows": [],
         "abilities": ["rain"],
@@ -62,7 +62,7 @@
     {
         "id": 6,
         "name": "Skelligijski Sztorm",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": null,
         "rows": [],
         "abilities": ["storm"],
@@ -72,7 +72,7 @@
     {
         "id": 7,
         "name": "Czyste Niebo",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": null,
         "rows": [],
         "abilities": ["clear"],
@@ -82,7 +82,7 @@
     {
         "id": 10,
         "name": "Tajemniczy Elf",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 0,
         "rows": ["close_opp"],
         "abilities": ["spy", "hero"],
@@ -92,7 +92,7 @@
     {
         "id": 11,
         "name": "Cirilla Fiona Elen Riannon",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 15,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -102,7 +102,7 @@
     {
         "id": 12,
         "name": "Geralt z Rivii",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 15,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -112,7 +112,7 @@
     {
         "id": 13,
         "name": "Triss Merigold",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 7,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -122,7 +122,7 @@
     {
         "id": 14,
         "name": "Yennefer z Vengerbergu",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 7,
         "rows": ["ranged"],
         "abilities": ["hero", "medic"],
@@ -132,7 +132,7 @@
     {
         "id": 15,
         "name": "Bydlęce Siły Zbrojne",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 8,
         "rows": ["close"],
         "abilities": ["avenge"],
@@ -142,7 +142,7 @@
     {
         "id": 16,
         "name": "Emiel Regis Rohellec Terzieff",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -152,7 +152,7 @@
     {
         "id": 17,
         "name": "Gaunter O'Dimm",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 2,
         "rows": ["siege"],
         "abilities": ["muster"],
@@ -162,7 +162,7 @@
     {
         "id": 18,
         "name": "Gaunter O'Dimm: Cień" ,
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 4,
         "rows": ["ranged"],
         "abilities": ["muster"],
@@ -172,7 +172,7 @@
     {
         "id": 19,
         "name": "Jaskier",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 2,
         "rows": ["close"],
         "abilities": ["horn"],
@@ -182,7 +182,7 @@
     {
         "id": 20,
         "name": "Krowa",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 0,
         "rows": ["ranged"],
         "abilities": ["recall"],
@@ -192,7 +192,7 @@
     {
         "id": 21,
         "name": "Olgierd von Everec",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 6,
         "rows": ["close", "ranged"],
         "abilities": ["agility", "morale"],
@@ -202,7 +202,7 @@
     {
         "id": 22,
         "name": "Vesemir",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 6,
         "rows": ["close"],
         "abilities": [],
@@ -212,7 +212,7 @@
     {
         "id": 23,
         "name": "Villentretenmerth",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 7,
         "rows": ["close"],
         "abilities": ["scorch_row"],
@@ -222,7 +222,7 @@
     {
         "id": 24,
         "name": "Zoltan Chivay",
-        "faction": "Neutralne",
+        "faction": 0,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -235,7 +235,7 @@
     {
         "id": 35,
         "name": "Esterad Thyssen",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -245,7 +245,7 @@
     {
         "id": 36,
         "name": "Filippa Eilhart",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 10,
         "rows": ["ranged"],
         "abilities": ["hero"],
@@ -255,7 +255,7 @@
     {
         "id": 37,
         "name": "Jan Natalis",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -265,7 +265,7 @@
     {
         "id": 38,
         "name": "Vernon Roche",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -275,7 +275,7 @@
     {
         "id": 39,
         "name": "Balista",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -285,7 +285,7 @@
     {
         "id": 40,
         "name": "Balista",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -295,7 +295,7 @@
     {
         "id": 41,
         "name": "Biedna piechota",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 1,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -305,7 +305,7 @@
     {
         "id": 42,
         "name": "Biedna piechota",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 1,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -315,7 +315,7 @@
     {
         "id": 43,
         "name": "Biedna piechota",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 1,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -325,7 +325,7 @@
     {
         "id": 44,
         "name": "Detmold",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 6,
         "rows": ["ranged"],
         "abilities": [],
@@ -335,7 +335,7 @@
     {
         "id": 45,
         "name": "Sigismund Dijkstra",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 4,
         "rows": ["close_opp"],
         "abilities": ["spy"],
@@ -345,7 +345,7 @@
     {
         "id": 46,
         "name": "Katapulta",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 8,
         "rows": ["siege"],
         "abilities": ["bond"],
@@ -355,7 +355,7 @@
     {
         "id": 47,
         "name": "Katapulta",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 8,
         "rows": ["siege"],
         "abilities": ["bond"],
@@ -365,7 +365,7 @@
     {
         "id": 48,
         "name": "Keira Metz",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 5,
         "rows": ["ranged"],
         "abilities": [],
@@ -375,7 +375,7 @@
     {
         "id": 49,
         "name": "Komandos Niebieskich Pasów",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 4,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -385,7 +385,7 @@
     {
         "id": 50,
         "name": "Komandos Niebieskich Pasów",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 4,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -395,7 +395,7 @@
     {
         "id": 51,
         "name": "Komandos Niebieskich Pasów",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 4,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -405,7 +405,7 @@
     {
         "id": 52,
         "name": "Medyczka Burej Chorągwi",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 5,
         "rows": ["siege"],
         "abilities": ["medic"],
@@ -415,7 +415,7 @@
     {
         "id": 53,
         "name": "Mistrz Oblężeń z Kaedwen",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 1,
         "rows": ["siege"],
         "abilities": ["morale"],
@@ -425,7 +425,7 @@
     {
         "id": 54,
         "name": "Mistrz Oblężeń z Kaedwen",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 1,
         "rows": ["siege"],
         "abilities": ["morale"],
@@ -435,7 +435,7 @@
     {
         "id": 55,
         "name": "Mistrz Oblężeń z Kaedwen",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 1,
         "rows": ["siege"],
         "abilities": ["morale"],
@@ -445,7 +445,7 @@
     {
         "id": 56,
         "name": "Redański Piechur",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 1,
         "rows": ["close"],
         "abilities": [],
@@ -455,7 +455,7 @@
     {
         "id": 57,
         "name": "Redański Piechur",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 1,
         "rows": ["close"],
         "abilities": [],
@@ -465,7 +465,7 @@
     {
         "id": 58,
         "name": "Rębacze z Crinfrid",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 5,
         "rows": ["ranged"],
         "abilities": ["bond"],
@@ -475,7 +475,7 @@
     {
         "id": 59,
         "name": "Rębacze z Crinfrid",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 5,
         "rows": ["ranged"],
         "abilities": ["bond"],
@@ -485,7 +485,7 @@
     {
         "id": 60,
         "name": "Rębacze z Crinfrid",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 5,
         "rows": ["ranged"],
         "abilities": ["bond"],
@@ -495,7 +495,7 @@
     {
         "id": 61,
         "name": "Sabrina Glevissig",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 4,
         "rows": ["ranged"],
         "abilities": [],
@@ -505,7 +505,7 @@
     {
         "id": 62,
         "name": "Sheala de Tancarville",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 5,
         "rows": ["ranged"],
         "abilities": [],
@@ -515,7 +515,7 @@
     {
         "id": 63,
         "name": "Sheldon Skaggs",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 4,
         "rows": ["ranged"],
         "abilities": [],
@@ -525,7 +525,7 @@
     {
         "id": 64,
         "name": "Książę Stennis",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 5,
         "rows": ["close_opp"],
         "abilities": ["spy"],
@@ -535,7 +535,7 @@
     {
         "id": 65,
         "name": "Talar",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 1,
         "rows": ["siege_opp"],
         "abilities": ["spy"],
@@ -545,7 +545,7 @@
     {
         "id": 66,
         "name": "Trebusz",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -555,7 +555,7 @@
     {
         "id": 67,
         "name": "Trebusz",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -565,7 +565,7 @@
     {
         "id": 68,
         "name": "Ves",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -575,7 +575,7 @@
     {
         "id": 69,
         "name": "Wieża Oblężnicza",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -585,7 +585,7 @@
     {
         "id": 70,
         "name": "Yarpen Zigrin",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 2,
         "rows": ["close"],
         "abilities": [],
@@ -595,7 +595,7 @@
     {
         "id": 71,
         "name": "Zygfryd z Denesle",
-        "faction": "Królestwa Północy",
+        "faction": 1,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -607,7 +607,7 @@
     {
         "id": 85,
         "name": "Letho z Gulety",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -617,7 +617,7 @@
     {
         "id": 86,
         "name": "Menno Coehoorn",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero", "medic"],
@@ -627,7 +627,7 @@
     {
         "id": 87,
         "name": "Morvran Voorhis",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 10,
         "rows": ["siege"],
         "abilities": ["hero"],
@@ -637,7 +637,7 @@
     {
         "id": 88,
         "name": "Tibor Eggebracht",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 10,
         "rows": ["ranged"],
         "abilities": ["hero"],
@@ -647,7 +647,7 @@
     {
         "id": 89,
         "name": "Albrich",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 2,
         "rows": ["ranged"],
         "abilities": [],
@@ -657,7 +657,7 @@
     {
         "id": 90,
         "name": "Assire var Anahid",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 6,
         "rows": ["ranged"],
         "abilities": [],
@@ -667,7 +667,7 @@
     {
         "id": 91,
         "name": "Brygada Impera",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 3,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -677,7 +677,7 @@
     {
         "id": 92,
         "name": "Brygada Impera",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 3,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -687,7 +687,7 @@
     {
         "id": 93,
         "name": "Brygada Impera",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 3,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -697,7 +697,7 @@
     {
         "id": 94,
         "name": "Brygada Impera",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 3,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -707,7 +707,7 @@
     {
         "id": 95,
         "name": "Cahir Mawr Dyffryn aep Ceallach",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 6,
         "rows": ["close"],
         "abilities": [],
@@ -717,7 +717,7 @@
     {
         "id": 96,
         "name": "Cynthia",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 4,
         "rows": ["ranged"],
         "abilities": [],
@@ -727,7 +727,7 @@
     {
         "id": 97,
         "name": "Młody Emisariusz",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 5,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -737,7 +737,7 @@
     {
         "id": 98,
         "name": "Młody Emisariusz",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 5,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -747,7 +747,7 @@
     {
         "id": 99,
         "name": "Fringilla Vigo",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 6,
         "rows": ["ranged"],
         "abilities": [],
@@ -757,7 +757,7 @@
     {
         "id": 100,
         "name": "Kawaleria Nauzicaa",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 2,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -767,7 +767,7 @@
     {
         "id": 101,
         "name": "Kawaleria Nauzicaa",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 2,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -777,7 +777,7 @@
     {
         "id": 102,
         "name": "Kawaleria Nauzicaa",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 2,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -787,7 +787,7 @@
     {
         "id": 103,
         "name": "Nilfgaardzki Łucznik",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 10,
         "rows": ["ranged"],
         "abilities": [],
@@ -797,7 +797,7 @@
     {
         "id": 104,
         "name": "Nilfgaardzki Łucznik",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 10,
         "rows": ["ranged"],
         "abilities": [],
@@ -807,7 +807,7 @@
     {
         "id": 105,
         "name": "Zdezelowana Mangonella",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 3,
         "rows": ["siege"],
         "abilities": [],
@@ -817,7 +817,7 @@
     {
         "id": 106,
         "name": "Morteisen",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 3,
         "rows": ["close"],
         "abilities": [],
@@ -827,7 +827,7 @@
     {
         "id": 107,
         "name": "Zerrikański Ognisty Skorpion",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 5,
         "rows": ["siege"],
         "abilities": [],
@@ -837,7 +837,7 @@
     {
         "id": 108,
         "name": "Puttkammer",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 3,
         "rows": ["ranged"],
         "abilities": [],
@@ -847,7 +847,7 @@
     {
         "id": 109,
         "name": "Rainfarn",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -857,7 +857,7 @@
     {
         "id": 110,
         "name": "Renuald aep Matsen",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 5,
         "rows": ["ranged"],
         "abilities": [],
@@ -867,7 +867,7 @@
     {
         "id": 111,
         "name": "Saper",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -877,7 +877,7 @@
     {
         "id": 112,
         "name": "Shilard Fitz-Oesterlen",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 7,
         "rows": ["close_opp"],
         "abilities": ["spy"],
@@ -887,7 +887,7 @@
     {
         "id": 113,
         "name": "Stefan Skellen",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 9,
         "rows": ["close_opp"],
         "abilities": ["spy"],
@@ -897,7 +897,7 @@
     {
         "id": 114,
         "name": "Sweers",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 2,
         "rows": ["ranged"],
         "abilities": [],
@@ -907,7 +907,7 @@
     {
         "id": 115,
         "name": "Vanhemar",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 4,
         "rows": ["ranged"],
         "abilities": [],
@@ -917,7 +917,7 @@
     {
         "id": 116,
         "name": "Vattier de Rideaux",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 4,
         "rows": ["close_opp"],
         "abilities": ["spy"],
@@ -927,7 +927,7 @@
     {
         "id": 117,
         "name": "Vreemde",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 2,
         "rows": ["close"],
         "abilities": [],
@@ -937,7 +937,7 @@
     {
         "id": 118,
         "name": "Wielki Ognisty Skorpion",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 10,
         "rows": ["siege"],
         "abilities": [],
@@ -947,7 +947,7 @@
     {
         "id": 119,
         "name": "Wsparcie Łuczników",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 1,
         "rows": ["ranged"],
         "abilities": ["medic"],
@@ -957,7 +957,7 @@
     {
         "id": 120,
         "name": "Wsparcie Łuczników",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 1,
         "rows": ["ranged"],
         "abilities": ["medic"],
@@ -967,7 +967,7 @@
     {
         "id": 121,
         "name": "Wsparcie Oblężnicze",
-        "faction": "Cesarstwo Nilfgaardu",
+        "faction": 2,
         "power": 0,
         "rows": ["siege"],
         "abilities": ["medic"],
@@ -979,7 +979,7 @@
     {
         "id": 135,
         "name": "Draug",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -989,7 +989,7 @@
     {
         "id": 136,
         "name": "Imlerith",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -999,7 +999,7 @@
     {
         "id": 137,
         "name": "Kejran",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 8,
         "rows": ["close", "ranged"],
         "abilities": ["hero", "agility", "morale"],
@@ -1009,7 +1009,7 @@
     {
         "id": 138,
         "name": "Leszy",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 10,
         "rows": ["ranged"],
         "abilities": ["hero"],
@@ -1019,7 +1019,7 @@
     {
         "id": 139,
         "name": "Baba Cmentarna",
-        "faction": "Potwory",
+        "faction": 3,
         "power":5 ,
         "rows": ["ranged"],
         "abilities": [],
@@ -1029,7 +1029,7 @@
     {
         "id": 140,
         "name": "Bies",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 6,
         "rows": ["close"],
         "abilities": [],
@@ -1039,7 +1039,7 @@
     {
         "id": 141,
         "name": "Endriaga",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["ranged"],
         "abilities": [],
@@ -1049,7 +1049,7 @@
     {
         "id": 142,
         "name": "Gargulec",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["ranged"],
         "abilities": [],
@@ -1059,7 +1059,7 @@
     {
         "id": 143,
         "name": "Ghul",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 1,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1069,7 +1069,7 @@
     {
         "id": 144,
         "name": "Ghul",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 1,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1079,7 +1079,7 @@
     {
         "id": 145,
         "name": "Ghul",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 1,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1089,7 +1089,7 @@
     {
         "id": 146,
         "name": "Gryf",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1099,7 +1099,7 @@
     {
         "id": 147,
         "name": "Harpia",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1109,7 +1109,7 @@
     {
         "id": 148,
         "name": "Harpia Celaeno",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1119,7 +1119,7 @@
     {
         "id": 149,
         "name": "Krabopająk",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 4,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1129,7 +1129,7 @@
     {
         "id": 150,
         "name": "Krabopająk",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 4,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1139,7 +1139,7 @@
     {
         "id": 151,
         "name": "Krabopająk",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 4,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1149,7 +1149,7 @@
     {
         "id": 152,
         "name": "Królewicz Ropuch",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 7,
         "rows": ["ranged"],
         "abilities": ["scorch_row"],
@@ -1159,7 +1159,7 @@
     {
         "id": 153,
         "name": "Kuroliszek",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["ranged"],
         "abilities": [],
@@ -1169,7 +1169,7 @@
     {
         "id": 154,
         "name": "Lodowy Gigant",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 5,
         "rows": ["siege"],
         "abilities": [],
@@ -1179,7 +1179,7 @@
     {
         "id": 155,
         "name": "Mglak",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["close"],
         "abilities": [],
@@ -1189,7 +1189,7 @@
     {
         "id": 156,
         "name": "Morowa dziewica",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1199,7 +1199,7 @@
     {
         "id": 157,
         "name": "Nekker",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1209,7 +1209,7 @@
     {
         "id": 158,
         "name": "Nekker",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1219,7 +1219,7 @@
     {
         "id": 159,
         "name": "Nekker",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1229,7 +1229,7 @@
     {
         "id": 160,
         "name": "Olbrzymi Krabopająk",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 6,
         "rows": ["siege"],
         "abilities": ["muster"],
@@ -1239,7 +1239,7 @@
     {
         "id": 161,
         "name": "Poroniec",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -1249,7 +1249,7 @@
     {
         "id": 162,
         "name": "Przeraza",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1259,7 +1259,7 @@
     {
         "id": 163,
         "name": "Wampir: Bruxa",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 4,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1269,7 +1269,7 @@
     {
         "id": 164,
         "name": "Wampir: Ekimma",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 4,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1279,7 +1279,7 @@
     {
         "id": 165,
         "name": "Wampir: Fleder",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 4,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1289,7 +1289,7 @@
     {
         "id": 166,
         "name": "Wampir: Garkain",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 4,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1299,7 +1299,7 @@
     {
         "id": 167,
         "name": "Wampir: Katakan",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 4,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1309,7 +1309,7 @@
     {
         "id": 168,
         "name": "Widłogon",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1319,7 +1319,7 @@
     {
         "id": 169,
         "name": "Wiedźma: Kuchta",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 6,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1329,7 +1329,7 @@
     {
         "id": 170,
         "name": "Wiedźma: Prządka",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 6,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1339,7 +1339,7 @@
     {
         "id": 171,
         "name": "Wiedźma: Szepciucha",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 6,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1349,7 +1349,7 @@
     {
         "id": 172,
         "name": "Wilkołak",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1359,7 +1359,7 @@
     {
         "id": 173,
         "name": "Wiwerna",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 2,
         "rows": ["ranged"],
         "abilities": [],
@@ -1369,7 +1369,7 @@
     {
         "id": 174,
         "name": "Żywiołak Ognia",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -1379,7 +1379,7 @@
     {
         "id": 175,
         "name": "Żywiołak Ziemi",
-        "faction": "Potwory",
+        "faction": 3,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -1391,7 +1391,7 @@
     {
         "id": 185,
         "name": "Eithné",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 10,
         "rows": ["ranged"],
         "abilities": ["hero"],
@@ -1401,7 +1401,7 @@
     {
         "id": 186,
         "name": "Iorveth",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 10,
         "rows": ["ranged"],
         "abilities": ["hero"],
@@ -1411,7 +1411,7 @@
     {
         "id": 187,
         "name": "Isengrim Faoiltiarn",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero", "morale"],
@@ -1421,7 +1421,7 @@
     {
         "id": 188,
         "name": "Saesenthessis",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 10,
         "rows": ["ranged"],
         "abilities": ["hero"],
@@ -1431,7 +1431,7 @@
     {
         "id": 189,
         "name": "Barclay Els",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 6,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1441,7 +1441,7 @@
     {
         "id": 190,
         "name": "Brygada Vrihedd",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1451,7 +1451,7 @@
     {
         "id": 191,
         "name": "Brygada Vrihedd",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1461,7 +1461,7 @@
     {
         "id": 192,
         "name": "Ciaran aep Easnillien",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 3,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1471,7 +1471,7 @@
     {
         "id": 193,
         "name": "Dennis Cranmer",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 6,
         "rows": ["close"],
         "abilities": [],
@@ -1481,7 +1481,7 @@
     {
         "id": 194,
         "name": "Elfi Harcownik",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 2,
         "rows": ["ranged"],
         "abilities": ["muster"],
@@ -1491,7 +1491,7 @@
     {
         "id": 195,
         "name": "Elfi Harcownik",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 2,
         "rows": ["ranged"],
         "abilities": ["muster"],
@@ -1501,7 +1501,7 @@
     {
         "id": 196,
         "name": "Elfi Harcownik",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 2,
         "rows": ["ranged"],
         "abilities": ["muster"],
@@ -1511,7 +1511,7 @@
     {
         "id": 197,
         "name": "Filavandrel aén Fidháil",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 6,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1521,7 +1521,7 @@
     {
         "id": 198,
         "name": "Krasnolud Harcownik",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 3,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1531,7 +1531,7 @@
     {
         "id": 199,
         "name": "Krasnolud Harcownik",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 3,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1541,7 +1541,7 @@
     {
         "id": 200,
         "name": "Krasnolud Harcownik",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 3,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1551,7 +1551,7 @@
     {
         "id": 201,
         "name": "Ida Emean aep Sivney",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 6,
         "rows": ["ranged"],
         "abilities": [],
@@ -1561,7 +1561,7 @@
     {
         "id": 202,
         "name": "Kadet Vrihedd",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 4,
         "rows": ["ranged"],
         "abilities": [],
@@ -1571,7 +1571,7 @@
     {
         "id": 203,
         "name": "Łucznik z Dol Blathanna",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 4,
         "rows": ["ranged"],
         "abilities": [],
@@ -1581,7 +1581,7 @@
     {
         "id": 204,
         "name": "Havekarski Medyk",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 0,
         "rows": ["ranged"],
         "abilities": ["medic"],
@@ -1591,7 +1591,7 @@
     {
         "id": 205,
         "name": "Havekarski Medyk",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 0,
         "rows": ["ranged"],
         "abilities": ["medic"],
@@ -1601,7 +1601,7 @@
     {
         "id": 206,
         "name": "Havekarski Medyk",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 0,
         "rows": ["ranged"],
         "abilities": ["medic"],
@@ -1611,7 +1611,7 @@
     {
         "id": 207,
         "name": "Milva",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 10,
         "rows": ["ranged"],
         "abilities": ["morale"],
@@ -1621,7 +1621,7 @@
     {
         "id": 208,
         "name": "Obrońcy Mahakamu",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1631,7 +1631,7 @@
     {
         "id": 209,
         "name": "Obrońcy Mahakamu",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1641,7 +1641,7 @@
     {
         "id": 210,
         "name": "Obrońcy Mahakamu",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1651,7 +1651,7 @@
     {
         "id": 211,
         "name": "Obrońcy Mahakamu",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1661,7 +1661,7 @@
     {
         "id": 212,
         "name": "Obrońcy Mahakamu",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -1671,7 +1671,7 @@
     {
         "id": 213,
         "name": "Riordain",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 1,
         "rows": ["ranged"],
         "abilities": [],
@@ -1681,7 +1681,7 @@
     {
         "id": 214,
         "name": "Schirrú",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 8,
         "rows": ["ranged"],
         "abilities": ["scorch_row"],
@@ -1691,7 +1691,7 @@
     {
         "id": 215,
         "name": "Toruviel",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 2,
         "rows": ["ranged"],
         "abilities": [],
@@ -1701,7 +1701,7 @@
     {
         "id": 216,
         "name": "Havekarskie Wsparcie",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1711,7 +1711,7 @@
     {
         "id": 217,
         "name": "Havekarskie Wsparcie",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1721,7 +1721,7 @@
     {
         "id": 218,
         "name": "Havekarskie Wsparcie",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 5,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -1731,7 +1731,7 @@
     {
         "id": 219,
         "name": "Yaevinn",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 6,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1741,7 +1741,7 @@
     {
         "id": 220,
         "name": "Zwiadowca z Dol Blathanna",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 6,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1751,7 +1751,7 @@
     {
         "id": 221,
         "name": "Zwiadowca z Dol Blathanna",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 6,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1761,7 +1761,7 @@
     {
         "id": 222,
         "name": "Zwiadowca z Dol Blathanna",
-        "faction": "Scoia'tael",
+        "faction": 4,
         "power": 6,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -1773,7 +1773,7 @@
     {
         "id": 235,
         "name": "Mardroeme",
-        "faction": "Skellige",
+        "faction": 5,
         "power": null,
         "rows": [],
         "abilities": ["mardroeme"],
@@ -1783,7 +1783,7 @@
     {
         "id": 236,
         "name": "Cerys",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero", "muster"],
@@ -1793,7 +1793,7 @@
     {
         "id": 237,
         "name": "Hemdall",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 11,
         "rows": ["close"],
         "abilities": ["hero", "avenge"],
@@ -1803,7 +1803,7 @@
     {
         "id": 238,
         "name": "Hjalmar",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 10,
         "rows": ["ranged"],
         "abilities": ["hero"],
@@ -1813,7 +1813,7 @@
     {
         "id": 239,
         "name": "Myszowór",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 8,
         "rows": ["ranged"],
         "abilities": ["hero", "mardroeme"],
@@ -1823,7 +1823,7 @@
     {
         "id": 240,
         "name": "Berserker",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["close"],
         "abilities": ["berserker"],
@@ -1833,7 +1833,7 @@
     {
         "id": 241,
         "name": "Birna Bran",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 2,
         "rows": ["close"],
         "abilities": ["medic"],
@@ -1843,7 +1843,7 @@
     {
         "id": 242,
         "name": "Donar an Hindar",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -1853,7 +1853,7 @@
     {
         "id": 243,
         "name": "Draig Bon-Dhu",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 2,
         "rows": ["siege"],
         "abilities": ["horn"],
@@ -1863,7 +1863,7 @@
     {
         "id": 244,
         "name": "Drakkar Wojenny",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["siege"],
         "abilities": ["bond"],
@@ -1873,7 +1873,7 @@
     {
         "id": 245,
         "name": "Drakkar Wojenny",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["siege"],
         "abilities": ["bond"],
@@ -1883,7 +1883,7 @@
     {
         "id": 246,
         "name": "Drakkar Wojenny",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["siege"],
         "abilities": ["bond"],
@@ -1893,7 +1893,7 @@
     {
         "id": 247,
         "name": "Holger Czarna Ręka",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["siege"],
         "abilities": [],
@@ -1903,7 +1903,7 @@
     {
         "id": 248,
         "name": "Kambi",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 0,
         "rows": ["close"],
         "abilities": ["recall"],
@@ -1913,7 +1913,7 @@
     {
         "id": 249,
         "name": "Lekki Drakkar",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["ranged"],
         "abilities": ["muster"],
@@ -1923,7 +1923,7 @@
     {
         "id": 250,
         "name": "Łucznik Klanu Brokvar",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["ranged"],
         "abilities": [],
@@ -1933,7 +1933,7 @@
     {
         "id": 251,
         "name": "Lugos Siny",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["close"],
         "abilities": [],
@@ -1943,7 +1943,7 @@
     {
         "id": 252,
         "name": "Lugos Szalony",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["close"],
         "abilities": [],
@@ -1953,7 +1953,7 @@
     {
         "id": 253,
         "name": "Młody Berserker",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 2,
         "rows": ["ranged"],
         "abilities": ["berserker"],
@@ -1963,7 +1963,7 @@
     {
         "id": 254,
         "name": "Olaf",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 12,
         "rows": ["close", "ranged"],
         "abilities": ["agility", "morale"],
@@ -1973,7 +1973,7 @@
     {
         "id": 255,
         "name": "Pirat z Klanu Dimun",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["ranged"],
         "abilities": ["scorch"],
@@ -1983,7 +1983,7 @@
     {
         "id": 256,
         "name": "Płatnerz Klanu Tordarroch",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -1993,7 +1993,7 @@
     {
         "id": 257,
         "name": "Przemieniony Berserker",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 14,
         "rows": ["close"],
         "abilities": ["morale"],
@@ -2003,7 +2003,7 @@
     {
         "id": 258,
         "name": "Przemieniony Młody Berserker",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 8,
         "rows": ["ranged"],
         "abilities": ["bond"],
@@ -2013,7 +2013,7 @@
     {
         "id": 259,
         "name": "Skald Klanu Heymaey",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -2023,7 +2023,7 @@
     {
         "id": 260,
         "name": "Svanrige",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -2033,7 +2033,7 @@
     {
         "id": 261,
         "name": "Tarczowniczka Klanu Drummond",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -2043,7 +2043,7 @@
     {
         "id": 262,
         "name": "Tarczowniczka Klanu Drummond",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -2053,7 +2053,7 @@
     {
         "id": 263,
         "name": "Tarczowniczka Klanu Drummond",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -2063,7 +2063,7 @@
     {
         "id": 264,
         "name": "Udalryk",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -2073,7 +2073,7 @@
     {
         "id": 265,
         "name": "Wojownik Klanu Craite",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -2083,7 +2083,7 @@
     {
         "id": 266,
         "name": "Wojownik Klanu Craite",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -2093,7 +2093,7 @@
     {
         "id": 267,
         "name": "Wojownik Klanu Craite",
-        "faction": "Skellige",
+        "faction": 5,
         "power": 6,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -2105,7 +2105,7 @@
     {
         "id": 280,
         "name": "Sangreal",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": null,
         "rows": [],
         "abilities": ["sangreal"],
@@ -2115,7 +2115,7 @@
     {
         "id": 281,
         "name": "Prorok Lebioda",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 8,
         "rows": ["ranged"],
         "abilities": ["hero", "morale"],
@@ -2125,7 +2125,7 @@
     {
         "id": 282,
         "name": "Milton de Peyrac-Peyran",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -2135,7 +2135,7 @@
     {
         "id": 283,
         "name": "Palmerin de Launfal",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -2145,7 +2145,7 @@
     {
         "id": 284,
         "name": "Pani Jeziora",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 10,
         "rows": ["siege"],
         "abilities": ["hero"],
@@ -2155,7 +2155,7 @@
     {
         "id": 285,
         "name": "Agentka Księżnej",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 4,
         "rows": ["close_opp"],
         "abilities": ["spy"],
@@ -2165,7 +2165,7 @@
     {
         "id": 286,
         "name": "Arystokraci",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 3,
         "rows": ["ranged"],
         "abilities": [],
@@ -2175,7 +2175,7 @@
     {
         "id": 287,
         "name": "Barghest",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 3,
         "rows": ["ranged"],
         "abilities": ["muster"],
@@ -2185,7 +2185,7 @@
     {
         "id": 288,
         "name": "Benoit",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 3,
         "rows": ["ranged"],
         "abilities": ["sangreal"],
@@ -2195,7 +2195,7 @@
     {
         "id": 289,
         "name": "Błędny Rycerz",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -2205,7 +2205,7 @@
     {
         "id": 290,
         "name": "Błędny Rycerz",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -2215,7 +2215,7 @@
     {
         "id": 291,
         "name": "Błędny Rycerz",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -2225,7 +2225,7 @@
     {
         "id": 292,
         "name": "Chmurny Gigant",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -2235,7 +2235,7 @@
     {
         "id": 293,
         "name": "Chorągiew",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 2,
         "rows": ["close", "ranged"],
         "abilities": ["agility", "morale"],
@@ -2245,7 +2245,7 @@
     {
         "id": 294,
         "name": "Cintryjczyk",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 5,
         "rows": ["siege"],
         "abilities": [],
@@ -2255,7 +2255,7 @@
     {
         "id": 295,
         "name": "Damien De la Tour",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 8,
         "rows": ["close"],
         "abilities": ["morale", "endurance"],
@@ -2265,7 +2265,7 @@
     {
         "id": 296,
         "name": "Dettlaff van der Eretein",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 4,
         "rows": ["close"],
         "abilities": ["thirsty"],
@@ -2275,7 +2275,7 @@
     {
         "id": 297,
         "name": "Dettlaff: Wampir Wyższy",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 10,
         "rows": ["close"],
         "abilities": [],
@@ -2285,7 +2285,7 @@
     {
         "id": 298,
         "name": "Giermek",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 3,
         "rows": ["close"],
         "abilities": [],
@@ -2295,7 +2295,7 @@
     {
         "id": 299,
         "name": "Goliat",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -2305,7 +2305,7 @@
     {
         "id": 300,
         "name": "Gregoire z Gorgony",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 6,
         "rows": ["close"],
         "abilities": [],
@@ -2315,7 +2315,7 @@
     {
         "id": 301,
         "name": "Guillaume de Launfal",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -2325,7 +2325,7 @@
     {
         "id": 302,
         "name": "Król Rybak",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 1,
         "rows": ["siege"],
         "abilities": [],
@@ -2335,7 +2335,7 @@
     {
         "id": 303,
         "name": "Marlena de Trastamara",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 1,
         "rows": ["ranged"],
         "abilities": ["thirsty"],
@@ -2345,7 +2345,7 @@
     {
         "id": 304,
         "name": "Marlena: Wicht",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 4,
         "rows": ["ranged"],
         "abilities": ["muster"],
@@ -2355,7 +2355,7 @@
     {
         "id": 305,
         "name": "Medyk Polowy",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 2,
         "rows": ["ranged"],
         "abilities": ["medic"],
@@ -2365,7 +2365,7 @@
     {
         "id": 306,
         "name": "Orianna",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 3,
         "rows": ["ranged"],
         "abilities": ["thirsty"],
@@ -2375,7 +2375,7 @@
     {
         "id": 307,
         "name": "Orianna: Wampir Wyższy",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 8,
         "rows": ["ranged"],
         "abilities": [],
@@ -2385,7 +2385,7 @@
     {
         "id": 308,
         "name": "Protofleder",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 4,
         "rows": ["ranged"],
         "abilities": ["muster"],
@@ -2395,7 +2395,7 @@
     {
         "id": 309,
         "name": "Pucybut",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 3,
         "rows": ["close_opp"],
         "abilities": ["spy", "morale"],
@@ -2405,7 +2405,7 @@
     {
         "id": 310,
         "name": "Emiel Regis Rohellec Terzieff",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 4,
         "rows": ["close"],
         "abilities": ["thirsty"],
@@ -2415,7 +2415,7 @@
     {
         "id": 311,
         "name": "Regis: Wampir Wyższy",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 10,
         "rows": ["close"],
         "abilities": [],
@@ -2425,7 +2425,7 @@
     {
         "id": 312,
         "name": "Roderik z Dun Tynne",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 4,
         "rows": ["ranged"],
         "abilities": [],
@@ -2435,7 +2435,7 @@
     {
         "id": 313,
         "name": "Straż Książęca",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 1,
         "rows": ["close"],
         "abilities": ["bond", "endurance"],
@@ -2445,7 +2445,7 @@
     {
         "id": 314,
         "name": "Ukryty",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 7,
         "rows": ["siege"],
         "abilities": ["muster"],
@@ -2455,7 +2455,7 @@
     {
         "id": 315,
         "name": "Vivienne de Tabris",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 2,
         "rows": ["close"],
         "abilities": ["thirsty"],
@@ -2465,7 +2465,7 @@
     {
         "id": 316,
         "name": "Vivienne: Wilga",
-        "faction": "Księstwo Toussaint",
+        "faction": 6,
         "power": 5,
         "rows": ["close"],
         "abilities": ["morale"],
@@ -2477,7 +2477,7 @@
     {
         "id": 330,
         "name": "Święty Grzegorz",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -2487,7 +2487,7 @@
     {
         "id": 331,
         "name": "Prorok Lebioda",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 8,
         "rows": ["ranged"],
         "abilities": ["hero", "morale"],
@@ -2497,7 +2497,7 @@
     {
         "id": 332,
         "name": "Święty Płomień",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 1,
         "rows": ["close", "ranged"],
         "abilities": ["hero", "agility", "morale", "morale"],
@@ -2507,7 +2507,7 @@
     {
         "id": 333,
         "name": "Upadła Rayla",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 10,
         "rows": ["close"],
         "abilities": ["hero"],
@@ -2517,7 +2517,7 @@
     {
         "id": 334,
         "name": "Brat Większy",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 8,
         "rows": ["close"],
         "abilities": [],
@@ -2527,7 +2527,7 @@
     {
         "id": 335,
         "name": "Caleb Menge",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 6,
         "rows": ["siege"],
         "abilities": [],
@@ -2537,7 +2537,7 @@
     {
         "id": 336,
         "name": "Cudowne Dziecko",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 1,
         "rows": ["siege"],
         "abilities": ["endurance"],
@@ -2547,7 +2547,7 @@
     {
         "id": 337,
         "name": "Duchowny",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 2,
         "rows": ["siege"],
         "abilities": [],
@@ -2557,7 +2557,7 @@
     {
         "id": 338,
         "name": "Fanatycy",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 2,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -2567,7 +2567,7 @@
     {
         "id": 339,
         "name": "Goniec Salamandry",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 3,
         "rows": ["close"],
         "abilities": [],
@@ -2577,7 +2577,7 @@
     {
         "id": 340,
         "name": "Ignatius Hale",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 4,
         "rows": ["siege"],
         "abilities": [],
@@ -2587,7 +2587,7 @@
     {
         "id": 341,
         "name": "Inkwizytor",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 3,
         "rows": ["ranged"],
         "abilities": ["muster"],
@@ -2597,7 +2597,7 @@
     {
         "id": 342,
         "name": "Jakub de Aldersberg",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 6,
         "rows": ["siege"],
         "abilities": ["low_morale", "morale"],
@@ -2607,7 +2607,7 @@
     {
         "id": 343,
         "name": "Kapłan",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 3,
         "rows": ["close", "ranged"],
         "abilities": ["agility", "morale"],
@@ -2617,7 +2617,7 @@
     {
         "id": 344,
         "name": "Kwatermistrz",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 6,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -2627,7 +2627,7 @@
     {
         "id": 345,
         "name": "Łowca Czarownic",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -2637,7 +2637,7 @@
     {
         "id": 346,
         "name": "Mag Salamandry",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 6,
         "rows": ["ranged"],
         "abilities": [],
@@ -2647,7 +2647,7 @@
     {
         "id": 347,
         "name": "Mag Salamandry",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 6,
         "rows": ["ranged"],
         "abilities": [],
@@ -2657,7 +2657,7 @@
     {
         "id": 348,
         "name": "Magister",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 5,
         "rows": ["ranged"],
         "abilities": [],
@@ -2667,7 +2667,7 @@
     {
         "id": 349,
         "name": "Mutant",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 5,
         "rows": ["siege"],
         "abilities": ["muster", "low_morale"],
@@ -2677,7 +2677,7 @@
     {
         "id": 350,
         "name": "Mutant Zabójca",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 5,
         "rows": ["close"],
         "abilities": ["low_morale"],
@@ -2687,7 +2687,7 @@
     {
         "id": 351,
         "name": "Nataniel Pastodi",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 6,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -2697,7 +2697,7 @@
     {
         "id": 352,
         "name": "Płomienny Kaznodzieja",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 2,
         "rows": ["close_opp"],
         "abilities": ["spy", "morale"],
@@ -2707,7 +2707,7 @@
     {
         "id": 353,
         "name": "Posłaniec",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 4,
         "rows": ["close", "ranged"],
         "abilities": ["agility"],
@@ -2717,7 +2717,7 @@
     {
         "id": 354,
         "name": "Procesja Pokuty",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 1,
         "rows": ["close"],
         "abilities": ["muster", "endurance"],
@@ -2727,7 +2727,7 @@
     {
         "id": 355,
         "name": "Roderick de Wett",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 5,
         "rows": ["close"],
         "abilities": [],
@@ -2737,7 +2737,7 @@
     {
         "id": 356,
         "name": "Roland Bleindeim",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -2747,7 +2747,7 @@
     {
         "id": 357,
         "name": "Upadły Rycerz",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -2757,7 +2757,7 @@
     {
         "id": 358,
         "name": "Samotny Czempion",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 11,
         "rows": ["close"],
         "abilities": ["low_morale"],
@@ -2767,7 +2767,7 @@
     {
         "id": 359,
         "name": "Savolla",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 5,
         "rows": ["siege"],
         "abilities": [],
@@ -2777,7 +2777,7 @@
     {
         "id": 360,
         "name": "Skryba",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 4,
         "rows": ["ranged"],
         "abilities": ["morale"],
@@ -2787,7 +2787,7 @@
     {
         "id": 361,
         "name": "Sługa Ognia",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 2,
         "rows": ["ranged"],
         "abilities": [],
@@ -2797,7 +2797,7 @@
     {
         "id": 362,
         "name": "Strażnik Świątynny",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 5,
         "rows": ["close"],
         "abilities": ["muster"],
@@ -2807,7 +2807,7 @@
     {
         "id": 363,
         "name": "Stróż Wiecznego Ognia",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 4,
         "rows": ["close"],
         "abilities": ["morale"],
@@ -2817,7 +2817,7 @@
     {
         "id": 364,
         "name": "Szeregowy Płonącej Róży",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 3,
         "rows": ["close"],
         "abilities": ["bond"],
@@ -2827,7 +2827,7 @@
     {
         "id": 365,
         "name": "Tamara Stenger",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 4,
         "rows": ["siege"],
         "abilities": [],
@@ -2837,7 +2837,7 @@
     {
         "id": 366,
         "name": "Twórca Mutantów",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 2,
         "rows": ["siege"],
         "abilities": ["muster"],
@@ -2847,7 +2847,7 @@
     {
         "id": 367,
         "name": "Zawiedziony Ulrich",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 2,
         "rows": ["close"],
         "abilities": ["low_morale"],
@@ -2857,7 +2857,7 @@
     {
         "id": 368,
         "name": "Wściekły Pies",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 4,
         "rows": ["close"],
         "abilities": [],
@@ -2867,7 +2867,7 @@
     {
         "id": 369,
         "name": "Zabójca Salamandry",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 7,
         "rows": ["ranged"],
         "abilities": ["scorch"],
@@ -2877,7 +2877,7 @@
     {
         "id": 370,
         "name": "Zmutowane Psy",
-        "faction": "Kult Wiecznego Ognia",
+        "faction": 7,
         "power": 3,
         "rows": ["close"],
         "abilities": ["bond", "low_morale"],

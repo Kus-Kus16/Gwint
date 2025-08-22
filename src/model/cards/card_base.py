@@ -8,7 +8,7 @@ class CardBase(ABC):
     def __init__(self, data):
         self.id = data['id']
         self.name = data['name']
-        self.faction = FactionType.fullname_to_faction(data['faction'])
+        self.faction = FactionType(data['faction'])
         self.owner = None
         self.filename = data['filename']
         self.abilities = None

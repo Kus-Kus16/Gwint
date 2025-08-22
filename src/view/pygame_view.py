@@ -9,7 +9,7 @@ from src.view.scenes.game_scene import GameScene
 from src.view.scenes.menu_scene import MenuScene
 from src.presenter import loader as loader, settings
 from src.view.constants import ui_constants as u
-
+from src.presenter.settings import locale as l, AUTHORS
 
 class PygameView:
     def __init__(self):
@@ -38,8 +38,8 @@ class PygameView:
 
         #Screens initiation
         self.menu = MenuScene(self.screen)
-        self.credits = TextScene(self.screen, l("menu.credits"), u.AUTHORS)
-        self.waiting = TextScene(self.screen, l("view.waitop")")
+        self.credits = TextScene(self.screen, l("menu.credits"), AUTHORS)
+        self.waiting = TextScene(self.screen, l("view.waitop"))
         self.game = GameScene(self.screen)
         self.deck = DeckScene(self.screen)
         self.settings = SettingsScene(self.screen)

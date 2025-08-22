@@ -7,6 +7,7 @@ from src.model.enums.cards_area import CardsArea
 from src.model.enums.faction_type import FactionType
 from src.model.enums.row_type import RowType
 from src.view.constants import game_constants as c, ui_constants as u
+from src.presenter.settings import locale as l
 from src.view.scenes.carousel_scene import CarouselScene
 from src.view.scenes.choose_scene import ChooseScene
 from src.view.scenes.endscreen import EndScreen
