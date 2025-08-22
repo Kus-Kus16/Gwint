@@ -2,7 +2,7 @@ import pygame
 from overrides import overrides
 from src.presenter.settings import locale as l
 
-from src.presenter import loader as loader
+from src.presenter.loader import Loader
 from src.view.constants import ui_constants as u
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
@@ -18,15 +18,15 @@ class MenuScene(Scene):
 		button_size = u.BUTTON_SIZE_WIDE
 		button_paths = self.theme_buttons_paths
 		self.buttons = [
-			Button(l("Play"), (button_x, button_y), button_size,
+			Button(self.screen, l("Play"), (button_x, button_y), button_size,
 				   self.button_newgame, image_paths=button_paths),
-			Button(l("Your Deck"), (button_x, button_y + (button_height + 45)), button_size,
+			Button(self.screen, l("Your Deck"), (button_x, button_y + (button_height + 45)), button_size,
 				   self.button_deck, image_paths=button_paths),
-			Button(l("Settings"), (button_x, button_y + 2 * (button_height + 45)), button_size,
+			Button(self.screen, l("Settings"), (button_x, button_y + 2 * (button_height + 45)), button_size,
 				   self.button_settings, image_paths=button_paths),
-			Button(l("Credits"), (button_x, button_y + 3 * (button_height + 45)), button_size,
+			Button(self.screen, l("Credits"), (button_x, button_y + 3 * (button_height + 45)), button_size,
 				   self.button_credits, image_paths=button_paths),
-			Button(l("Exit"), (button_x, button_y + 4 * (button_height + 45)), button_size,
+			Button(self.screen, l("Exit"), (button_x, button_y + 4 * (button_height + 45)), button_size,
 				   self.button_exit, image_paths=button_paths)
 		]
 
@@ -38,12 +38,12 @@ class MenuScene(Scene):
 		overlay.fill((0, 0, 0, 216))
 		self.screen.blit(overlay, (134, 0))
 
-		logo = loader.load_image(u.LOGO_PATH)
+		logo = Loader.load_image(u.LOGO_PATH)
 		self.screen.blit(logo, (192, 73))
 
 		mouse_pos = pygame.mouse.get_pos()
 		for btn in self.buttons:
-			btn.draw(self.screen, mouse_pos)
+			btn.draw(mouse_pos)
 
 		self.draw_temporary()
 

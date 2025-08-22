@@ -5,8 +5,8 @@ from src.view.constants import ui_constants as u
 
 
 class InputBox(Component):
-    def __init__(self, pos, size, title, framerate, on_change, text='', font=None):
-        super().__init__(font if font is not None else u.DEFAULT_FONT)
+    def __init__(self, screen, pos, size, title, framerate, on_change, text=''):
+        super().__init__(screen)
         self.pos = pos
         self.rect = pygame.Rect(pos, size)
         self.rect.topleft = (self.rect.topleft[0] - 250, self.rect.topleft[1] + 86)
@@ -15,9 +15,9 @@ class InputBox(Component):
         self.color_active = u.COLOR_GOLD,
         self.color = self.color_inactive
         self.text_color = u.COLOR_WHITE
-
         self.text = text
         self.title = title
+        self.font = u.DEFAULT_FONT
         self.on_change = on_change
         self.title_font = u.CINZEL_30_BOLD
         self.active = False
@@ -59,19 +59,19 @@ class InputBox(Component):
             self.cursor_counter = 0
             self.cursor_visible = not self.cursor_visible
 
-    def draw(self, screen):
+    def draw(self):
         self.update_cursor()
 
         x, y = self.pos
-        self.draw_text(self.title, x, y + 50, screen, font=self.title_font, center=True)
-        text_rect = self.draw_text(self.text, *self.rect.center, screen, center=True)
+        self.draw_text(self.title, x, y + 50, font=self.title_font, center=True)
+        text_rect = self.draw_text(self.text, *self.rect.center, center=True)
         if self.active and self.cursor_visible:
             cursor_x_pos = text_rect.x + self.font.size(self.text[:self.cursor_position])[0]
             cursor_y_pos = text_rect.y
             cursor_height = self.font.get_height()
 
-            pygame.draw.line(screen, self.text_color,
+            pygame.draw.line(self.screen, self.text_color,
                              (cursor_x_pos, cursor_y_pos),
                              (cursor_x_pos, cursor_y_pos + cursor_height), 2)
 
-        pygame.draw.rect(screen, self.color, self.rect, 2)
+        pygame.draw.rect(self.screen, self.color, self.rect, 2)

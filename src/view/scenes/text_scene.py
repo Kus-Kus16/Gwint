@@ -8,45 +8,35 @@ from src.presenter.settings import locale as l
 
 
 class TextScene(Scene):
-    def __init__(self, screen, title, texts=None):
+    def __init__(self, screen, title, text=None):
         super().__init__(screen)
 
         self.title = title
-        self.texts = texts
+        self.text = text
 
         button_width, button_height = u.BUTTON_SIZE_WIDE
         self.buttons = [
-            Button(l("Return to Menu"), ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
+            Button(self.screen, l("Return to Menu"), ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
                    u.BUTTON_SIZE_WIDE, self.button_menu, image_paths=self.theme_buttons_paths)
         ]
 
     @overrides
     def draw(self):
         super().draw()
-        self.draw_overlay(0.60)
+        self.draw_overlay(0.75)
 
-        title_pos = (self.screen_width // 2, 100) if self.texts else self.screen.get_rect().center
+        title_pos = (self.screen_width // 2, 100) if self.text else self.screen.get_rect().center
         self.draw_text(self.title, *title_pos, center=True, font=u.CINZEL_50_BOLD)
 
         for button in self.buttons:
-            button.draw(self.screen, pygame.mouse.get_pos())
+            button.draw(pygame.mouse.get_pos())
 
-        if self.texts:
-            self.draw_text_lines(self.texts, self.screen_width // 2, self.screen_height // 2)
+        if self.text:
+            self.draw_text(self.text, self.screen_width // 2, self.screen_height // 2, center=True)
 
-    def draw_text_lines(self, lines, center_x, center_y, color=u.COLOR_WHITE, spacing=30):
-        font = u.CINZEL_30_BOLD
-        font_large = u.CINZEL_40
-
-        line_height = font.get_height()
-        block_height = len(lines) * (line_height + spacing) - spacing
-        start_y = center_y - block_height // 2
-        large = True
-
-        for i, line in enumerate(lines):
-            y = start_y + i * (line_height + spacing) + line_height // 2
-            self.draw_text(line, center_x, y, color, font=font_large if large else font, center=True)
-            large = not large
+    @overrides
+    def _draw_text_lines(self, lines, x, y, color=u.COLOR_WHITE, font0=u.CINZEL_30, font1=None, spacing=30, center=False):
+        super()._draw_text_lines(lines, x, y, color, font0=u.CINZEL_40, font1=u.CINZEL_30_BOLD, center=center)
 
     @overrides
     def handle_events(self, event):

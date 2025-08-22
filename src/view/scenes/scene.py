@@ -3,14 +3,16 @@ from abc import ABC, abstractmethod
 import pygame
 
 from src.model.enums.card_type import CardType
+from src.view.components.component import Component
 from src.view.components.notification import Notification
-from src.presenter import loader as loader, settings
+from src.presenter.settings import Settings
+from src.presenter.loader import Loader
 from src.view.constants import ui_constants as u
 
 
-class Scene(ABC):
+class Scene(Component, ABC):
     def __init__(self, screen, background_path=None):
-        self.screen = screen
+        super().__init__(screen)
         self.size = screen.get_size()
         self.screen_width, self.screen_height = self.size
 
@@ -20,7 +22,7 @@ class Scene(ABC):
         self.buttons = []
         self.theme_buttons_paths = None
         self.on_setting_update()
-        settings.register_observer(self, "theme")
+        Settings.register_observer(self, "theme")
 
         self.framerate = u.FRAMERATE
         self.pos = (0, 0)
@@ -113,34 +115,25 @@ class Scene(ABC):
             if drawable.can_be_handled():
                 return drawable
 
-    def draw_text(self, text, x, y, color=u.COLOR_WHITE, font=u.CINZEL_30, center=False):
-        text_surface = font.render(str(text), True, color)
-        text_rect = text_surface.get_rect()
-        if center:
-            text_rect.center = (x, y)
-        else:
-            text_rect.topleft = (x, y)
-        self.screen.blit(text_surface, text_rect)
-
     def reset_all(self):
         self.temporary_drawable = []
         self.spacing_frames = 0
         self.locked = False
 
-    @classmethod
-    def load_small_card_image(cls, faction, filename):
+    @staticmethod
+    def load_small_card_image(faction, filename):
         path = f"resources/small/{faction}/{filename}.png"
-        return loader.load_image(path, u.SMALL_CARD_SIZE)
+        return Loader.load_image(path, u.SMALL_CARD_SIZE)
 
-    @classmethod
-    def load_medium_card_image(cls, faction, filename):
+    @staticmethod
+    def load_medium_card_image(faction, filename):
         path = f"resources/large/{faction}/{filename}.png"
-        return loader.load_image(path, u.MEDIUM_CARD_SIZE)
+        return Loader.load_image(path, u.MEDIUM_CARD_SIZE)
 
-    @classmethod
-    def load_large_card_image(cls, faction, filename):
+    @staticmethod
+    def load_large_card_image(faction, filename):
         path = f"resources/large/{faction}/{filename}.png"
-        return loader.load_image(path, u.LARGE_CARD_SIZE)
+        return Loader.load_image(path, u.LARGE_CARD_SIZE)
 
     def load_card_image(self, card, size):
         loaders = {
@@ -154,10 +147,10 @@ class Scene(ABC):
     def get_card_paths(self, card, size):
         return None, None
 
-    @classmethod
-    def load_ico_image(cls, filename, size=None):
+    @staticmethod
+    def load_ico_image(filename, size=None):
         path = f"resources/ico/{filename}.png"
-        return loader.load_image(path, size)
+        return Loader.load_image(path, size)
 
     def draw_card(self, card, x, y, size, highlight=False):
         image = self.load_card_image(card, size)
@@ -213,9 +206,9 @@ class Scene(ABC):
         self.screen.blit(image, rect)
 
     def on_setting_update(self):
-        index = settings.load_setting("theme")
+        index = Settings.get_setting("theme")
         if index >= len(u.THEMES):
-            index = settings.get_random_theme()
+            index = Settings.get_random_theme()
 
         bck, but = u.THEMES[index]
 
@@ -231,4 +224,4 @@ class Scene(ABC):
         if self.never_update and self.background is not None:
             return
 
-        self.background = loader.load_image(background_path, (self.screen_width, self.screen_height))
+        self.background = Loader.load_image(background_path, (self.screen_width, self.screen_height))

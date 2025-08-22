@@ -23,12 +23,12 @@ class ChooseBase(CommanderAbilityBase, ABC):
 
         return actions
 
-    @classmethod
-    def carousel(cls, presenter, cards):
+    @staticmethod
+    def carousel(presenter, cards):
         presenter.show_carousel(cards, choose_count=1, cancelable=False)
 
-    @classmethod
-    def find_target(cls, targets, player, container):
+    @staticmethod
+    def find_target(targets, player, container):
         target_id = targets.pop(0)
         target = container.find_card_by_id(target_id)
         if target is None:

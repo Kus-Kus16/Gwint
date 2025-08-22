@@ -14,8 +14,12 @@ class FactionType(Enum):
     FIRE = 7
 
     @classmethod
-    def faction_to_fullname(cls, faction):
-        return cls._get_fullname_map().get(faction)
+    def faction_to_fullname(cls, faction_type):
+        return cls._get_fullname_map().get(faction_type)
+
+    @classmethod
+    def faction_to_filename(cls, faction_type):
+        return cls._get_filename_map().get(faction_type)
 
     @classmethod
     def _get_fullname_map(cls):
@@ -28,4 +32,17 @@ class FactionType(Enum):
             cls.SKELLIGE: l("Skellige"),
             cls.TOUSSAINT: l("Duchy of Toussaint"),
             cls.FIRE: l("Cult of Eternal Fire"),
+        }
+
+    @classmethod
+    def _get_filename_map(cls):
+        return {
+            cls.NEUTRAL: "neutral",
+            cls.NORTH: "north",
+            cls.NILFGAARD: "nilfgaard",
+            cls.MONSTERS: "monsters",
+            cls.SCOIATAEL: "scoiatael",
+            cls.SKELLIGE: "skellige",
+            cls.TOUSSAINT: "toussaint",
+            cls.FIRE: "fire",
         }

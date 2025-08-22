@@ -7,9 +7,10 @@ from src.view.scenes.text_scene import TextScene
 from src.view.scenes.deck_scene import DeckScene
 from src.view.scenes.game_scene import GameScene
 from src.view.scenes.menu_scene import MenuScene
-from src.presenter import loader as loader, settings
+from src.presenter.loader import Loader
 from src.view.constants import ui_constants as u
-from src.presenter.settings import locale as l, AUTHORS
+from src.presenter.settings import Settings
+from src.presenter.settings import locale as l
 
 class PygameView:
     def __init__(self):
@@ -23,7 +24,7 @@ class PygameView:
         self.clock = pygame.time.Clock()
         self.framerate = u.FRAMERATE
         self.show_fps = None
-        self.cursor = loader.load_image("resources/ico/cursor.png")
+        self.cursor = Loader.load_image("resources/ico/cursor.png")
 
         self.running = True
         self.observer = None
@@ -38,16 +39,16 @@ class PygameView:
 
         #Screens initiation
         self.menu = MenuScene(self.screen)
-        self.credits = TextScene(self.screen, l("menu.credits"), AUTHORS)
-        self.waiting = TextScene(self.screen, l("view.waitop"))
+        self.credits = TextScene(self.screen, l("Credits"), Settings.AUTHORS)
+        self.waiting = TextScene(self.screen, l("Waiting for the opponent"))
         self.game = GameScene(self.screen)
         self.deck = DeckScene(self.screen)
         self.settings = SettingsScene(self.screen)
         self.current_scene = self.menu
 
         self.on_setting_update()
-        settings.register_observer(self, "volume")
-        settings.register_observer(self, "show_fps")
+        Settings.register_observer(self, "volume")
+        Settings.register_observer(self, "show_fps")
 
     def run(self):
         while self.running:
@@ -92,7 +93,7 @@ class PygameView:
             return
 
         fps = self.clock.get_fps()
-        font = pygame.font.SysFont("Arial", 14)
+        font = pygame.font.SysFont("Arial", 11)
         text_surface = font.render(f"{int(fps)} FPS", True, (0, 255, 0))
         self.screen.blit(text_surface, (2, 2))
 
@@ -109,5 +110,5 @@ class PygameView:
         self.current_scene.notification(name, frames, True)
 
     def on_setting_update(self):
-        pygame.mixer.music.set_volume(settings.load_setting("volume"))
-        self.show_fps = settings.load_setting("show_fps")
+        pygame.mixer.music.set_volume(Settings.get_setting("volume"))
+        self.show_fps = Settings.get_setting("show_fps")

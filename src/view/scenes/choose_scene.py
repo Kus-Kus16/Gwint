@@ -13,7 +13,7 @@ class ChooseScene(Scene, TemporaryDrawable):
         Scene.__init__(self, screen)
         TemporaryDrawable.__init__(self, locking=False, frames=-1)
 
-        self.texts = [l("The Scoia'tael faction perk allows you to decide"), l("who will get to go first.")]
+        self.text = l("The Scoia'tael faction perk allows you to decide\nwho will get to go first.")
         self.title = l("Would you like to go first?")
 
         self.font_title = u.CINZEL_40_BOLD
@@ -36,8 +36,8 @@ class ChooseScene(Scene, TemporaryDrawable):
         y_buttons = self.box_rect.bottom - self.spacing - button_height
 
         self.buttons = [
-            Button(l("Me"), (start_x, y_buttons), u.BUTTON_SIZE_NARROW, self.button_me),
-            Button(l("Opponent"), (start_x + u.BUTTON_SIZE_NARROW[0] + 40, y_buttons), u.BUTTON_SIZE_NARROW,
+            Button(self.screen, l("Me"), (start_x, y_buttons), u.BUTTON_SIZE_NARROW, self.button_me),
+            Button(self.screen, l("Opponent"), (start_x + u.BUTTON_SIZE_NARROW[0] + 40, y_buttons), u.BUTTON_SIZE_NARROW,
                    self.button_opp)
         ]
 
@@ -49,23 +49,16 @@ class ChooseScene(Scene, TemporaryDrawable):
         self.screen.blit(overlay, self.box_rect.topleft)
         pygame.draw.rect(self.screen, u.COLOR_WHITE, self.box_rect, 3, border_radius=5)
 
-        title_surface = self.font_title.render(self.title, True, u.COLOR_LIGHTGRAY)
-        title_rect = title_surface.get_rect(center=(self.box_rect.centerx, self.box_rect.top + spacing))
-        self.screen.blit(title_surface, title_rect)
-
-        y_pos = self.box_rect.centery - spacing
-        for line in self.texts:
-            text_surface = self.font_text.render(line, True, u.COLOR_WHITE)
-            text_rect = text_surface.get_rect(center=(self.box_rect.centerx, y_pos))
-            self.screen.blit(text_surface, text_rect)
-            y_pos += spacing
+        self.draw_text(self.title, self.box_rect.centerx, self.box_rect.top + spacing,
+                       color=u.COLOR_LIGHTGRAY, font=self.font_title, center=True)
+        self.draw_text(self.text, *self.box_rect.center, font=self.font_text, center=True)
 
     @overrides
     def draw(self):
         self.draw_overlay(0.60)
         self.draw_box()
         for button in self.buttons:
-            button.draw(self.screen, pygame.mouse.get_pos())
+            button.draw(pygame.mouse.get_pos())
 
     @overrides
     def handle_events(self, event):

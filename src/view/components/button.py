@@ -1,13 +1,14 @@
 import pygame
 
-from src.presenter import loader as loader
+from src.presenter.loader import Loader
 from src.view.components.component import Component
 from src.view.constants import ui_constants as u
 
 
 class Button(Component):
-	def __init__(self, text, pos, size, on_click=None, font=None, image_paths=None):
-		super().__init__(font if font is not None else u.DEFAULT_FONT_BOLD)
+	def __init__(self, screen, text, pos, size, on_click=None, font=None, image_paths=None):
+		super().__init__(screen)
+		self.font = font if font is not None else u.DEFAULT_FONT_BOLD
 		self.text = text
 		self.pos = pos
 		self.size = size
@@ -21,10 +22,10 @@ class Button(Component):
 		self.hover_color = u.COLOR_BUTTON_HOVER
 		self.shadow_offset = 5
 
-	def draw(self, screen, mouse_pos):
+	def draw(self, mouse_pos):
 		image = self.images[0] if not self.rect.collidepoint(mouse_pos) else self.images[1]
-		screen.blit(image, self.pos)
-		self.draw_text(self.text, self.rect.centerx, self.rect.centery, screen, u.COLOR_BLACK, center=True)
+		self.screen.blit(image, self.pos)
+		self.draw_text(self.text, self.rect.centerx, self.rect.centery, u.COLOR_BLACK, self.font, center=True)
 
 	def check_click(self, pos):
 		return True if self.rect.collidepoint(pos) else False
@@ -34,4 +35,4 @@ class Button(Component):
 			return
 
 		image_paths = image_paths if image_paths is not None else u.DEFAULT_BUTTON_PATHS
-		self.images = loader.load_image(image_paths[0], self.size), loader.load_image(image_paths[1], self.size)
+		self.images = Loader.load_image(image_paths[0], self.size), Loader.load_image(image_paths[1], self.size)

@@ -26,8 +26,8 @@ class TradeCard(CommanderAbilityBase):
         actions.append(lambda: self.carousel(presenter, hand.cards, 1))
         return actions
 
-    @classmethod
-    def carousel(cls, presenter, cards, count):
+    @staticmethod
+    def carousel(presenter, cards, count):
         presenter.show_carousel(cards, choose_count=count, cancelable=False)
 
     @overrides

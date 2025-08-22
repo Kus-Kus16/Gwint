@@ -125,18 +125,13 @@ msgstr "Zaczynasz jako pierwszy."
 msgid "Your opponent will go first."
 msgstr "Przeciwnik zaczyna jako pierwszy."
 
-#: Gwint/src/view/components/notification.py:21
-#: Gwint/src/view/components/notification.py:23
-msgid "Opponent used the Scoia'tael faction perk"
-msgstr "Przeciwnik użył zdolności specjalnej talii Scoia'tael,"
-
-#: Gwint/src/view/components/notification.py:22
-msgid "to go first."
-msgstr "by rozpocząć rozgrywkę jako pierwszy."
+#: Gwint/src/view/components/notification.py:18
+msgid "Opponent used the Scoia'tael faction perk\nto go first."
+msgstr ""
 
 #: Gwint/src/view/components/notification.py:24
-msgid "for you to go first."
-msgstr "byś rozpoczął rozgrywkę jako pierwszy."
+msgid "Opponent used the Scoia'tael faction perk\nfor you to go first."
+msgstr ""
 
 #: Gwint/src/view/components/notification.py:25
 msgid "Round start"
@@ -163,52 +158,28 @@ msgid "You won the round!"
 msgstr "Wygrałeś tę rundę!"
 
 #: Gwint/src/view/components/notification.py:31
-msgid "Northern Realms faction ability triggered -"
-msgstr "Dzięki zdolności talii Królestw Północy,"
-
-#: Gwint/src/view/components/notification.py:32
-msgid "North draws an additional card."
-msgstr "po wygranej rundzie dobiera się dodatkową kartę."
+msgid "Northern Realms faction ability triggered -\nNorth draws an additional card."
+msgstr "Dzięki zdolności talii Królestw Północy,\npo wygranej rundzie dobiera się dodatkową kartę."
 
 #: Gwint/src/view/components/notification.py:33
-msgid "Nilfgaardian Empire faction ability triggered -"
-msgstr "Dzięki zdolności talii Cesarstwa Nilfgaardu,"
-
-#: Gwint/src/view/components/notification.py:34
-msgid "Nilfgaard wins the tie."
-msgstr "zamiast remisu następuje wygrana Nilfgaardu"
+msgid "Nilfgaardian Empire faction ability triggered -\nNilfgaard wins the tie."
+msgstr "Dzięki zdolności talii Cesarstwa Nilfgaardu,\nzamiast remisu następuje wygrana Nilfgaardu"
 
 #: Gwint/src/view/components/notification.py:35
-msgid "Monsters faction ability triggered -"
-msgstr "Dzięki zdolności talii Potworów,"
-
-#: Gwint/src/view/components/notification.py:36
-msgid "one randomly chosen Monster card stays on board."
-msgstr "losowo wybrana jednostka zostaje do następnej rundy."
+msgid "Monsters faction ability triggered -\none randomly chosen Monster card stays on board."
+msgstr "Dzięki zdolności talii Potworów,\nlosowo wybrana jednostka zostaje do następnej rundy."
 
 #: Gwint/src/view/components/notification.py:37
-msgid "Skellige faction ability triggered -"
-msgstr "Dzięki zdolności talii Skellige,"
-
-#: Gwint/src/view/components/notification.py:38
-msgid "Two random cards are returned to the board."
-msgstr "dwie losowe karty wracają na stół."
+msgid "Skellige faction ability triggered -\nTwo random cards are returned to the board."
+msgstr "Dzięki zdolności talii Skellige,\ndwie losowe karty wracają na stół."
 
 #: Gwint/src/view/components/notification.py:39
-msgid "Duchy of Toussaint faction ability triggered -"
-msgstr "Dzięki zdolności talii Księstwa Toussaint,"
-
-#: Gwint/src/view/components/notification.py:40
-msgid "Toussaint draws an additional card."
-msgstr "po przegranej rundzie dobiera się dodatkową kartę."
+msgid "Duchy of Toussaint faction ability triggered -\nToussaint draws an additional card."
+msgstr "Dzięki zdolności talii Księstwa Toussaint,\npo przegranej rundzie dobiera się dodatkową kartę."
 
 #: Gwint/src/view/components/notification.py:41
-msgid "Cult of Eternal Fire faction ability triggered -"
-msgstr "Dzięki zdolności talii Kultu Wiecznego Ognia,"
-
-#: Gwint/src/view/components/notification.py:42
-msgid "At the beginning of the game, up to four cards are redrawn."
-msgstr "na początku rozgrywki wymienia się do czterech kart."
+msgid "Cult of Eternal Fire faction ability triggered -\nat the beginning of the game, up to four cards are redrawn."
+msgstr "Dzięki zdolności talii Kultu Wiecznego Ognia,\nna początku rozgrywki wymienia się do czterech kart."
 
 #: Gwint/src/view/components/notification.py:43
 msgid "Awaiting your opponent's decision."
@@ -231,7 +202,7 @@ msgid "Close"
 msgstr "Zamknij"
 
 #: Gwint/src/view/scenes/carousel_scene.py:59
-msgid "Chooseupto"
+msgid "Choose up to"
 msgstr "Wybierz do"
 
 #: Gwint/src/view/scenes/carousel_scene.py:59
@@ -239,12 +210,8 @@ msgid "cards to discard."
 msgstr "kart, które chcesz wymienić."
 
 #: Gwint/src/view/scenes/choose_scene.py:16
-msgid "The Scoia'tael faction perk allows you to decide"
-msgstr "Talia Scoia'tael daje ci możliwość podjęcia decyzji,"
-
-#: Gwint/src/view/scenes/choose_scene.py:16
-msgid "who will get to go first."
-msgstr "kto rozpocznie rozgrywkę jako pierwszy."
+msgid "The Scoia'tael faction perk allows you to decide\nwho will get to go first."
+msgstr "Talia Scoia'tael daje ci możliwość podjęcia decyzji,\nkto rozpocznie rozgrywkę jako pierwszy."
 
 #: Gwint/src/view/scenes/choose_scene.py:17
 msgid "Would you like to go first?"
@@ -312,6 +279,10 @@ msgstr "Runda"
 #: Gwint/src/view/scenes/game_scene.py:283
 msgid "Press spacebar to pass"
 msgstr "Wciśnij spację aby spasować"
+
+#: Gwint/src/view/scenes/game_scene.py:310
+msgid "Passed"
+msgstr "Pas"
 
 #: Gwint/src/view/scenes/game_scene.py:316
 msgid "You"

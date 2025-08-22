@@ -1,10 +1,12 @@
 import pygame
 
-from src.presenter import loader as loader
+from src.presenter.loader import Loader
+from src.view.components.component import Component
 from src.view.constants import ui_constants as u, deck_constants as c
 
-class Scrollbar:
-	def __init__(self, pos, height, color):
+class Scrollbar(Component):
+	def __init__(self, screen, pos, height, color):
+		super().__init__(screen)
 		self.pos = pos
 		self.height = height
 		self.path = u.SCROLL_PATH
@@ -16,7 +18,7 @@ class Scrollbar:
 		self.scroll_start = None
 		self.drag_start_y = None
 
-	def draw(self, screen, content_length):
+	def draw(self, content_length):
 		if c.CARDS_PER_PAGE >= content_length:
 			return
 
@@ -25,11 +27,11 @@ class Scrollbar:
 		max_scroll = content_length - c.CARDS_PER_PAGE
 		y_offset = int((self.height - scroll_height) * self.offset / max_scroll)
 		x_offset = (c.SCROLL_WIDTH - c.SCROLLBAR_WIDTH) // 2
-		scrollbar_img = loader.load_image(self.path, (c.SCROLL_WIDTH, scroll_height))
+		scrollbar_img = Loader.load_image(self.path, (c.SCROLL_WIDTH, scroll_height))
 
 		x, y = self.pos
-		pygame.draw.rect(screen, self.color, self.rect)
-		screen.blit(scrollbar_img, (x - x_offset, y + y_offset))
+		pygame.draw.rect(self.screen, self.color, self.rect)
+		self.screen.blit(scrollbar_img, (x - x_offset, y + y_offset))
 
 	def check_click(self, pos):
 		return True if self.rect.collidepoint(pos) else False

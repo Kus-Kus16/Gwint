@@ -27,8 +27,8 @@ class RestackDeck(CommanderAbilityBase):
         actions.append(lambda: self.carousel(presenter, cards, 3))
         return actions
 
-    @classmethod
-    def carousel(cls, presenter, cards, count):
+    @staticmethod
+    def carousel(presenter, cards, count):
         presenter.show_carousel(cards, choose_count=count, cancelable=False,
                                 label=l("Put the cards back on the deck."))
 
