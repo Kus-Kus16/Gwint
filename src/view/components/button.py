@@ -25,7 +25,7 @@ class Button(Component):
 	def draw(self, mouse_pos):
 		image = self.images[0] if not self.rect.collidepoint(mouse_pos) else self.images[1]
 		self.screen.blit(image, self.pos)
-		self.draw_text(self.text, self.rect.centerx, self.rect.centery, u.COLOR_BLACK, self.font, center=True)
+		self.draw_text(self.text, self.rect.centerx, self.rect.centery, color=u.COLOR_BLACK, font=self.font, center=True)
 
 	def check_click(self, pos):
 		return True if self.rect.collidepoint(pos) else False

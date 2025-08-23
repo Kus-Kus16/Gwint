@@ -3,7 +3,6 @@ from overrides import overrides
 
 from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
-from src.presenter.settings import locale as l
 from src.view.components.button import Button
 from src.view.constants.ui_constants import COLOR_LIGHTGRAY
 from src.view.scenes.scene import Scene
@@ -22,8 +21,8 @@ class EndScreen(Scene, TemporaryDrawable):
         button_y = self.screen_height - 180
         button_size = u.BUTTON_SIZE
         self.buttons = [
-            Button(self.screen, l("Menu"), (button_x - 400, button_y), button_size, self.button_menu),
-            Button(self.screen, l("Rematch"), (button_x + 100, button_y), button_size, self.button_rematch),
+            Button(self.screen, "Menu", (button_x - 400, button_y), button_size, self.button_menu),
+            Button(self.screen, "Rematch", (button_x + 100, button_y), button_size, self.button_rematch),
         ]
 
     @overrides
@@ -48,13 +47,13 @@ class EndScreen(Scene, TemporaryDrawable):
         regular = u.CINZEL_30
         bold = u.CINZEL_30_BOLD
 
-        self.draw_text(l("You"), x_center - x_offset, y, color=u.COLOR_GOLD, font=bold, center=True)
-        self.draw_text(l("Opponent"), x_center - x_offset, y + y_offset, color=u.COLOR_GOLD, font=bold, center=True)
+        self.draw_text("You", x_center - 2 * x_offset, y, color=u.COLOR_GOLD, font=bold, center=True)
+        self.draw_text("Opponent", x_center - 2 * x_offset, y + y_offset, color=u.COLOR_GOLD, font=bold, center=True)
 
-
-        for i, text in enumerate([f"{l("Round")} 1", f"{l("Round")} 2", f"{l("Round")} 3"]):
+        for i in range(3):
             x = x_center + (i - 1) * x_offset
-            self.draw_text(text, x, y - y_offset, color=COLOR_LIGHTGRAY, font=bold, center=True)
+            text_template = "Round {n}"
+            self.draw_text(text_template, x, y - y_offset, color=COLOR_LIGHTGRAY, font=bold, center=True, n=i+1)
 
             if i < len(self.round_history):
                 me_score, opp_score = self.round_history[i]

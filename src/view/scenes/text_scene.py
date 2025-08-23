@@ -4,7 +4,6 @@ from overrides import overrides
 from src.view.constants import ui_constants as u
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
-from src.presenter.settings import locale as l
 
 
 class TextScene(Scene):
@@ -16,7 +15,7 @@ class TextScene(Scene):
 
         button_width, button_height = u.BUTTON_SIZE_WIDE
         self.buttons = [
-            Button(self.screen, l("Return to Menu"), ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
+            Button(self.screen, "Return to Menu", ((self.screen_width - button_width) // 2, self.screen_height - button_height - 50),
                    u.BUTTON_SIZE_WIDE, self.button_menu, image_paths=self.theme_buttons_paths)
         ]
 
@@ -35,8 +34,10 @@ class TextScene(Scene):
             self.draw_text(self.text, self.screen_width // 2, self.screen_height // 2, center=True)
 
     @overrides
-    def _draw_text_lines(self, lines, x, y, color=u.COLOR_WHITE, font0=u.CINZEL_30, font1=None, spacing=30, center=False):
-        super()._draw_text_lines(lines, x, y, color, font0=u.CINZEL_40, font1=u.CINZEL_30_BOLD, center=center)
+    def _draw_text_lines(self, lines, x, y, color=u.COLOR_WHITE, font0=u.CINZEL_30, font1=None, spacing=5,
+                         centerx=False, centery=False, **kwargs):
+        super()._draw_text_lines(lines, x, y, color, font0=u.CINZEL_40, font1=u.CINZEL_30_BOLD,
+                                 centerx=centerx, centery=centery, spacing=20, **kwargs)
 
     @overrides
     def handle_events(self, event):

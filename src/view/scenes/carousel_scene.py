@@ -4,7 +4,6 @@ from overrides import overrides
 from src.model.enums.ability_type import AbilityType
 from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
-from src.presenter.settings import locale as l
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 
@@ -35,9 +34,9 @@ class CarouselScene(Scene, TemporaryDrawable):
 
         button_data = []
         if self.choosable:
-            button_data.append((l("Choose"), self.button_select))
+            button_data.append(("Choose", self.button_select))
         if self.cancellable:
-            button_data.append((l("Close"), self.button_cancel))
+            button_data.append(("Close", self.button_cancel))
 
         total_width = len(button_data) * button_width + (len(button_data) - 1) * button_margin
         start_x = self.screen_width // 2 - total_width // 2
@@ -55,9 +54,8 @@ class CarouselScene(Scene, TemporaryDrawable):
             overlay.fill((0, 0, 0, 205))
             self.screen.blit(overlay, (0, 100))
 
-            text = self.label if not self.redraw_label else \
-                f"{l("Choose up to")} {self.choose_count} {l("cards to discard.")}"
-            self.draw_text(text, self.screen_width // 2, 150, color=u.COLOR_GOLD, center=True)
+            text = self.label if not self.redraw_label else "Choose up to {n} cards to discard."
+            self.draw_text(text, self.screen_width // 2, 150, color=u.COLOR_GOLD, center=True, n=self.choose_count)
 
         half_visible = self.visible_cards // 2
         card_width, card_height = u.MEDIUM_CARD_SIZE

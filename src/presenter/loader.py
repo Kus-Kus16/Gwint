@@ -2,16 +2,33 @@ import json
 import logging
 import os
 from abc import ABC
-
 import pygame
 
 class Loader(ABC):
     __image_cache = {}
+    __text_cache = {}
+
+    @classmethod
+    def load_text(cls, text_id, font, color, **kwargs):
+        from src.presenter.settings import Settings
+
+        translated = Settings.gettext(text_id)
+        text = translated.format(**kwargs)
+
+        key = (text, font, color)
+        if key in cls.__text_cache:
+            text_surface = cls.__text_cache[key]
+        else:
+            text_surface = font.render(text, True, color)
+            cls.__text_cache[key] = text_surface
+
+        return text_surface
 
     @classmethod
     def load_image(cls, path, size=None):
-        if (path, size) in cls.__image_cache:
-            return cls.__image_cache[(path, size)]
+        key = (path, size)
+        if key in cls.__image_cache:
+            return cls.__image_cache[key]
 
         if not os.path.exists(path):
             logging.info(f"Can't find image path: {path}")
@@ -22,7 +39,7 @@ class Loader(ABC):
         if size is not None:
             image = pygame.transform.scale(image, size)
 
-        cls.__image_cache[(path, size)] = image
+        cls.__image_cache[key] = image
         return image
 
     @staticmethod
@@ -39,3 +56,8 @@ class Loader(ABC):
     def load_json(path):
         with open(path, "r", encoding="utf-8") as file:
             return json.load(file)
+
+    @classmethod
+    def on_setting_update(cls):
+        cls.__text_cache.clear()
+

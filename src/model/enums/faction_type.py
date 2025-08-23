@@ -1,7 +1,5 @@
 from enum import Enum
 
-from src.presenter.settings import locale as l
-
 
 class FactionType(Enum):
     NEUTRAL = 0
@@ -24,14 +22,14 @@ class FactionType(Enum):
     @classmethod
     def _get_fullname_map(cls):
         return {
-            cls.NEUTRAL: l("Neutral"),
-            cls.NORTH: l("Northern Realms"),
-            cls.NILFGAARD: l("Nilfgaardian Empire"),
-            cls.MONSTERS: l("Monsters"),
-            cls.SCOIATAEL: l("Scoia'tael"),
-            cls.SKELLIGE: l("Skellige"),
-            cls.TOUSSAINT: l("Duchy of Toussaint"),
-            cls.FIRE: l("Cult of Eternal Fire"),
+            cls.NEUTRAL: "Neutral",
+            cls.NORTH: "Northern Realms",
+            cls.NILFGAARD: "Nilfgaardian Empire",
+            cls.MONSTERS: "Monsters",
+            cls.SCOIATAEL: "Scoia'tael",
+            cls.SKELLIGE: "Skellige",
+            cls.TOUSSAINT: "Duchy of Toussaint",
+            cls.FIRE: "Cult of Eternal Fire",
         }
 
     @classmethod

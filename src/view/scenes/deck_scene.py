@@ -11,7 +11,6 @@ from src.presenter.loader import Loader
 from src.presenter.saver import Saver
 from src.view.components.scrollbar import Scrollbar
 from src.view.constants import deck_constants as c, ui_constants as u
-from src.presenter.settings import locale as l
 from src.view.components.button import Button
 from src.view.scenes.carousel_scene import CarouselScene
 from src.view.scenes.scene import Scene
@@ -41,8 +40,8 @@ class DeckScene(Scene):
         x, y = (self.screen_width - button_width) // 2, self.screen_height - button_height - 30
 
         self.buttons = [
-            Button(self.screen, l("Menu"), (x, y), u.BUTTON_SIZE_NARROW, self.button_menu),
-            Button(self.screen, l("Play"), (x, y - button_height - 10), u.BUTTON_SIZE_NARROW, self.button_play)
+            Button(self.screen, "Menu", (x, y), u.BUTTON_SIZE_NARROW, self.button_menu),
+            Button(self.screen, "Play", (x, y - button_height - 10), u.BUTTON_SIZE_NARROW, self.button_play)
         ]
 
         # Factions
@@ -96,9 +95,9 @@ class DeckScene(Scene):
 
         y = c.TOP_BUTTONS_Y - u.BUTTON_SIZE_WIDE[1] // 2
         buttons = [
-            Button(self.screen, f"<< {prev_name}", (50, y), u.BUTTON_SIZE_WIDE,
+            Button(self.screen, prev_name, (50, y), u.BUTTON_SIZE_WIDE,
                    self.button_prev, font=u.CINZEL_25_BOLD),
-            Button(self.screen, f"{next_name} >>", (self.screen_width - 450, y), u.BUTTON_SIZE_WIDE,
+            Button(self.screen, next_name, (self.screen_width - 450, y), u.BUTTON_SIZE_WIDE,
                    self.button_next, font=u.CINZEL_25_BOLD)
         ]
         self.buttons[2:] = buttons
@@ -123,7 +122,7 @@ class DeckScene(Scene):
         self.scrollbar_right.draw(deck_dict["right"].size())
 
     def draw_commander(self):
-        self.draw_text(l("Commander"), *c.COMM_LABEL_POS, color=u.COLOR_GOLD, font=u.CINZEL_25_BOLD, center=True)
+        self.draw_text("Commander", *c.COMM_LABEL_POS, color=u.COLOR_GOLD, font=u.CINZEL_25_BOLD, center=True)
 
         commander = self.get_current_deck_dict().get("commander")
         if commander:
@@ -140,8 +139,8 @@ class DeckScene(Scene):
         font = u.CINZEL_25_BOLD
         color = u.COLOR_WHITE
 
-        self.draw_text(l("Card Collection"), *c.LEFT_LABEL_POS, color=color, font=font)
-        self.draw_text(l("Cards in Deck"), *c.RIGHT_LABEL_POS, color=color, font=font)
+        self.draw_text("Card Collection", *c.LEFT_LABEL_POS, color=color, font=font)
+        self.draw_text("Cards in Deck", *c.RIGHT_LABEL_POS, color=color, font=font)
 
         # Faction name
         font = u.CINZEL_50_BOLD
@@ -158,11 +157,11 @@ class DeckScene(Scene):
 
     def draw_deck_stats(self):
         lines = [
-            (l("Total cards in deck"), self.stats["total_count"], "deck_count"),
-            (l("Number of unit cards"), self.stats["unit_count"], "deck_unit"),
-            (l("Special cards"), f"{self.stats['special_count']}/10", "deck_special"),
-            (l("Total Unit Card Strength"), self.stats["total_strength"], "deck_strength"),
-            (l("Hero Cards"), self.stats["hero_count"], "deck_hero"),
+            ("Total cards in deck", self.stats["total_count"], "deck_count"),
+            ("Number of unit cards", self.stats["unit_count"], "deck_unit"),
+            ("Special cards", f"{self.stats['special_count']}/10", "deck_special"),
+            ("Total Unit Card Strength", self.stats["total_strength"], "deck_strength"),
+            ("Hero Cards", self.stats["hero_count"], "deck_hero"),
         ]
 
         start_y = c.STATS_Y
@@ -360,7 +359,7 @@ class DeckScene(Scene):
 
     @staticmethod
     def update_stats(card, count, sign, dictionary):
-        dictionary["total_count"] += count
+        dictionary["total_count"] += count * sign
 
         if card.is_card_type(CardType.SPECIAL):
             dictionary["special_count"] += count * sign
