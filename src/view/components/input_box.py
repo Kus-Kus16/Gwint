@@ -63,13 +63,18 @@ class InputBox(Component):
         self.update_cursor()
 
         x, y = self.pos
-        self.draw_text(self.title, x, y + 50, font=self.title_font, center=True)
+        self.draw_text(self.title, x - self.rect.width // 2, y + 50, font=self.title_font, center=True)
         text_rect = self.draw_text(self.text, *self.rect.center, center=True)
-        if self.active and self.cursor_visible:
-            cursor_x_pos = text_rect.x + self.font.size(self.text[:self.cursor_position])[0]
-            cursor_y_pos = text_rect.y
-            cursor_height = self.font.get_height()
 
+        if self.active and self.cursor_visible:
+            if self.text:
+                cursor_x_pos = text_rect.x + self.font.size(self.text[:self.cursor_position])[0]
+                cursor_y_pos = text_rect.y
+            else:
+                cursor_x_pos = self.rect.centerx
+                cursor_y_pos = self.rect.centery - self.font.get_height() // 2
+
+            cursor_height = self.font.get_height()
             pygame.draw.line(self.screen, self.text_color,
                              (cursor_x_pos, cursor_y_pos),
                              (cursor_x_pos, cursor_y_pos + cursor_height), 2)

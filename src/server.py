@@ -9,7 +9,7 @@ from src.network.game_states import GameStates
 SERVER_IP = "0.0.0.0"
 PORT = 5555
 
-games = {}
+games = dict()
 lock = threading.Lock()
 
 def send(conn, data):
@@ -24,22 +24,30 @@ def receive(conn):
     return pickle.loads(data)
 
 # Client managing thread
-def threaded_client(conn, game_id, player_id):
+def threaded_client(conn):
     try:
         request, data = receive(conn)
 
-        if request != "register":
+        if request != "register" or not data:
             send(conn, ("error", ["illegal request"]))
             return
 
         with lock:
-            if game_id not in games:
-                send(conn, ("error", ["no_game"]))
+            game_id = data[:1][0]
+            game_state = games.get(game_id)
+            if game_state is None:
+                game_state = GameStates()
+                games[game_id] = game_state
+                player_id = 0
+            elif game_state.started:
+                send(conn, ("error", ["game id already in use"]))
                 return
+            else:
+                game_state.started = True
+                player_id = 1
 
-            game_state = games[game_id]
-
-        game_state.add_state(player_id, data)
+        game_state.add_player()
+        game_state.add_state(player_id, data[1:])
         send(conn, ("ok", [player_id, game_state.seed]))
 
         while True:
@@ -48,10 +56,10 @@ def threaded_client(conn, game_id, player_id):
                 break
 
             with lock:
-                if not game_id in games:
+                game_state = games.get(game_id)
+                if not game_state or (game_state.started and game_state.player_count < 2):
                     send(conn, ("error", ["no_game"]))
                     break
-                game_state = games[game_id]
 
             match request:
                 case "waiting": # For game, for redraw, for move, for endgame
@@ -76,12 +84,14 @@ def threaded_client(conn, game_id, player_id):
     finally:
         print(f"Connection lost to player {player_id} of game {game_id}")
         conn.close()
+        game_state.remove_player()
 
         with lock:
-            games.pop(game_id, None)
+            if game_state.player_count == 0:
+                # last player
+                del games[game_id]
 
 def main():
-    id_counter = 0
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
@@ -99,28 +109,7 @@ def main():
                 # Client connects
                 conn, addr = s.accept()
                 print(f"Connected to: {addr}")
-
-                with lock:
-                    id_counter += 1
-                    game_id = (id_counter - 1) // 2
-
-                    if id_counter % 2 == 1:
-                        # Player 0
-                        player_id = 0
-                        games[game_id] = GameStates()
-                        print(f"New game {game_id} created")
-                    else:
-                        # Player 1
-                        if game_id not in games:
-                            id_counter += 1
-                            game_id = (id_counter - 1) // 2
-                            player_id = 0
-                            games[game_id] = GameStates()
-                            print(f"New game {game_id} created, skipped invalid place")
-                        else:
-                            player_id = 1
-
-                threading.Thread(target=threaded_client, args=(conn, game_id, player_id), daemon=True).start()
+                threading.Thread(target=threaded_client, args=(conn,), daemon=True).start()
             except socket.timeout:
                 continue
 
