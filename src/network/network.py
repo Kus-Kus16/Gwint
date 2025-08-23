@@ -28,7 +28,6 @@ class Network:
             self.connected = False
             raise ConnectionError(str(e).replace(", ", "\n"))
 
-
     def disconnect(self):
         if not self.connected:
             return
@@ -58,6 +57,3 @@ class Network:
 
     def on_setting_update(self):
         self.server_ip = Settings.get_setting("server_ip")
-        if self.connected:
-            self.disconnect()
-            self.connect()

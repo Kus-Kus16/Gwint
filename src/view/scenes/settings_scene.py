@@ -27,7 +27,7 @@ class SettingsScene(Scene):
                     self.setting_volume, round(Settings.get_setting("volume") * 10), can_wrap=False),
             Setting(self.screen, "Theme", (self.screen_width // 4, 400), Settings.THEMES,
                     self.setting_theme, Settings.get_setting("theme")),
-            Setting(self.screen, "FPS Counter", (self.screen_width // 4, 600), Settings.OFFON,
+            Setting(self.screen, "FPS Counter", (self.screen_width //4, 600), Settings.OFFON,
                     self.setting_fps, Settings.get_setting("show_fps")),
             Setting(self.screen, "Language", (3 * self.screen_width // 4, 200), Settings.LANGUAGES,
                     self.setting_language, Settings.get_setting("language")),
@@ -35,9 +35,15 @@ class SettingsScene(Scene):
                     self.setting_quickplay, Settings.get_setting("quick_play"))
         ]
 
-        current_ip = Settings.get_setting("server_ip")
-        self.input_box = InputBox(self.screen, (3 * self.screen_width // 4, 600), u.TEXT_BOX_SIZE,
-                                  "Server IP", self.framerate, self.setting_ip, text=current_ip)
+        ip = Settings.get_setting("server_ip")
+        lobby_code = Settings.get_setting("server_lobby")
+        input_size = u.TEXT_BOX_SIZE
+        self.input_boxes = [
+            InputBox(self.screen, (3 * self.screen_width // 4 - 20, 600), input_size,
+                     "Server IP", self.framerate, self.setting_ip, text=ip),
+            InputBox(self.screen, (3 * self.screen_width // 4 + input_size[0] + 20, 600), input_size,
+                     "Lobby code", self.framerate, self.setting_lobby, text=lobby_code)
+        ]
 
     def draw(self):
         super().draw()
@@ -47,7 +53,8 @@ class SettingsScene(Scene):
         for setting in self.settings:
             setting.draw(pygame.mouse.get_pos())
 
-        self.input_box.draw()
+        for input_box in self.input_boxes:
+            input_box.draw()
 
         for button in self.buttons:
             button.draw(pygame.mouse.get_pos())
@@ -56,8 +63,9 @@ class SettingsScene(Scene):
         if self.locked:
             return
 
-        if self.input_box.handle_events(event):
-            return
+        for input_box in self.input_boxes:
+            if input_box.handle_events(event):
+                return
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             for setting in self.settings:
@@ -96,3 +104,7 @@ class SettingsScene(Scene):
     @staticmethod
     def setting_ip(text):
         Settings.save_setting("server_ip", text)
+
+    @staticmethod
+    def setting_lobby(text):
+        Settings.save_setting("server_lobby", text)

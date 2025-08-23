@@ -32,15 +32,24 @@ class GamePresenter:
         Settings.register_observer(self, "quick_play")
 
     def connect(self, deck, commander):
+        lobby_code = Settings.get_setting("server_lobby")
+        if lobby_code == "":
+            self.return_to_menu("Lobby code not set.", seconds=3)
+
+        ip = Settings.get_setting("server_ip")
+        if ip == "":
+            self.return_to_menu("Server IP not set.", seconds=3)
+
         try:
             self.net.connect()
-            response, data = self.net.send(("register", [deck, commander]))
+            response, data = self.net.send(("register", [lobby_code, deck, commander]))
         except ConnectionError as e:
             self.return_to_menu("Server not responding:\n" + str(e), seconds=3)
             return False
 
         if response != "ok":
-            raise ConnectionError(f"Server responded with:\n:{response}")
+            self.return_to_menu(f"Server responded with:\n{data[0]}", seconds=3)
+            return False
 
         self.my_id, self.seed = data
 
@@ -263,7 +272,7 @@ class GamePresenter:
                 self.me = Player(deck, commander)
                 self.game_state = "waiting-for-game"
                 self.view.change_scene(self.view.waiting)
-        except ValueError as e:
+        except ValueError:
             self.return_to_menu("Your selected deck is incorrect.", seconds=3)
 
     def handle_play(self, action):

@@ -67,6 +67,14 @@ msgstr "Księstwo Toussaint"
 msgid "Cult of Eternal Fire"
 msgstr "Kult Wiecznego Ognia"
 
+#: Gwint/src/presenter/game_presenter.py:37
+msgid "Lobby code not set."
+msgstr "Kod lobby nie został ustawiony."
+
+#: Gwint/src/presenter/game_presenter.py:37
+msgid "Server IP not set."
+msgstr "IP serwera nie zostało ustawione."
+
 #: Gwint/src/presenter/game_presenter.py:39
 msgid "Server not responding:"
 msgstr "Serwer nie odpowiada:"
@@ -348,6 +356,10 @@ msgstr "Szybka Gra"
 #: Gwint/src/view/scenes/settings_scene.py:45
 msgid "Server IP"
 msgstr "IP Serwera"
+
+#: Gwint/src/view/scenes/settings_scene.py:45
+msgid "Lobby code"
+msgstr "Kod Lobby"
 
 #: Gwint/src/view/constants/ui_constants.py:88
 msgid "Model, Frontend, Toussaint Deck:"
