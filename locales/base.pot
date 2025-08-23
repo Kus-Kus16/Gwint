@@ -67,6 +67,14 @@ msgstr ""
 msgid "Cult of Eternal Fire"
 msgstr ""
 
+#: Gwint/src/presenter/game_presenter.py:37
+msgid "Lobby code not set."
+msgstr ""
+
+#: Gwint/src/presenter/game_presenter.py:37
+msgid "Server IP not set."
+msgstr ""
+
 #: Gwint/src/presenter/game_presenter.py:39
 msgid "Server not responding:"
 msgstr ""
@@ -347,6 +355,10 @@ msgstr ""
 
 #: Gwint/src/view/scenes/settings_scene.py:45
 msgid "Server IP"
+msgstr ""
+
+#: Gwint/src/view/scenes/settings_scene.py:45
+msgid "Lobby Code"
 msgstr ""
 
 #: Gwint/src/view/constants/ui_constants.py:88

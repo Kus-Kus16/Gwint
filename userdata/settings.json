@@ -1,5 +1,6 @@
 {
-    "server_ip": "192.168.1.1",
+    "server_ip": "",
+    "server_lobby": "",
     "volume": 0.5,
     "theme": 4,
     "quick_play": 1,
