@@ -39,6 +39,23 @@ class TextScene(Scene):
         super()._draw_text_lines(lines, x, y, color, font0=u.CINZEL_40, font1=u.CINZEL_30_BOLD,
                                  centerx=centerx, centery=centery, spacing=20, **kwargs)
 
+        if self.texts:
+            self.draw_text_lines(self.texts, self.screen_width // 2, self.screen_height // 2)
+
+    def draw_text_lines(self, lines, center_x, center_y, color=u.COLOR_WHITE, spacing=30):
+        font = u.CINZEL_30_BOLD
+        font_large = u.CINZEL_40
+
+        line_height = font.get_height()
+        block_height = len(lines) * (line_height + spacing) - spacing
+        start_y = center_y - block_height // 2
+        large = True
+
+        for i, line in enumerate(lines):
+            y = start_y + i * (line_height + spacing) + line_height // 2
+            self.draw_text(line, center_x, y, color, font=font_large if large else font, center=True)
+            large = not large
+
     @overrides
     def handle_events(self, event):
         if self.locked:

@@ -19,6 +19,10 @@ class PygameView:
 
         icon = pygame.image.load(u.ICON_PATH).convert_alpha()
         pygame.display.set_icon(icon)
+        pygame.display.set_caption("Gwint")
+
+        icon = pygame.image.load(u.ICON_PATH).convert_alpha()
+        pygame.display.set_icon(icon)
 
         self.clock = pygame.time.Clock()
         self.framerate = u.FRAMERATE

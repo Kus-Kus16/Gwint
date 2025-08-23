@@ -4,7 +4,10 @@ from enum import Enum
 class FactionType(Enum):
     NEUTRAL = 0
     NORTH = 1
+    NEUTRAL = 0
+    NORTH = 1
     NILFGAARD = 2
+    MONSTERS = 3
     MONSTERS = 3
     SCOIATAEL = 4
     SKELLIGE = 5

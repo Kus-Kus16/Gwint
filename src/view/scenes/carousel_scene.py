@@ -53,6 +53,9 @@ class CarouselScene(Scene, TemporaryDrawable):
             overlay = pygame.Surface((self.screen_width, 100), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 205))
             self.screen.blit(overlay, (0, 100))
+            overlay = pygame.Surface((self.screen_width, 100), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 205))
+            self.screen.blit(overlay, (0, 100))
 
             text = self.label if not self.redraw_label else "Choose up to {n} cards to discard."
             self.draw_text(text, self.screen_width // 2, 150, color=u.COLOR_GOLD, center=True, n=self.choose_count)

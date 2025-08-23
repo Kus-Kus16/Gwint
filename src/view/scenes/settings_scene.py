@@ -1,5 +1,6 @@
 import pygame
 
+from src.presenter import settings
 from src.view.components.button import Button
 from src.view.components.input_box import InputBox
 from src.view.components.setting import Setting
