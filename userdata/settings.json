@@ -1,8 +1,8 @@
 {
-    "server_ip": "192.168.1.44",
-    "volume": 0.0,
-    "theme": 3,
+    "server_ip": "192.168.1.1",
+    "volume": 0.5,
+    "theme": 4,
     "quick_play": 1,
-    "show_fps": 1,
+    "show_fps": 0,
     "language": 0
 }

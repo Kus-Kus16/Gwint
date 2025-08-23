@@ -1,6 +1,5 @@
 import pygame
 from overrides import overrides
-from src.presenter.settings import locale as l
 
 from src.presenter.loader import Loader
 from src.view.constants import ui_constants as u
@@ -18,15 +17,15 @@ class MenuScene(Scene):
 		button_size = u.BUTTON_SIZE_WIDE
 		button_paths = self.theme_buttons_paths
 		self.buttons = [
-			Button(self.screen, l("Play"), (button_x, button_y), button_size,
+			Button(self.screen, "Play", (button_x, button_y), button_size,
 				   self.button_newgame, image_paths=button_paths),
-			Button(self.screen, l("Your Deck"), (button_x, button_y + (button_height + 45)), button_size,
+			Button(self.screen, "Your Deck", (button_x, button_y + (button_height + 45)), button_size,
 				   self.button_deck, image_paths=button_paths),
-			Button(self.screen, l("Settings"), (button_x, button_y + 2 * (button_height + 45)), button_size,
+			Button(self.screen, "Settings", (button_x, button_y + 2 * (button_height + 45)), button_size,
 				   self.button_settings, image_paths=button_paths),
-			Button(self.screen, l("Credits"), (button_x, button_y + 3 * (button_height + 45)), button_size,
+			Button(self.screen, "Credits", (button_x, button_y + 3 * (button_height + 45)), button_size,
 				   self.button_credits, image_paths=button_paths),
-			Button(self.screen, l("Exit"), (button_x, button_y + 4 * (button_height + 45)), button_size,
+			Button(self.screen, "Exit", (button_x, button_y + 4 * (button_height + 45)), button_size,
 				   self.button_exit, image_paths=button_paths)
 		]
 

@@ -3,7 +3,6 @@ from overrides import overrides
 
 from src.view.components.temporary_drawable import TemporaryDrawable
 from src.view.constants import ui_constants as u
-from src.presenter.settings import locale as l
 from src.view.scenes.scene import Scene
 from src.view.components.button import Button
 
@@ -13,8 +12,8 @@ class ChooseScene(Scene, TemporaryDrawable):
         Scene.__init__(self, screen)
         TemporaryDrawable.__init__(self, locking=False, frames=-1)
 
-        self.text = l("The Scoia'tael faction perk allows you to decide\nwho will get to go first.")
-        self.title = l("Would you like to go first?")
+        self.text = "The Scoia'tael faction perk allows you to decide\nwho will get to go first."
+        self.title = "Would you like to go first?"
 
         self.font_title = u.CINZEL_40_BOLD
         self.font_text = u.CINZEL_30
@@ -36,8 +35,8 @@ class ChooseScene(Scene, TemporaryDrawable):
         y_buttons = self.box_rect.bottom - self.spacing - button_height
 
         self.buttons = [
-            Button(self.screen, l("Me"), (start_x, y_buttons), u.BUTTON_SIZE_NARROW, self.button_me),
-            Button(self.screen, l("Opponent"), (start_x + u.BUTTON_SIZE_NARROW[0] + 40, y_buttons), u.BUTTON_SIZE_NARROW,
+            Button(self.screen, "Me", (start_x, y_buttons), u.BUTTON_SIZE_NARROW, self.button_me),
+            Button(self.screen, "Opponent", (start_x + u.BUTTON_SIZE_NARROW[0] + 40, y_buttons), u.BUTTON_SIZE_NARROW,
                    self.button_opp)
         ]
 

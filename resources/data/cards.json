@@ -95,7 +95,7 @@
         "faction": 0,
         "power": 15,
         "rows": ["close"],
-        "abilities": ["hero"],
+        "abilities": ["hero", "muster"],
         "count": 1,
         "filename": "cirilla"
     },
@@ -105,7 +105,7 @@
         "faction": 0,
         "power": 15,
         "rows": ["close"],
-        "abilities": ["hero"],
+        "abilities": ["hero", "muster"],
         "count": 1,
         "filename": "geralt"
     },
@@ -201,6 +201,16 @@
     },
     {
         "id": 22,
+        "name": "Płotka",
+        "faction": 0,
+        "power": 3,
+        "rows": ["close"],
+        "abilities": [],
+        "count": 1,
+        "filename": "plotka"
+    },
+    {
+        "id": 23,
         "name": "Vesemir",
         "faction": 0,
         "power": 6,
@@ -210,7 +220,7 @@
         "filename": "vesemir"
     },
     {
-        "id": 23,
+        "id": 24,
         "name": "Villentretenmerth",
         "faction": 0,
         "power": 7,
@@ -220,7 +230,7 @@
         "filename": "villen"
     },
     {
-        "id": 24,
+        "id": 25,
         "name": "Zoltan Chivay",
         "faction": 0,
         "power": 5,
