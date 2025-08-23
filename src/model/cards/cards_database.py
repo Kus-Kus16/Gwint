@@ -59,7 +59,7 @@ class CardsDatabase(ABC):
 
     @classmethod
     def get_faction_commanders(cls, faction_type):
-        commanders = cls.__faction_cards_dict[faction_type]
+        commanders = cls.__faction_commanders_dict[faction_type]
         for data in commanders:
             data["faction"] = faction_type
 

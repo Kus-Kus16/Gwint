@@ -13,9 +13,8 @@ class Settings(ABC):
     __lang_provider = None
 
     LANGUAGES = ["EN", "PL"]
-    THEMES = ["Ciri", "Gerald", "Yennefer", "Nithral", "Losowy"]
-    OFFON = ["Wył.", "Wł."]
-    AUTHORS = "Model, Frontend, Toussaint Deck:\nMaciej Kus\nServer, Frontend:\nKrzysztof Pieczka\nEternal Fire Deck, Scoia'tael Optimise:\nMaciej Fraś"
+    THEMES = ["Ciri", "Gerald", "Yennefer", "Nithral", "Random"]
+    OFFON = ["OFF", "ON"]
 
     @classmethod
     def get_setting(cls, setting_name):
@@ -45,16 +44,15 @@ class Settings(ABC):
         return cls.__theme_index
 
     @classmethod
-    def reload_language(cls):
-        language_id = cls.LANGUAGES[cls.get_setting("language")]
+    def reload_language(cls, new_index):
+        language_id = cls.LANGUAGES[new_index]
         lang = gettext.translation("base", localedir="locales", fallback=True, languages=[language_id])
         cls.__lang_provider = lang.gettext
 
     @classmethod
     def gettext(cls, text):
         if cls.__lang_provider is None:
-            cls.reload_language()
+            cls.reload_language(cls.get_setting("language"))
         return cls.__lang_provider(text)
 
-locale = Settings.gettext
-#todo remove  ^
+Settings.register_observer(Loader, "language")

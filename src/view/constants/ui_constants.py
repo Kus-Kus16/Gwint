@@ -85,3 +85,7 @@ DEFAULT_RIGHT_ARROW_PATHS = (GOLD_RIGHT_ARROW_PATH, GOLD_RIGHT_ARROW_PATH_HOVER)
 
 # Menu
 THEMES = __themes()
+CREDITS = ("Model, Frontend, Toussaint Deck:\nMaciej Kus\n"
+           "Server, Frontend:\nKrzysztof Pieczka\n"
+           "Eternal Fire Deck, Scoia'tael Optimise:\nMaciej Fraś\n"
+           "Translations:\nDawid Kulas")

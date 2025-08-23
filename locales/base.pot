@@ -67,20 +67,12 @@ msgstr ""
 msgid "Cult of Eternal Fire"
 msgstr ""
 
-#: Gwint/src/network/network.py:30
-msgid "Connection failed"
-msgstr ""
-
-#: Gwint/src/network/network.py:48
-msgid "Communication error"
-msgstr ""
-
 #: Gwint/src/presenter/game_presenter.py:39
-msgid "Server not responding"
+msgid "Server not responding:"
 msgstr ""
 
 #: Gwint/src/presenter/game_presenter.py:43
-msgid "Server responded with"
+msgid "Server responded with:"
 msgstr ""
 
 #: Gwint/src/presenter/game_presenter.py:83
@@ -88,23 +80,23 @@ msgid "Incorrect opponent deck"
 msgstr ""
 
 #: Gwint/src/presenter/game_presenter.py:267
-msgid "Incorrect deck"
+msgid "Your selected deck is incorrect."
 msgstr ""
 
 #: Gwint/src/presenter/game_presenter.py:486
 msgid "Opponent disconnected."
 msgstr ""
 
-#: Gwint/src/presenter/settings.py:48
-msgid "Model, Frontend, Toussaint Deck:"
+#: Gwint/src/presenter/settings.py:16
+msgid "Random"
 msgstr ""
 
-#: Gwint/src/presenter/settings.py:50
-msgid "Server, Frontend:"
+#: Gwint/src/presenter/settings.py:17
+msgid "OFF"
 msgstr ""
 
-#: Gwint/src/presenter/settings.py:52
-msgid "Eternal Fire Deck, Scoia'tael Optimise:"
+#: Gwint/src/presenter/settings.py:17
+msgid "ON"
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:15
@@ -126,11 +118,14 @@ msgid "Your opponent will go first."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:18
-msgid "Opponent used the Scoia'tael faction perk\nto go first."
+msgid "Opponent used the Scoia'tael faction perk"
+msgstr ""
+
+msgid "to go first."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:24
-msgid "Opponent used the Scoia'tael faction perk\nfor you to go first."
+msgid "for you to go first."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:25
@@ -158,27 +153,51 @@ msgid "You won the round!"
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:31
-msgid "Northern Realms faction ability triggered -\nNorth draws an additional card."
+msgid "Northern Realms faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:31
+msgid "North draws an additional card."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:33
-msgid "Nilfgaardian Empire faction ability triggered -\nNilfgaard wins the tie."
+msgid "Nilfgaardian Empire faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:33
+msgid "Nilfgaard wins the tie."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:35
-msgid "Monsters faction ability triggered -\none randomly chosen Monster card stays on board."
+msgid "Monsters faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:35
+msgid "one randomly chosen Monster card stays on board."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:37
-msgid "Skellige faction ability triggered -\nTwo random cards are returned to the board."
+msgid "Skellige faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:37
+msgid "Two random cards are returned to the board."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:39
-msgid "Duchy of Toussaint faction ability triggered -\nToussaint draws an additional card."
+msgid "Duchy of Toussaint faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:39
+msgid "Toussaint draws an additional card."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:41
-msgid "Cult of Eternal Fire faction ability triggered -\nat the beginning of the game, up to four cards are redrawn."
+msgid "Cult of Eternal Fire faction ability triggered -"
+msgstr ""
+
+#: Gwint/src/view/components/notification.py:41
+msgid "at the beginning of the game, up to four cards are redrawn."
 msgstr ""
 
 #: Gwint/src/view/components/notification.py:43
@@ -202,15 +221,15 @@ msgid "Close"
 msgstr ""
 
 #: Gwint/src/view/scenes/carousel_scene.py:59
-msgid "Choose up to"
-msgstr ""
-
-#: Gwint/src/view/scenes/carousel_scene.py:59
-msgid "cards to discard."
+msgid "Choose up to {n} cards to discard."
 msgstr ""
 
 #: Gwint/src/view/scenes/choose_scene.py:16
-msgid "The Scoia'tael faction perk allows you to decide\nwho will get to go first."
+msgid "The Scoia'tael faction perk allows you to decide"
+msgstr ""
+
+#: Gwint/src/view/scenes/choose_scene.py:16
+msgid "who will get to go first."
 msgstr ""
 
 #: Gwint/src/view/scenes/choose_scene.py:17
@@ -273,7 +292,7 @@ msgid "Rematch"
 msgstr ""
 
 #: Gwint/src/view/scenes/endscreen.py:62
-msgid "Round"
+msgid "Round {n}"
 msgstr ""
 
 #: Gwint/src/view/scenes/game_scene.py:283
@@ -330,3 +349,18 @@ msgstr ""
 msgid "Server IP"
 msgstr ""
 
+#: Gwint/src/view/constants/ui_constants.py:88
+msgid "Model, Frontend, Toussaint Deck:"
+msgstr ""
+
+#: Gwint/src/view/constants/ui_constants.py:89
+msgid "Server, Frontend:"
+msgstr ""
+
+#: Gwint/src/view/constants/ui_constants.py:90
+msgid "Eternal Fire Deck, Scoia'tael Optimise:"
+msgstr ""
+
+#: Gwint/src/view/constants/ui_constants.py:91
+msgid "Translations:"
+msgstr ""

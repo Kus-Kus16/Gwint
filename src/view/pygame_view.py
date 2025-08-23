@@ -10,7 +10,6 @@ from src.view.scenes.menu_scene import MenuScene
 from src.presenter.loader import Loader
 from src.view.constants import ui_constants as u
 from src.presenter.settings import Settings
-from src.presenter.settings import locale as l
 
 class PygameView:
     def __init__(self):
@@ -39,8 +38,8 @@ class PygameView:
 
         #Screens initiation
         self.menu = MenuScene(self.screen)
-        self.credits = TextScene(self.screen, l("Credits"), Settings.AUTHORS)
-        self.waiting = TextScene(self.screen, l("Waiting for the opponent"))
+        self.credits = TextScene(self.screen, "Credits", u.CREDITS)
+        self.waiting = TextScene(self.screen, "Waiting for the opponent")
         self.game = GameScene(self.screen)
         self.deck = DeckScene(self.screen)
         self.settings = SettingsScene(self.screen)
@@ -93,7 +92,7 @@ class PygameView:
             return
 
         fps = self.clock.get_fps()
-        font = pygame.font.SysFont("Arial", 11)
+        font = pygame.font.SysFont("Arial", 13)
         text_surface = font.render(f"{int(fps)} FPS", True, (0, 255, 0))
         self.screen.blit(text_surface, (2, 2))
 

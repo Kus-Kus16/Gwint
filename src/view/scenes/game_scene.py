@@ -7,7 +7,6 @@ from src.model.enums.cards_area import CardsArea
 from src.model.enums.faction_type import FactionType
 from src.model.enums.row_type import RowType
 from src.view.constants import game_constants as c, ui_constants as u
-from src.presenter.settings import locale as l
 from src.view.scenes.carousel_scene import CarouselScene
 from src.view.scenes.choose_scene import ChooseScene
 from src.view.scenes.endscreen import EndScreen
@@ -280,7 +279,7 @@ class GameScene(Scene):
             self.screen.blit(overlay, overlay_rect)
 
             centerx, centery = overlay_rect.center
-            self.draw_text(l("Press spacebar to pass"), centerx, centery, center=True,
+            self.draw_text("Press spacebar to pass", centerx, centery, center=True,
                            color=u.COLOR_LIGHTGRAY, font=u.CINZEL_20_BOLD)
 
     def draw_player(self, player_id, info_rect, opponent=False):
@@ -307,13 +306,13 @@ class GameScene(Scene):
             self.draw_icon("high_score", None, x + 403, y + 40)
 
         if self.game.get_player(player_id).passed:
-            self.draw_text(l("Passed"), x + 453, y + 132, color=u.COLOR_WHITE, center=True, font=u.CINZEL_25_BOLD)
+            self.draw_text("Passed", x + 453, y + 132, color=u.COLOR_WHITE, center=True, font=u.CINZEL_25_BOLD)
 
         self.draw_gems(player.hp, x, y)
         self.draw_icon("cards", None, x + 201, y + 88)
         self.draw_text(player.hand.size(), x + 257, y + 108, color=u.COLOR_GOLD, center=True)
 
-        self.draw_text(l("Opponent") if opponent else l("You"), x + 201, y + 12, color=u.COLOR_GOLD, font=u.CINZEL_20_BOLD)
+        self.draw_text("Opponent" if opponent else "You", x + 201, y + 12, color=u.COLOR_GOLD, font=u.CINZEL_20_BOLD)
         self.draw_text(FactionType.faction_to_fullname(player.faction), x + 201, y + 45, color=u.COLOR_LIGHTGRAY, font=u.CINZEL_15)
 
         points_pos = c.POINTS_OPP_POS if opponent else c.POINTS_POS

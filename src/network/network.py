@@ -3,7 +3,6 @@ import pickle
 import socket
 
 from src.presenter.settings import Settings
-from src.presenter.settings import locale as l
 
 
 class Network:
@@ -27,7 +26,8 @@ class Network:
             self.connected = True
         except (socket.error, ConnectionRefusedError) as e:
             self.connected = False
-            raise ConnectionError(f"{l("Connection failed")}: {str(e)}")
+            raise ConnectionError(str(e).replace(", ", "\n"))
+
 
     def disconnect(self):
         if not self.connected:
@@ -45,7 +45,7 @@ class Network:
             return pickle.loads(self.client.recv(8192))
 
         except (socket.error, pickle.PickleError, EOFError) as e:
-            raise ConnectionError(f"{l("Communication error")}: {str(e)}")
+            raise ConnectionError(str(e).replace(", ", "\n"))
 
     @property
     def server_ip(self):
