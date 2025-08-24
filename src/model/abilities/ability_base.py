@@ -1,10 +1,15 @@
 from abc import ABC
 
+ABILITY_REGISTRY = {}
 
 class AbilityBase(ABC):
     def __init__(self, card):
         self.card = card
         self.__apply_type()
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        ABILITY_REGISTRY[cls.__name__] = cls
 
     def on_board_play(self, game, player, row_type, targets):
         return []

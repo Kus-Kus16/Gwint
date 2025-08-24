@@ -6,7 +6,6 @@ class Commander(RawCommander):
         super().__init__(data)
         self.nickname = data['nickname']
         self.active = True
-        self.abilities = self.create_abilities(data['abilities'], "abilities.commanders")
 
     def disable(self):
         self.active = False

@@ -1,8 +1,6 @@
-import importlib
 from abc import ABC
 
 from src.model.enums.faction_type import FactionType
-
 
 class CardBase(ABC):
     def __init__(self, data):
@@ -11,24 +9,22 @@ class CardBase(ABC):
         self.faction = FactionType(data['faction'])
         self.owner = None
         self.filename = data['filename']
-        self.abilities = None
         self.type = None
         self.ability_types = set()
+        self.abilities = self.create_abilities(data['abilities'])
 
     def add_types(self, types):
         self.ability_types.update(types)
 
-    def create_abilities(self, strings, abilities_path):
+    def create_abilities(self, strings):
+        from src.model.abilities.ability_base import ABILITY_REGISTRY
         def to_class_name(snake_name):
             return ''.join(word.capitalize() for word in snake_name.split('_'))
 
         instances = []
         for snake_name in strings:
             class_name = to_class_name(snake_name)
-            module_path = f"model.{abilities_path}.{snake_name}"
-
-            module = importlib.import_module(module_path)
-            cls = getattr(module, class_name)
+            cls = ABILITY_REGISTRY[class_name]
             instances.append(cls(self))
 
         return instances

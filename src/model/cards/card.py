@@ -4,12 +4,6 @@ from src.model.cards.raw_card import RawCard
 from src.model.enums.card_type import CardType
 
 class Card(RawCard):
-    def __init__(self, data):
-        super().__init__(data)
-
-        path = f"abilities.{'specials' if self.type is CardType.SPECIAL else 'units'}"
-        self.abilities = self.create_abilities(data['abilities'], path)
-
     def set_power(self, power):
         if self.is_card_type(CardType.HERO) or self.is_card_type(CardType.SPECIAL):
             return
