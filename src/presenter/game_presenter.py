@@ -5,6 +5,7 @@ import time
 from src.model.cards.cards_database import CardsDatabase
 from src.model.enums.cards_area import CardsArea
 from src.model.enums.faction_type import FactionType
+from src.model.enums.row_type import RowType
 from src.model.game import Game
 from src.model.player import Player
 from src.network.network import Network
@@ -163,7 +164,7 @@ class GamePresenter:
 
         try:
             if data[0] == "card":
-                self.play_card(1 - self.my_id, data[1], data[2], data[3])
+                self.play_card(1 - self.my_id, data[1], RowType(data[2]), data[3])
             else: # pass
                 self.pass_round(1 - self.my_id)
         except ValueError as e:
@@ -294,7 +295,7 @@ class GamePresenter:
             self.relock()
             return
 
-        response, data = self.net.send(("play", ["card", card_id, row_type, targets]))
+        response, data = self.net.send(("play", ["card", card_id, row_type.value, targets]))
         if not self.continue_with_response(response, is_ok_blocking=False):
             return
 
