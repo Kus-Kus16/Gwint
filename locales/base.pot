@@ -374,5 +374,5 @@ msgid "Eternal Fire Deck, Scoia'tael Optimise:"
 msgstr ""
 
 #: Gwint/src/view/constants/ui_constants.py:91
-msgid "Translations:"
+msgid  "Translations, Github Actions:"
 msgstr ""

@@ -374,5 +374,5 @@ msgid "Eternal Fire Deck, Scoia'tael Optimise:"
 msgstr "Talia Wiecznego Ognia, Optymalizacja Scoiat'ael:"
 
 #: Gwint/src/view/constants/ui_constants.py:91
-msgid "Translations:"
-msgstr "Tłumaczenia:"
+msgid  "Translations, Github Actions:"
+msgstr "Tłumaczenia, Github Actions:"

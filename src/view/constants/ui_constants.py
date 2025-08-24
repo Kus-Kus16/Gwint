@@ -90,4 +90,4 @@ THEMES = __themes()
 CREDITS = ("Model, Frontend, Toussaint Deck:\nMaciej Kus\n"
            "Server, Frontend:\nKrzysztof Pieczka\n"
            "Eternal Fire Deck, Scoia'tael Optimise:\nMaciej Fraś\n"
-           "Translations:\nDawid Kulas")
+           "Translations, Github Actions:\ndawkagaming")

@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['src\\client.py'],
+    ['src//client.py'],
     pathex=[],
     binaries=[],
     datas=[('resources', 'resources'), ('locales', 'locales')],
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['resources\\gwent\\icons\\icon-transparent.ico'],
+    icon=['resources//gwent//icons//icon-transparent.ico'],
 )
