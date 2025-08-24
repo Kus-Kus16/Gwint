@@ -1,3 +1,4 @@
 overrides==7.7.0
 polib==1.2.0
 pygame==2.6.1
+appdirs~=1.4.4

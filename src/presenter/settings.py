@@ -46,7 +46,8 @@ class Settings(ABC):
     @classmethod
     def reload_language(cls, new_index):
         language_id = cls.LANGUAGES[new_index]
-        lang = gettext.translation("base", localedir="locales", fallback=True, languages=[language_id])
+        locale_path = Loader.get_resource_path("locales")
+        lang = gettext.translation("base", localedir=locale_path, fallback=True, languages=[language_id])
         cls.__lang_provider = lang.gettext
 
     @classmethod

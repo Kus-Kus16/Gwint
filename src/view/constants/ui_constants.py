@@ -1,8 +1,10 @@
 import pygame
 
+from src.presenter.loader import Loader
 
 def __font(name, size):
-    return pygame.font.Font(f"resources/fonts/{name}.ttf", size)
+    path = Loader.get_resource_path(f"resources/fonts/{name}.ttf")
+    return pygame.font.Font(path, size)
 
 def __themes():
     themes = [("ciri", "BLUE"), ("geralt", "ORANGE"), ("yennefer", "GOLD"), ("nithral", "SILVER")]

@@ -17,7 +17,8 @@ class PygameView:
         self.screen_width, self.screen_height = self.screen.get_size()
         pygame.display.set_caption("Gwint")
 
-        icon = pygame.image.load(u.ICON_PATH).convert_alpha()
+        icon_path = Loader.get_resource_path(u.ICON_PATH)
+        icon = pygame.image.load(icon_path).convert_alpha()
         pygame.display.set_icon(icon)
 
         self.clock = pygame.time.Clock()
@@ -32,8 +33,9 @@ class PygameView:
         self.screen_width, self.screen_height = self.screen.get_size()
 
         # Soundtrack
+        path = Loader.get_resource_path("resources/soundtrack.mp3")
         pygame.mixer.init()
-        pygame.mixer.music.load("resources/soundtrack.mp3")
+        pygame.mixer.music.load(path)
         pygame.mixer.music.play(-1)
 
         #Screens initiation

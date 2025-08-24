@@ -1,8 +1,14 @@
 import json
 import logging
 import os
+import sys
 from abc import ABC
 import pygame
+import shutil
+from appdirs import user_data_dir
+
+USERDATA_DIR = user_data_dir("Gwent", "KusKus")
+os.makedirs(USERDATA_DIR, exist_ok=True)
 
 class Loader(ABC):
     __image_cache = {}
@@ -30,12 +36,13 @@ class Loader(ABC):
         if key in cls.__image_cache:
             return cls.__image_cache[key]
 
-        if not os.path.exists(path):
+        actual_path = cls.get_resource_path(path)
+        if not os.path.exists(actual_path):
             logging.info(f"Can't find image path: {path}")
             placeholder = "resources/placeholder.png"
             return cls.load_image(placeholder, size)
 
-        image = pygame.image.load(path).convert_alpha()
+        image = pygame.image.load(actual_path).convert_alpha()
         if size is not None:
             image = pygame.transform.scale(image, size)
 
@@ -45,11 +52,17 @@ class Loader(ABC):
     @staticmethod
     def load_data(filename):
         path = f"./resources/data/{filename}.json"
-        return Loader.load_json(path)
+        actual_path = Loader.get_resource_path(path)
+        return Loader.load_json(actual_path)
 
     @staticmethod
     def load_userdata(filename):
-        path = f"./userdata/{filename}.json"
+        path = str(os.path.join(USERDATA_DIR, f"{filename}.json"))
+
+        if not os.path.exists(path):
+            default_path = str(Loader.get_resource_path(f"resources/default_userdata/{filename}.json"))
+            shutil.copy(default_path, path)
+
         return Loader.load_json(path)
 
     @staticmethod
@@ -61,3 +74,7 @@ class Loader(ABC):
     def on_setting_update(cls):
         cls.__text_cache.clear()
 
+    @staticmethod
+    def get_resource_path(relative_path):
+        base_path = getattr(sys, "_MEIPASS", os.path.abspath("."))
+        return os.path.join(base_path, relative_path)
