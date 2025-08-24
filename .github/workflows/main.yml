@@ -1,0 +1,77 @@
+name: Build PyInstaller Windows
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+            python-version: '3.13'
+
+      - name: Check for deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller polib
+
+      - name: Install requirements
+        run: |
+          pip install -r requirements.txt
+
+      - name: Compile locales 
+        run: |
+          python locales/po_compiler.py
+
+      - name: PyInstaller - build for Windows
+        run: |
+          pyinstaller client.spec
+          pyinstaller server.spec
+          
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-windows
+          path: dist/*.exe
+  
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y upx
+
+      - name: Update pip
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install pip dependencies
+        run: |
+          pip install pyinstaller polib
+
+      - name: Install requirements
+        run: |
+          pip install -r requirements.txt
+
+      - name: Compile locales 
+        run: |
+          python locales/po_compiler.py
+
+      - name: PyInstaller - build for Linux
+        run: |
+          pyinstaller client.spec
+          pyinstaller server.spec
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-linux
+          path: dist/*.exe
