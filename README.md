@@ -8,6 +8,7 @@
 The project started as a student assignment and has since been further developed.  
 
 All graphics and concept rights belong to the original creators of Gwent – **CD PROJEKT RED**.  
+This project is a non-commercial fan-made recreation.
 
 ---
 
@@ -28,12 +29,11 @@ In addition, two new custom factions have been added: the Duchy of Toussaint and
 The settings screen allows players to choose an application theme, adjust the music volume, and change the language. Currently, Polish (PL) and English (EN) are supported.
 
 ## Screenshots
-|                                          |                                           |
-|------------------------------------------|-------------------------------------------|
-| ![Main Menu](.github/assets/deck.png)    | ![Deck Building](.github/assets/game.png) |
-| ![Gameplay](.github/assets/carousel.png) | ![Lobby](.github/assets/win.png)          |
 
-
+![deck](.github/assets/deck.png) 
+![gameplay](.github/assets/game.png)
+![cards_select](.github/assets/carousel.png)
+![win](.github/assets/win.png)
 
 ## Technologies
 - **Python 3.13**
